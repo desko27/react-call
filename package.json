@@ -1,0 +1,48 @@
+{
+  "name": "react-call",
+  "version": "0.0.2",
+  "description": "Call your react components",
+  "author": "Ismael Ramon <desko27@gmail.com> (https://desko.dev)",
+  "type": "module",
+  "main": "dist/main.js",
+  "scripts": {
+    "dev": "vite",
+    "lint": "biome check .",
+    "test": "exit 0",
+    "build": "tsc --p ./tsconfig.lib.json && vite build",
+    "release": "np",
+    "phoenix": "rm -rf node_modules && npm i",
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.8.3",
+    "@types/node": "^22.1.0",
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "husky": "^9.1.4",
+    "np": "^10.0.7",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "rollup-plugin-node-externals": "^7.1.2",
+    "typescript": "^5.5.4",
+    "vite": "^5.3.5",
+    "vite-plugin-dts": "^4.0.0-beta.2",
+    "vite-tsconfig-paths": "^4.3.2"
+  },
+  "peerDependencies": {
+    "react": ">=18"
+  },
+  "files": [
+    "dist"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/desko27/react-call#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/desko27/react-call.git"
+  },
+  "bugs": {
+    "url": "https://github.com/desko27/react-call/issues"
+  }
+}
