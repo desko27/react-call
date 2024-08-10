@@ -10,6 +10,7 @@
     "lint": "biome check .",
     "test": "exit 0",
     "build": "tsc --p ./tsconfig.lib.json && vite build",
+    "build:size": "node --run build && bundlesize",
     "release": "np",
     "phoenix": "rm -rf node_modules && npm i",
     "prepare": "husky"
@@ -20,6 +21,7 @@
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@vitejs/plugin-react": "^4.3.1",
+    "bundlesize": "^0.18.2",
     "husky": "^9.1.4",
     "np": "^10.0.7",
     "react": "^18.3.1",
