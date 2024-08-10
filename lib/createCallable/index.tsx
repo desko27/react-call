@@ -1,16 +1,16 @@
 import { useState, useEffect } from 'react'
 import type {
   CallFunction,
-  CallableComponentArgument,
-  StackState,
-  StackStateSetter,
-  CallableComponent,
+  UserComponent,
+  PrivateStackState,
+  PrivateStackStateSetter,
+  Callable,
 } from './types'
 
 export function createCallable<P = void, R = void>(
-  UserComponent: CallableComponentArgument<P, R>,
-): CallableComponent<P, R> {
-  let $setStack: StackStateSetter<P, R> | null = null
+  $UserComponent: UserComponent<P, R>,
+): Callable<P, R> {
+  let $setStack: PrivateStackStateSetter<P, R> | null = null
 
   const call: CallFunction<P, R> = (props) => {
     if ($setStack === null) throw new Error('No <Root> found!')
@@ -31,7 +31,7 @@ export function createCallable<P = void, R = void>(
   }
 
   function Root() {
-    const [stack, setStack] = useState<StackState<P, R>>([])
+    const [stack, setStack] = useState<PrivateStackState<P, R>>([])
 
     useEffect(() => {
       if ($setStack !== null)
@@ -44,7 +44,7 @@ export function createCallable<P = void, R = void>(
 
     return stack.map((stackedCall) => {
       const { props, ...call } = stackedCall // filter out props from call
-      return <UserComponent key={call.key} {...props} call={call} />
+      return <$UserComponent key={call.key} {...props} call={call} />
     })
   }
 

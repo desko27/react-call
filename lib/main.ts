@@ -1,3 +1,2 @@
 export { createCallable } from './createCallable'
-
-export type * from './types'
+export type * as ReactCall from './types.public'
