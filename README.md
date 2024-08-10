@@ -126,7 +126,7 @@ const userAction = await Toast.call({
 })
 ```
 
-But that's just an idea. It all depends on what you're building. The only thing `react-call` does is let you call components imperatively ⚛️ 📡 but it doesn't get in the way of your stuff!
+But it's just another idea. It all depends on what you're building. The only thing `react-call` does is let you call components imperatively ⚛️ 📡
 
 # Errors
 
