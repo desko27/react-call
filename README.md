@@ -10,13 +10,14 @@
 
 # Features
 
-Build your React component, `react-call` gives you the `call(<props>)` method.
+Bring your React component, `react-call` gives you the `call(<props>)` method.
 
-- ⚡️ Fast
 - 🔰 Easy to use
 - ⛑️ Fully Type-Safe
+- 🛜 Setup once, call from anywhere
+- ⛓️‍💥 Not limited by a context provider
+- 🤯 Call from outside React
 - 🌀 Flexible: it's your component
-- 🤯 Can be called outside of React
 - 📦 Extremely lightweight: <500B
 - 🕳️ Zero dependencies
 
@@ -55,12 +56,12 @@ if (yes) deleteItem()
 
 # Use cases
 
-Useful to wait for ANY piece of UI from which potentially get data.
+Present a piece of UI to the user, wait for it to be used and get the response data.
 
-- ✅ Confirmation modals, warnings
+- ✅ Confirmations, dialogs
 - ✅ Notifications, toasts
-- ✅ Feedback forms
-- 🧑‍🔧 [Build your thing](#-build-your-thing)
+- ✅ Popup forms, modals
+- ✅ Or anything! 🧑‍🔧 [Build your thing](#-build-your-thing)
 
 # Usage
 
@@ -70,11 +71,11 @@ const accepted = await Confirm.call({ message: 'Continue?' })
 ```
 
 > [!NOTE]
-> A confirmation dialog is used as an example, but you can go with any component you can think of and create as many as you wish. They all will come paired with their own call method.
+> A confirmation dialog is used as an example, but any component can become callable. Plus you can create as many as you wish.
 
 # Setup
 
-## 🎁 1. Wrap your component
+## 1. 🎁 Wrap your component
 
 ```tsx
 import { createCallable } from 'react-call'
@@ -96,28 +97,24 @@ Apart from your props, a special `call` prop is received containing the end() me
 > [!TIP]
 > Since it's just a component, state, hooks and any other React features are totally fine. You could have inputs, checkboxes, etc, bind them to a state and return such data via end() method.
 
-## 🪣 2. Place the entry point
+## 2. 📡 Place the Root
 
-What `createCallable` returns is not your actual component but an entry point for the calls. Let's say it's sort of a bucket where every single call is thrown into.
+Place `Root` once, which is what listens to every single call and renders it. Any component that is visible when making your calls will do.
 
 ```diff
-// Somewhere in App.tsx
-+ <Confirm />
-//  ^-- no worries, it will only render active calls
++ <Confirm.Root />
+//  ^-- it will only render active calls
 ```
-
-> [!NOTE]
-> No props for this one, since props are always passed as an argument when invoking the call method.
 
 > [!IMPORTANT]
 > If more than one call is active, they will render one after another (newer below). It works as a call stack.
 
 > [!WARNING]
-> There can only be one entry point. Avoid placing it in multiple locations that exist in the React Tree at the same time. If more than one is found an error will be thrown.
+> Since it's the source of truth, there can only be one `Root`. Avoid placing it in multiple locations of the React Tree at the same time, an error will be thrown if so.
 
 # 🧑‍🔧 Build your thing
 
-Again, this is no way limited to confirmation modals, you can build anything!
+Again, this is no way limited to confirmation dialogs. You can build anything!
 
 For example, because of the nature of the call stack inside and its ability to display multiple calls at once, a particularly interesting use case is notifications, toasts or similar. You could end up with something like:
 
@@ -129,11 +126,11 @@ const userAction = await Toast.call({
 })
 ```
 
-But that's just an idea. It all depends on what you're building! The only thing `react-call` does is let you call components imperatively ⚛️ 📡 but it doesn't get in the way of your stuff!
+But that's just an idea. It all depends on what you're building. The only thing `react-call` does is let you call components imperatively ⚛️ 📡 but it doesn't get in the way of your stuff!
 
 # Errors
 
 Error | Solution
 --- | ---
-No \<CallStack> found! | You forgot to place the component, check [place the entry point](#-2-place-the-entry-point) section.
-Multiple instances of \<CallStack> found! | You placed more than one instance of the component, check [place the entry point](#-2-place-the-entry-point) section as there is a warning about this.
+No \<Root> found! | You forgot to place the Root, check [Place the Root](#2--place-the-root) section.
+Multiple instances of \<Root> found! | You placed more than one Root, check [Place the Root](#2--place-the-root) section as there is a warning about this.

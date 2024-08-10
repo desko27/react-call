@@ -26,7 +26,7 @@ export function App() {
       <button type="button" onClick={handleConfirm}>
         Confirm
       </button>
-      <Modal />
+      <Modal.Root />
     </div>
   )
 }

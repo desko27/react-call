@@ -13,7 +13,7 @@ export type CallableComponentArgument<P, R> = React.FunctionComponent<
 >
 
 export type CallableComponent<P, R> = {
-  (): JSX.Element[]
+  Root: React.FunctionComponent
   call: CallFunction<P, R>
 }
 

@@ -13,7 +13,7 @@ export function createCallable<P = void, R = void>(
   let $setStack: StackStateSetter<P, R> | null = null
 
   const call: CallFunction<P, R> = (props) => {
-    if ($setStack === null) throw new Error('No <CallStack> found!')
+    if ($setStack === null) throw new Error('No <Root> found!')
 
     const key = globalThis.crypto.randomUUID()
     const promise = Promise.withResolvers<R>()
@@ -30,12 +30,12 @@ export function createCallable<P = void, R = void>(
     return promise.promise
   }
 
-  function CallStack() {
+  function Root() {
     const [stack, setStack] = useState<StackState<P, R>>([])
 
     useEffect(() => {
       if ($setStack !== null)
-        throw new Error('Multiple instances of <CallStack> found!')
+        throw new Error('Multiple instances of <Root> found!')
       $setStack = setStack
       return () => {
         $setStack = null
@@ -48,6 +48,5 @@ export function createCallable<P = void, R = void>(
     })
   }
 
-  CallStack.call = call
-  return CallStack
+  return { Root, call }
 }
