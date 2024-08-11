@@ -14,6 +14,7 @@ Bring your React component, `react-call` gives you the `call(<props>)` method.
 
 - 🔰 Easy to use
 - ⛑️ Fully Type-Safe
+- ⚡️ Causes no renders at all
 - 🛜 Setup once, call from anywhere
 - ⛓️‍💥 Not limited by a context provider
 - 🤯 Call from outside React
