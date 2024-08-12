@@ -133,5 +133,5 @@ But it's just another idea. It all depends on what you're building. The only thi
 
 Error | Solution
 --- | ---
-No \<Root> found! | You forgot to place the Root, check [Place the Root](#2--place-the-root) section.
+No \<Root> found! | You forgot to place the Root, check [Place the Root](#2--place-the-root) section. If it's already in place but not present by the time you call(), you may want to place it higher in your React tree.
 Multiple instances of \<Root> found! | You placed more than one Root, check [Place the Root](#2--place-the-root) section as there is a warning about this.
