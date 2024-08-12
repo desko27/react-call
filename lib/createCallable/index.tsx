@@ -11,11 +11,12 @@ export function createCallable<P = void, R = void>(
   UserComponent: UserComponentType<P, R>,
 ): Callable<P, R> {
   let $setStack: PrivateStackStateSetter<P, R> | null = null
+  let $nextKey = 0
 
   const call: CallFunction<P, R> = (props) => {
     if ($setStack === null) throw new Error('No <Root> found!')
 
-    const key = globalThis.crypto.randomUUID()
+    const key = String($nextKey++)
     const promise = Promise.withResolvers<R>()
 
     const end = (response: R) => {
@@ -39,6 +40,7 @@ export function createCallable<P = void, R = void>(
       $setStack = setStack
       return () => {
         $setStack = null
+        $nextKey = 0
       }
     }, [])
 
