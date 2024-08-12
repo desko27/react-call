@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react'
 import type {
   CallFunction,
-  UserComponent,
+  UserComponent as UserComponentType,
   PrivateStackState,
   PrivateStackStateSetter,
   Callable,
 } from './types'
 
 export function createCallable<P = void, R = void>(
-  $UserComponent: UserComponent<P, R>,
+  UserComponent: UserComponentType<P, R>,
 ): Callable<P, R> {
   let $setStack: PrivateStackStateSetter<P, R> | null = null
 
@@ -44,7 +44,7 @@ export function createCallable<P = void, R = void>(
 
     return stack.map((stackedCall) => {
       const { props, ...call } = stackedCall // filter out props from call
-      return <$UserComponent key={call.key} {...props} call={call} />
+      return <UserComponent key={call.key} {...props} call={call} />
     })
   }
 
