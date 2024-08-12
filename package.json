@@ -1,6 +1,6 @@
 {
   "name": "react-call",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Call your React components",
   "author": "Ismael Ramon <desko27@gmail.com> (https://desko.dev)",
   "type": "module",
