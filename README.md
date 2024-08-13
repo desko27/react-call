@@ -22,7 +22,7 @@ Bring your React component, `react-call` gives you the `call(<props>)` method.
 - 📦 Extremely lightweight: <500B
 - 🕳️ Zero dependencies
 
-# The mindset
+# The pattern
 
 Imperatively call your React component the way `window.confirm()` calls a confirmation dialog.
 
