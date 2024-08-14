@@ -62,7 +62,7 @@ Present a piece of UI to the user, wait for it to be used and get the response d
 - ✅ Confirmations, dialogs
 - ✅ Notifications, toasts
 - ✅ Popup forms, modals
-- ✅ Or anything! 🧑‍🔧 [Build your thing](#-build-your-thing)
+- ✅ Or anything! 🚀 [Build your thing](#-build-your-thing)
 
 # Usage
 
@@ -76,7 +76,7 @@ const accepted = await Confirm.call({ message: 'Continue?' })
 
 # Setup
 
-## 1. 🎁 Wrap your component
+## 1. ⚛️ Wrap your component
 
 ```tsx
 import { createCallable } from 'react-call'
@@ -113,7 +113,7 @@ Place `Root` once, which is what listens to every single call and renders it. An
 > [!WARNING]
 > Since it's the source of truth, there can only be one `Root`. Avoid placing it in multiple locations of the React Tree at the same time, an error will be thrown if so.
 
-# 🧑‍🔧 Build your thing
+# 🚀 Build your thing
 
 Again, this is no way limited to confirmation dialogs. You can build anything!
 
@@ -128,6 +128,22 @@ const userAction = await Toast.call({
 ```
 
 But it's just another idea. It all depends on what you're building. The only thing `react-call` does is let you call components imperatively ⚛️ 📡
+
+# TypeScript types
+
+You won't need them most likely, but if you want to split the component declaration and such, you may use the types under the `ReactCall` namespace:
+
+```tsx
+import type { ReactCall } from 'react-call'
+```
+
+Type | Description
+--- | ---
+ReactCall.Function<Props, Response> | The call() method
+ReactCall.Context<Props, Response> | The call prop in UserComponent
+ReactCall.Props<Props, Response> | Your props + the call prop
+ReactCall.UserComponent<Props, Response> | What is passed to createCallable
+ReactCall.Callable<Props, Response> | What createCallable returns
 
 # Errors
 
