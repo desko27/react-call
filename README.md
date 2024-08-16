@@ -187,9 +187,9 @@ Multiple instances of \<Root> found! | You placed more than one Root, check [Pla
 
 # SSR
 
-The react-call setup supports [Server Side Rendering](https://nextjs.org/docs/pages/building-your-application/rendering/server-side-rendering), so there's nothing wrong with it on the server.
+✅ The react-call setup supports [Server Side Rendering](https://nextjs.org/docs/pages/building-your-application/rendering/server-side-rendering). This means both createCallable and Root component are fine if run or rendered on the server.
 
-However, bear in mind that the call() method is designed as a client-only feature. As long as you don't run the call() method on the server you'll be fine.
+However, bear in mind that because the call() method is meant to be triggered by user interaction, it is designed as a client-only feature.
 
 > [!CAUTION]
-> If call() is run on the server, a "No \<Root> found!" error will be thrown.
+> If call() is run on the server a "No \<Root> found!" error will be thrown. As long as you don't run the call() method on the server you'll be fine.
