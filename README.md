@@ -19,6 +19,7 @@ Bring your React component, `react-call` gives you the `call(<props>)` method.
 - ⛓️‍💥 Not limited by a context provider
 - 🤯 Call from outside React
 - 🌀 Flexible: it's your component
+- 🚀 Supports React Native and SSR
 - 📦 Extremely lightweight: <500B
 - 🕳️ Zero dependencies
 
@@ -62,7 +63,7 @@ Present a piece of UI to the user, wait for it to be used and get the response d
 - ✅ Confirmations, dialogs
 - ✅ Notifications, toasts
 - ✅ Popup forms, modals
-- ✅ Or anything! 🚀 [Build your thing](#-build-your-thing)
+- ✅ Or anything! 🦄 [Build your thing](#-build-your-thing)
 
 # Usage
 
@@ -113,7 +114,7 @@ Place `Root` once, which is what listens to every single call and renders it. An
 > [!WARNING]
 > Since it's the source of truth, there can only be one `Root`. Avoid placing it in multiple locations of the React Tree at the same time, an error will be thrown if so.
 
-# 🚀 Build your thing
+# 🦄 Build your thing
 
 Again, this is no way limited to confirmation dialogs. You can build anything!
 
@@ -149,5 +150,14 @@ ReactCall.Callable<Props, Response> | What createCallable returns
 
 Error | Solution
 --- | ---
-No \<Root> found! | You forgot to place the Root, check [Place the Root](#2--place-the-root) section. If it's already in place but not present by the time you call(), you may want to place it higher in your React tree.
+No \<Root> found! | You forgot to place the Root, check [Place the Root](#2--place-the-root) section. If it's already in place but not present by the time you call(), you may want to place it higher in your React tree. If you're getting this error on the server see [SSR section](#does-the-setup-work-with-ssr).
 Multiple instances of \<Root> found! | You placed more than one Root, check [Place the Root](#2--place-the-root) section as there is a warning about this.
+
+# SSR
+
+The react-call setup supports [Server Side Rendering](https://nextjs.org/docs/pages/building-your-application/rendering/server-side-rendering), so there's nothing wrong with it on the server.
+
+However, bear in mind that the call() method is designed as a client-only feature. As long as you don't run the call() method on the server you'll be fine.
+
+> [!CAUTION]
+> If call() is run on the server, a "No \<Root> found!" error will be thrown.
