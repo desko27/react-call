@@ -2,14 +2,24 @@
   "name": "react-call",
   "version": "1.1.0",
   "description": "Call your React components",
+  "license": "MIT",
+  "repository": "desko27/react-call",
   "author": "Ismael Ramon <desko27@gmail.com> (https://desko.dev)",
   "type": "module",
-  "main": "dist/main.js",
+  "exports": {
+    "default": "./dist/main.js",
+    "require": "./dist/main.cjs",
+    "types": "./dist/main.d.ts"
+  },
+  "main": "./dist/main.js",
+  "types": "./dist/main.d.ts",
+  "sideEffects": false,
   "scripts": {
     "dev": "vite",
     "lint": "biome check .",
     "test": "exit 0",
-    "build": "tsc --p ./tsconfig.lib.json && vite build",
+    "check:types": "tsc --noEmit --p ./tsconfig.lib.json",
+    "build": "node --run check:types && vite build",
     "build:size": "node --run build && bundlesize",
     "release": "np",
     "phoenix": "rm -rf node_modules && npm i",
@@ -37,14 +47,5 @@
   },
   "files": [
     "dist"
-  ],
-  "license": "MIT",
-  "homepage": "https://github.com/desko27/react-call#readme",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/desko27/react-call.git"
-  },
-  "bugs": {
-    "url": "https://github.com/desko27/react-call/issues"
-  }
+  ]
 }

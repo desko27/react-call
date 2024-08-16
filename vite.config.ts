@@ -11,14 +11,14 @@ export default defineConfig({
     react(),
     nodeExternals(),
     tsconfigPaths(),
-    dts({ include: ['lib'] }),
+    dts({ include: ['lib'], rollupTypes: true }),
   ],
   build: {
     copyPublicDir: false,
     lib: {
       fileName: 'main',
       entry: resolve(__dirname, 'lib/main.ts'),
-      formats: ['es'],
+      formats: ['es', 'cjs'],
     },
   },
 })
