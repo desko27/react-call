@@ -59,6 +59,16 @@
   },
   "overrides": [
     {
+      "include": ["lib/**"],
+      "linter": {
+        "rules": {
+          "complexity": {
+            "noBannedTypes": "off"
+          }
+        }
+      }
+    },
+    {
       "include": ["vite.config.ts"],
       "linter": {
         "rules": {

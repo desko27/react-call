@@ -7,19 +7,19 @@ import type {
   Callable,
 } from './types'
 
-export function createCallable<P = void, R = void>(
-  UserComponent: UserComponentType<P, R>,
-): Callable<P, R> {
-  let $setStack: PrivateStackStateSetter<P, R> | null = null
+export function createCallable<Props = void, Response = void, RootProps = {}>(
+  UserComponent: UserComponentType<Props, Response, RootProps>,
+): Callable<Props, Response, RootProps> {
+  let $setStack: PrivateStackStateSetter<Props, Response> | null = null
   let $nextKey = 0
 
-  const call: CallFunction<P, R> = (props) => {
+  const call: CallFunction<Props, Response> = (props) => {
     if ($setStack === null) throw new Error('No <Root> found!')
 
     const key = String($nextKey++)
-    const promise = Promise.withResolvers<R>()
+    const promise = Promise.withResolvers<Response>()
 
-    const end = (response: R) => {
+    const end = (response: Response) => {
       if ($setStack === null) return
       promise.resolve(response)
       $setStack((prev) => prev.filter((c) => c.key !== key))
@@ -31,8 +31,8 @@ export function createCallable<P = void, R = void>(
     return promise.promise
   }
 
-  function Root() {
-    const [stack, setStack] = useState<PrivateStackState<P, R>>([])
+  function Root(rootProps: RootProps) {
+    const [stack, setStack] = useState<PrivateStackState<Props, Response>>([])
 
     useEffect(() => {
       if ($setStack !== null)
@@ -45,7 +45,8 @@ export function createCallable<P = void, R = void>(
     }, [])
 
     return stack.map((stackedCall) => {
-      const { props, ...call } = stackedCall // filter out props from call
+      const { props, ...callWithoutProps } = stackedCall
+      const call = { ...callWithoutProps, root: rootProps }
       return <UserComponent key={call.key} {...props} call={call} />
     })
   }
