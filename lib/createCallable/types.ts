@@ -1,21 +1,47 @@
-export type CallFunction<P, R> = (props: P) => Promise<R>
-
-export interface PrivateCallContext<P, R> {
+export interface PrivateCallContext<Props, Response> {
   key: string
-  props: P
-  end: (response: R) => void
+  props: Props
+  end: (response: Response) => void
 }
-export type CallContext<P, R> = Omit<PrivateCallContext<P, R>, 'props'>
-
-export type PropsWithCall<P, R> = P & { call: CallContext<P, R> }
-export type UserComponent<P, R> = React.FunctionComponent<PropsWithCall<P, R>>
-
-export type Callable<P, R> = {
-  Root: React.FunctionComponent
-  call: CallFunction<P, R>
-}
-
-export type PrivateStackState<P, R> = PrivateCallContext<P, R>[]
-export type PrivateStackStateSetter<P, R> = React.Dispatch<
-  React.SetStateAction<PrivateStackState<P, R>>
+export type PrivateStackState<Props, Response> = PrivateCallContext<
+  Props,
+  Response
+>[]
+export type PrivateStackStateSetter<Props, Response> = React.Dispatch<
+  React.SetStateAction<PrivateStackState<Props, Response>>
 >
+
+/**
+ * The call() method
+ */
+export type CallFunction<Props, Response> = (props: Props) => Promise<Response>
+
+/**
+ * The special call prop in UserComponent
+ */
+export type CallContext<Props, Response, RootProps> = Omit<
+  PrivateCallContext<Props, Response>,
+  'props'
+> & { root: RootProps }
+
+/**
+ * User props + the call prop
+ */
+export type PropsWithCall<Props, Response, RootProps> = Props & {
+  call: CallContext<Props, Response, RootProps>
+}
+
+/**
+ * What is passed to createCallable
+ */
+export type UserComponent<Props, Response, RootProps> = React.FunctionComponent<
+  PropsWithCall<Props, Response, RootProps>
+>
+
+/**
+ * What createCallable returns
+ */
+export type Callable<Props, Response, RootProps> = {
+  Root: React.FunctionComponent<RootProps>
+  call: CallFunction<Props, Response>
+}

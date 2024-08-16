@@ -114,6 +114,38 @@ Place `Root` once, which is what listens to every single call and renders it. An
 > [!WARNING]
 > Since it's the source of truth, there can only be one `Root`. Avoid placing it in multiple locations of the React Tree at the same time, an error will be thrown if so.
 
+# Passing Root props
+
+You can also read props from Root, which are separate from the call props. To do that, just add your RootProps type to createCallable and pass them to your Root.
+
+Root props will be available to your component via `call.root` object.
+
+```diff
++ type RootProps = { userName: string }
+
+const Confirm = createCallable<
+  Props,
+  Response,
++ RootProps
+>(({ call, message }) => (
+  ...
++   Hi {call.root.userName}!
+  ...
+))
+```
+
+```diff
+<Confirm.Root
++ userName='John Doe'
+/>
+```
+
+You may want to use Root props if you need to:
+
+- Share the same piece of data to every call
+- Use something that is availble in Root's parent
+- Update your active call components on data changes
+
 # 🦄 Build your thing
 
 Again, this is no way limited to confirmation dialogs. You can build anything!
@@ -140,11 +172,11 @@ import type { ReactCall } from 'react-call'
 
 Type | Description
 --- | ---
-ReactCall.Function<Props, Response> | The call() method
-ReactCall.Context<Props, Response> | The call prop in UserComponent
-ReactCall.Props<Props, Response> | Your props + the call prop
-ReactCall.UserComponent<Props, Response> | What is passed to createCallable
-ReactCall.Callable<Props, Response> | What createCallable returns
+ReactCall.Function<Props?, Response?> | The call() method
+ReactCall.Context<Props?, Response?, RootProps?> | The call prop in UserComponent
+ReactCall.Props<Props?, Response?, RootProps?> | Your props + the call prop
+ReactCall.UserComponent<Props?, Response?, RootProps?> | What is passed to createCallable
+ReactCall.Callable<Props?, Response?, RootProps?> | What createCallable returns
 
 # Errors
 
