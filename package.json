@@ -7,9 +7,11 @@
   "author": "Ismael Ramon <desko27@gmail.com> (https://desko.dev)",
   "type": "module",
   "exports": {
-    "default": "./dist/main.js",
-    "require": "./dist/main.cjs",
-    "types": "./dist/main.d.ts"
+    ".": {
+      "default": "./dist/main.js",
+      "require": "./dist/main.cjs",
+      "types": "./dist/main.d.ts"
+    }
   },
   "main": "./dist/main.js",
   "types": "./dist/main.d.ts",
