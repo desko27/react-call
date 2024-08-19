@@ -44,11 +44,13 @@ export function createCallable<Props = void, Response = void, RootProps = {}>(
       }
     }, [])
 
-    return stack.map((stackedCall) => {
-      const { props, ...callWithoutProps } = stackedCall
-      const call = { ...callWithoutProps, root: rootProps }
-      return <UserComponent key={call.key} {...props} call={call} />
-    })
+    return stack.map(({ props, ...call }) => (
+      <UserComponent
+        {...props}
+        key={call.key}
+        call={{ ...call, root: rootProps }}
+      />
+    ))
   }
 
   return { Root, call }
