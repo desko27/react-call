@@ -25,9 +25,7 @@ export function createCallable<Props = void, Response = void, RootProps = {}>(
         $setStack((prev) => prev.filter((c) => c.key !== key))
       }
 
-      const nextCall = { key, props, end }
-      $setStack((prev) => [...prev, nextCall])
-
+      $setStack((prev) => [...prev, { key, props, end }])
       return promise.promise
     },
     Root: (rootProps: RootProps) => {
