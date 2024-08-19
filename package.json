@@ -1,13 +1,15 @@
 {
   "name": "react-call",
-  "version": "1.2.0-0",
+  "version": "1.2.0-1",
   "description": "Call your React components",
   "repository": "desko27/react-call",
   "author": "Ismael Ramon <desko27@gmail.com> (https://desko.dev)",
   "license": "MIT",
   "type": "module",
   "sideEffects": false,
-  "files": [ "dist" ],
+  "files": [
+    "dist"
+  ],
   "module": "./dist/main.js",
   "main": "./dist/main.cjs",
   "types": "./dist/main.d.ts",
