@@ -8,6 +8,7 @@ import type {
 
 export function createCallable<Props = void, Response = void, RootProps = {}>(
   UserComponent: UserComponentType<Props, Response, RootProps>,
+  endingDelay = 0,
 ): Callable<Props, Response, RootProps> {
   let $setStack: PrivateStackStateSetter<Props, Response> | null = null
   let $nextKey = 0
@@ -20,9 +21,11 @@ export function createCallable<Props = void, Response = void, RootProps = {}>(
       const promise = Promise.withResolvers<Response>()
 
       const end = (response: Response) => {
-        if ($setStack === null) return
         promise.resolve(response)
-        $setStack((prev) => prev.filter((c) => c.key !== key))
+        globalThis.setTimeout(
+          () => $setStack?.((prev) => prev.filter((c) => c.key !== key)),
+          endingDelay,
+        )
       }
 
       $setStack((prev) => [...prev, { key, props, end }])
