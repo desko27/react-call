@@ -11,7 +11,7 @@ export default defineConfig({
     react(),
     nodeExternals(),
     tsconfigPaths(),
-    dts({ include: ['lib'], rollupTypes: true }),
+    dts({ rollupTypes: true, tsconfigPath: 'tsconfig.lib.json' }),
   ],
   build: {
     copyPublicDir: false,
