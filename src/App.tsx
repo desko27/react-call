@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { createCallable } from '#lib/main'
 
 type Props = { message: string }
@@ -23,6 +24,8 @@ const Modal = createCallable<Props, Response, RootProps>(
 )
 
 export function App() {
+  const [visible, setVisible] = useState(true)
+
   const handleConfirm = async () => {
     const result = await Modal.call({ message: 'are you sure?' })
     console.log(`Resolved: ${result}`)
@@ -30,10 +33,13 @@ export function App() {
 
   return (
     <div>
+      <button type="button" onClick={() => setVisible((p) => !p)}>
+        Toggle
+      </button>
       <button type="button" onClick={handleConfirm}>
         Confirm
       </button>
-      <Modal.Root userName="desko27" />
+      {visible && <Modal.Root userName="desko27" />}
     </div>
   )
 }

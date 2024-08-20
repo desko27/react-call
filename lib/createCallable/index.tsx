@@ -22,11 +22,12 @@ export function createCallable<Props = void, Response = void, RootProps = {}>(
 
       const end = (response: Response) => {
         promise.resolve(response)
-        $setStack?.((prev) =>
+        const scopedSetStack = $setStack
+        scopedSetStack?.((prev) =>
           prev.map((c) => (c.key !== key ? c : { ...c, ending: true })),
         )
         globalThis.setTimeout(
-          () => $setStack?.((prev) => prev.filter((c) => c.key !== key)),
+          () => scopedSetStack?.((prev) => prev.filter((c) => c.key !== key)),
           endingDelay,
         )
       }
