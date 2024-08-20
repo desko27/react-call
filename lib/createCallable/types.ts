@@ -2,7 +2,7 @@ export interface PrivateCallContext<Props, Response> {
   key: string
   props: Props
   end: (response: Response) => void
-  ending: boolean
+  ended: boolean
 }
 export type PrivateStackState<Props, Response> = PrivateCallContext<
   Props,

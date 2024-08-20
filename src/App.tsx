@@ -9,8 +9,7 @@ const Modal = createCallable<Props, Response, RootProps>(
   ({ call, message }) => (
     <div>
       <p>
-        {call.root.userName}, {message}{' '}
-        {call.ending && <span>(ending...)</span>}
+        {call.root.userName}, {message} {call.ended && <span>(ended)</span>}
       </p>
       <button type="button" onClick={() => call.end(true)}>
         Yes

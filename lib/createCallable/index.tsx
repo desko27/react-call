@@ -8,7 +8,7 @@ import type {
 
 export function createCallable<Props = void, Response = void, RootProps = {}>(
   UserComponent: UserComponentType<Props, Response, RootProps>,
-  endingDelay = 0,
+  unmountingDelay = 0,
 ): Callable<Props, Response, RootProps> {
   let $setStack: PrivateStackStateSetter<Props, Response> | null = null
   let $nextKey = 0
@@ -24,15 +24,15 @@ export function createCallable<Props = void, Response = void, RootProps = {}>(
         promise.resolve(response)
         const scopedSetStack = $setStack
         scopedSetStack?.((prev) =>
-          prev.map((c) => (c.key !== key ? c : { ...c, ending: true })),
+          prev.map((c) => (c.key !== key ? c : { ...c, ended: true })),
         )
         globalThis.setTimeout(
           () => scopedSetStack?.((prev) => prev.filter((c) => c.key !== key)),
-          endingDelay,
+          unmountingDelay,
         )
       }
 
-      $setStack((prev) => [...prev, { key, props, end, ending: false }])
+      $setStack((prev) => [...prev, { key, props, end, ended: false }])
       return promise.promise
     },
     Root: (rootProps: RootProps) => {
