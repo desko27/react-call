@@ -18,10 +18,13 @@ export function createCallable<Props = void, Response = void, RootProps = {}>(
       if ($setStack === null) throw new Error('No <Root> found!')
 
       const key = String($nextKey++)
-      const promise = Promise.withResolvers<Response>()
+      let resolve: (value: Response | PromiseLike<Response>) => void
+      const promise = new Promise<Response>((res) => {
+        resolve = res
+      })
 
       const end = (response: Response) => {
-        promise.resolve(response)
+        resolve(response)
         if (!$setStack) return
         const scopedSetStack = $setStack
 
@@ -38,7 +41,7 @@ export function createCallable<Props = void, Response = void, RootProps = {}>(
       }
 
       $setStack((prev) => [...prev, { key, props, end, ended: false }])
-      return promise.promise
+      return promise
     },
     Root: (rootProps: RootProps) => {
       const [stack, setStack] = useState<PrivateStackState<Props, Response>>([])
