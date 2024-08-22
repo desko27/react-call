@@ -6,6 +6,20 @@ import type {
   Callable,
 } from './types'
 
+const PromiseWithResolvers = <Response,>() => {
+  let resolve: (value: Response | PromiseLike<Response>) => void
+  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  let reject: (reason?: any) => void
+
+  const promise = new Promise<Response>((res, rej) => {
+    resolve = res
+    reject = rej
+  })
+
+  // @ts-ignore
+  return { promise, resolve, reject }
+}
+
 export function createCallable<Props = void, Response = void, RootProps = {}>(
   UserComponent: UserComponentType<Props, Response, RootProps>,
 ): Callable<Props, Response, RootProps> {
@@ -17,7 +31,7 @@ export function createCallable<Props = void, Response = void, RootProps = {}>(
       if ($setStack === null) throw new Error('No <Root> found!')
 
       const key = String($nextKey++)
-      const promise = Promise.withResolvers<Response>()
+      const promise = PromiseWithResolvers<Response>()
 
       const end = (response: Response) => {
         if ($setStack === null) return
