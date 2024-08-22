@@ -22,6 +22,7 @@ const PromiseWithResolvers = <Response,>() => {
 
 export function createCallable<Props = void, Response = void, RootProps = {}>(
   UserComponent: UserComponentType<Props, Response, RootProps>,
+  unmountingDelay = 0,
 ): Callable<Props, Response, RootProps> {
   let $setStack: PrivateStackStateSetter<Props, Response> | null = null
   let $nextKey = 0
@@ -34,12 +35,23 @@ export function createCallable<Props = void, Response = void, RootProps = {}>(
       const promise = PromiseWithResolvers<Response>()
 
       const end = (response: Response) => {
-        if ($setStack === null) return
         promise.resolve(response)
-        $setStack((prev) => prev.filter((c) => c.key !== key))
+        if (!$setStack) return
+        const scopedSetStack = $setStack
+
+        if (unmountingDelay > 0) {
+          scopedSetStack((prev) =>
+            prev.map((c) => (c.key !== key ? c : { ...c, ended: true })),
+          )
+        }
+
+        globalThis.setTimeout(
+          () => scopedSetStack((prev) => prev.filter((c) => c.key !== key)),
+          unmountingDelay,
+        )
       }
 
-      $setStack((prev) => [...prev, { key, props, end }])
+      $setStack((prev) => [...prev, { key, props, end, ended: false }])
       return promise.promise
     },
     Root: (rootProps: RootProps) => {
