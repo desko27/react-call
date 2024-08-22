@@ -20,7 +20,7 @@ Bring your React component, `react-call` gives you the `call(<props>)` method.
 - 🤯 Call from outside React
 - 🌀 Flexible: it's your component
 - 🚀 Supports React Native and SSR
-- 📦 Extremely lightweight: <500B
+- 📦 Extremely lightweight: ~500B
 - 🕳️ Zero dependencies
 
 # The pattern

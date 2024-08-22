@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { createCallable } from '#lib/main'
 
 type Props = { message: string }
@@ -8,7 +9,7 @@ const Modal = createCallable<Props, Response, RootProps>(
   ({ call, message }) => (
     <div>
       <p>
-        {call.root.userName}, {message}
+        {call.root.userName}, {message} {call.ended && <span>(ended)</span>}
       </p>
       <button type="button" onClick={() => call.end(true)}>
         Yes
@@ -18,9 +19,12 @@ const Modal = createCallable<Props, Response, RootProps>(
       </button>
     </div>
   ),
+  2000,
 )
 
 export function App() {
+  const [visible, setVisible] = useState(true)
+
   const handleConfirm = async () => {
     const result = await Modal.call({ message: 'are you sure?' })
     console.log(`Resolved: ${result}`)
@@ -28,10 +32,13 @@ export function App() {
 
   return (
     <div>
+      <button type="button" onClick={() => setVisible((p) => !p)}>
+        Toggle
+      </button>
       <button type="button" onClick={handleConfirm}>
         Confirm
       </button>
-      <Modal.Root userName="desko27" />
+      {visible && <Modal.Root userName="desko27" />}
     </div>
   )
 }
