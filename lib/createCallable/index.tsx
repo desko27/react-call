@@ -15,7 +15,7 @@ export function createCallable<Props = void, Response = void, RootProps = {}>(
 
   return {
     call: (props) => {
-      if ($setStack === null) throw new Error('No <Root> found!')
+      if (!$setStack) throw new Error('No <Root> found!')
 
       const key = String($nextKey++)
       let resolve: (value: Response | PromiseLike<Response>) => void
@@ -47,8 +47,7 @@ export function createCallable<Props = void, Response = void, RootProps = {}>(
       const [stack, setStack] = useState<PrivateStackState<Props, Response>>([])
 
       useEffect(() => {
-        if ($setStack !== null)
-          throw new Error('Multiple instances of <Root> found!')
+        if ($setStack) throw new Error('Multiple instances of <Root> found!')
         $setStack = setStack
         return () => {
           $setStack = null
