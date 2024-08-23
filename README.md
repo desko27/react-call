@@ -146,6 +146,25 @@ You may want to use Root props if you need to:
 - Use something that is availble in Root's parent
 - Update your active call components on data changes
 
+# Exit animations
+
+To animate the exit of your component when `call.end()` is run, just pass the duration of your animation in milliseconds to createCallable as a second argument:
+
+```diff
++ const UNMOUNTING_DELAY = 500
+
+const Confirm = createCallable<Props, Response>(
+  ({ call }) => (
+    <div
++     className={call.ended ? 'exit-animation' : '' }
+    />
+  ),
++ UNMOUNTING_DELAY
+)
+```
+
+The `call.ended` boolean may be used to apply your animation CSS class.
+
 # 🦄 Build your thing
 
 Again, this is no way limited to confirmation dialogs. You can build anything!
