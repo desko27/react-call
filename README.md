@@ -85,7 +85,7 @@ import { createCallable } from 'react-call'
 interface Props { message: string }
 type Response = boolean
 
-const Confirm = createCallable<Props, Response>(({ call, message }) => (
+export const Confirm = createCallable<Props, Response>(({ call, message }) => (
   <div role="dialog">
     <p>{message}</p>
     <button onClick={() => call.end(true)}>Yes</button>
