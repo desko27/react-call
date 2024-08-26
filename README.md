@@ -123,7 +123,7 @@ Root props will be available to your component via `call.root` object.
 ```diff
 + type RootProps = { userName: string }
 
-const Confirm = createCallable<
+export const Confirm = createCallable<
   Props,
   Response,
 + RootProps
@@ -153,7 +153,7 @@ To animate the exit of your component when `call.end()` is run, just pass the du
 ```diff
 + const UNMOUNTING_DELAY = 500
 
-const Confirm = createCallable<Props, Response>(
+export const Confirm = createCallable<Props, Response>(
   ({ call }) => (
     <div
 +     className={call.ended ? 'exit-animation' : '' }
