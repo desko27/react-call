@@ -25,9 +25,9 @@
     "lint": "biome check .",
     "test": "exit 0",
     "check:types": "tsc --noEmit --p ./tsconfig.lib.json",
-    "build": "node --run check:types && vite build",
-    "bundlesize": "node --run build && bundlesize",
-    "build:site": "node --run check:types && vite build -c vite.site.config.ts",
+    "build": "npm run check:types && vite build",
+    "bundlesize": "npm run build && bundlesize",
+    "build:site": "npm run check:types && vite build -c vite.site.config.ts",
     "release": "np",
     "phoenix": "rm -rf node_modules && npm i",
     "prepare": "husky"
