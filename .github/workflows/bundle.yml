@@ -22,4 +22,4 @@ jobs:
       with:
         node-version-file: '.node-version'
     - run: npm ci
-    - run: node --run build:size
+    - run: node --run bundlesize
