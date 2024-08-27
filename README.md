@@ -5,7 +5,8 @@
     react-call
   </h1>
   <pre>npm i react-call</pre>
-  <i>Call your React components</i>
+
+  Call your React components — [demo ↗](https://react-call.desko.dev/)
 </div>
 
 # Features
