@@ -133,3 +133,6 @@ dist
 
 # system
 .DS_Store
+
+# site dist
+site
