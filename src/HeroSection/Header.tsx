@@ -2,7 +2,7 @@ import { version } from '../../package.json'
 
 export function Header(): JSX.Element {
   return (
-    <header className="p-6 text-fuchsia-300 text-lg font-semibold tracking-wider flex justify-between">
+    <header className="p-6 text-fuchsia-300 text-lg font-semibold tracking-wider flex justify-between animate-fade-in-down animate-delay-1000">
       <span>
         <a
           className="hover:text-fuchsia-100 hover:underline"
