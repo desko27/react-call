@@ -1,11 +1,23 @@
+import {
+  YourDialog,
+  YourToast,
+  YourNested,
+  YourChain,
+  YourUnlocked,
+  YourBubbles,
+} from './CallableScenes'
 import { HeroSection } from './HeroSection'
-import { YourComponent } from './YourComponent'
 
 export function App() {
   return (
     <>
       <HeroSection />
-      <YourComponent.Root />
+      <YourDialog.Root />
+      <YourToast.Root />
+      <YourNested.Root />
+      <YourChain.Root />
+      <YourUnlocked.Root />
+      <YourBubbles.Root />
     </>
   )
 }
