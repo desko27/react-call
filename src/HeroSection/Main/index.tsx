@@ -5,7 +5,7 @@ import { CodeBlock } from './CodeBlock'
 import { Action } from './Action'
 
 export function Main(): JSX.Element {
-  const [sceneName, setSceneName] = useState('YourNested')
+  const [sceneName, setSceneName] = useState('YourDialog')
 
   return (
     <main className="px-6 flex-grow flex flex-col items-center justify-center gap-y-10">
