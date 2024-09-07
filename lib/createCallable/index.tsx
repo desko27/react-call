@@ -59,7 +59,7 @@ export function createCallable<Props = void, Response = void, RootProps = {}>(
         <UserComponent
           {...props}
           key={call.key}
-          call={{ ...call, root: rootProps }}
+          call={{ ...call, root: rootProps, stackSize: stack.length }}
         />
       ))
     },

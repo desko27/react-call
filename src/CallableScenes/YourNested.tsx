@@ -3,6 +3,8 @@ import { createCallable } from '#lib/main'
 
 import { Dialog } from '../shared/Dialog'
 
+const DOM_LIMIT_TO_VIRTUALIZE = 20
+
 export const YourNested = createCallable<
   {
     i: number
@@ -20,6 +22,8 @@ export const YourNested = createCallable<
     mountedRef.current = true
     if (!isMounted) onCallNested(i)
   }, [])
+
+  if (i < call.stackSize - DOM_LIMIT_TO_VIRTUALIZE) return null
 
   return (
     <Dialog color="pink" ended={call.ended}>
