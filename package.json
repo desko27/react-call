@@ -34,6 +34,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^1.8.3",
+    "@faker-js/faker": "^9.0.0",
     "@midudev/tailwind-animations": "^0.0.7",
     "@types/node": "^22.5.1",
     "@types/react": "^18.3.5",
@@ -41,6 +42,7 @@
     "@vitejs/plugin-react": "^4.3.1",
     "autoprefixer": "^10.4.20",
     "bundlesize": "^0.18.2",
+    "clsx": "^2.1.1",
     "husky": "^9.1.5",
     "np": "^10.0.7",
     "postcss": "^8.4.42",
