@@ -113,7 +113,7 @@ Place `Root` once, which is what listens to every single call and renders it. An
 > If more than one call is active, they will render one after the other (newer below, which is one on top of the other if your CSS is position fixed/absolute). It works as a call stack.
 
 > [!WARNING]
-> Since it's the source of truth, there can only be one `Root`. Avoid placing it in multiple locations of the React Tree at the same time, an error will be thrown if so.
+> Since it's the source of truth, there can only be one `Root` mounted per createCallable(). Avoid placing it in multiple locations of the React Tree loaded at once, an error will be thrown if so.
 
 # Passing Root props
 
