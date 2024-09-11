@@ -23,7 +23,7 @@ export const YourNested = createCallable<
     if (!isMounted) onCallNested(i)
   }, [])
 
-  if (i < call.stackSize - DOM_LIMIT_TO_VIRTUALIZE) return null
+  if (call.stack.index < call.stack.size - DOM_LIMIT_TO_VIRTUALIZE) return null
 
   return (
     <Dialog color="pink" ended={call.ended}>
