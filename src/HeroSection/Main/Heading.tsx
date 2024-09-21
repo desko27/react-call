@@ -22,6 +22,7 @@ export function Heading(): JSX.Element {
             'transition-all duration-500',
             'inline-block px-3 py-2 rounded-full',
             'border-2 border-violet-400 text-violet-400 font-semibold',
+            'hover:border-violet-200 hover:text-violet-200',
             'shadow-lg hover:shadow-violet-500/20 hover:scale-110',
             'focus:outline-none focus:outline-1 focus:outline-white',
             'inline-flex items-center gap-1',
