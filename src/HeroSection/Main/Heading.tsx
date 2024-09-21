@@ -1,4 +1,5 @@
 import { clsx } from 'clsx'
+import { Github } from '@react-symbols/icons'
 
 export function Heading(): JSX.Element {
   return (
@@ -19,17 +20,17 @@ export function Heading(): JSX.Element {
         <a
           className={clsx(
             'transition-all duration-500',
-            'inline-block px-4 py-2 rounded-full',
-            'bg-gradient-to-br from-fuchsia-900 to-fuchsia-600 hover:bg-fuchsia-500',
-            'text-slate-100 font-semibold',
-            'shadow-lg hover:shadow-fuchsia-500/20 hover:scale-110',
+            'inline-block px-3 py-2 rounded-full',
+            'border-2 border-violet-400 text-violet-400 font-semibold',
+            'shadow-lg hover:shadow-violet-500/20 hover:scale-110',
             'focus:outline-none focus:outline-1 focus:outline-white',
+            'inline-flex items-center gap-1',
           )}
           target="_blank"
           rel="noopener noreferrer"
           href="https://github.com/desko27/react-call#readme"
         >
-          Read the docs ↗
+          <Github className="inline-block size-6" /> Read the docs
         </a>
       </div>
     </div>
