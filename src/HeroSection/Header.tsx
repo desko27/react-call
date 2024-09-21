@@ -28,7 +28,7 @@ export function Header(): JSX.Element {
           rel="noopener noreferrer"
           href="https://github.com/desko27/react-call"
         >
-          GitHub
+          GitHub ↗
         </a>
       </span>
     </header>
