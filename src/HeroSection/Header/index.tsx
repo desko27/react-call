@@ -1,6 +1,8 @@
 import { clsx } from 'clsx'
 
-import { version } from '../../package.json'
+import { version } from '../../../package.json'
+
+import { GitHubIcon } from './GitHubIcon'
 
 export function Header(): JSX.Element {
   return (
@@ -20,17 +22,15 @@ export function Header(): JSX.Element {
           v{version}
         </a>
       </span>
-      <span>
-        ⭐️{' '}
-        <a
-          className="hover:text-fuchsia-100 hover:underline"
-          target="_blank"
-          rel="noopener noreferrer"
-          href="https://github.com/desko27/react-call"
-        >
-          GitHub ↗
-        </a>
-      </span>
+      <a
+        className="group hover:text-fuchsia-100 flex items-center gap-1"
+        target="_blank"
+        rel="noopener noreferrer"
+        href="https://github.com/desko27/react-call"
+      >
+        <GitHubIcon className="inline-block w-8" />
+        <span className="group-hover:underline">GitHub</span>
+      </a>
     </header>
   )
 }

@@ -16,17 +16,15 @@ export function Footer(): JSX.Element {
       >
         Get animations
       </a>
-      <span className="flex items-center gap-2">
+      <a
+        className="group hover:text-slate-300 flex items-center gap-2"
+        target="_blank"
+        rel="noopener noreferrer"
+        href="https://x.com/desko27"
+      >
         <strong className="text-xl">𝕏</strong>
-        <a
-          className="hover:text-slate-300 hover:underline"
-          target="_blank"
-          rel="noopener noreferrer"
-          href="https://x.com/desko27"
-        >
-          @desko27
-        </a>
-      </span>
+        <span className="group-hover:underline">@desko27</span>
+      </a>
     </footer>
   )
 }
