@@ -36,6 +36,7 @@
     "@biomejs/biome": "^1.8.3",
     "@faker-js/faker": "^9.0.0",
     "@midudev/tailwind-animations": "^0.0.7",
+    "@react-symbols/icons": "^1.2.6",
     "@types/node": "^22.5.1",
     "@types/react": "^18.3.5",
     "@types/react-dom": "^18.3.0",

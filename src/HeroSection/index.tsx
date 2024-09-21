@@ -4,7 +4,7 @@ import { Footer } from './Footer'
 
 export function HeroSection(): JSX.Element {
   return (
-    <div className="min-h-dvh bg-gradient-to-br from-slate-800 to-slate-900 flex flex-col gap-y-10">
+    <div className="min-h-dvh bg-gradient-to-br from-slate-800 to-slate-900 flex flex-col gap-y-2">
       <Header />
       <Main />
       <Footer />
