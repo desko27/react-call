@@ -30,30 +30,30 @@ export const YourChain = createCallable<{ n: number }, FormData>(
             <div>
               <label className="text-sm/6 font-medium text-white">
                 👤 Assignee
+                <input
+                  name="assignee"
+                  type="text"
+                  className={clsx(
+                    'mt-2 block w-full rounded-lg border-none bg-white/5 py-1.5 px-3 text-sm/6 text-white',
+                    'focus:outline-none focus:outline-2 focus:-outline-offset-2 focus:outline-white/25',
+                  )}
+                  defaultValue={name}
+                />
               </label>
-              <input
-                name="assignee"
-                type="text"
-                className={clsx(
-                  'mt-2 block w-full rounded-lg border-none bg-white/5 py-1.5 px-3 text-sm/6 text-white',
-                  'focus:outline-none focus:outline-2 focus:-outline-offset-2 focus:outline-white/25',
-                )}
-                defaultValue={name}
-              />
             </div>
             <div>
               <label className="text-sm/6 font-medium text-white">
                 ✍️ Description
+                <textarea
+                  name="description"
+                  className={clsx(
+                    'mt-2 block w-full resize-none rounded-lg border-none bg-white/5 py-1.5 px-3 text-sm/6 text-white',
+                    'focus:outline-none focus:outline-2 focus:-outline-offset-2 focus:outline-white/25',
+                  )}
+                  rows={3}
+                  defaultValue={description}
+                />
               </label>
-              <textarea
-                name="description"
-                className={clsx(
-                  'mt-2 block w-full resize-none rounded-lg border-none bg-white/5 py-1.5 px-3 text-sm/6 text-white',
-                  'focus:outline-none focus:outline-2 focus:-outline-offset-2 focus:outline-white/25',
-                )}
-                rows={3}
-                defaultValue={description}
-              />
             </div>
           </fieldset>
           <Dialog.Actions>
