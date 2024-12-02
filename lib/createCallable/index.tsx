@@ -62,7 +62,8 @@ export function createCallable<Props = void, Response = void, RootProps = {}>(
           call={{
             ...call,
             root: rootProps,
-            stack: { index, size: stack.length },
+            index,
+            stackSize: stack.length,
           }}
         />
       ))

@@ -23,7 +23,7 @@ export type CallFunction<Props, Response> = (props: Props) => Promise<Response>
 export type CallContext<Props, Response, RootProps> = Omit<
   PrivateCallContext<Props, Response>,
   'props'
-> & { root: RootProps; stack: { index: number; size: number } }
+> & { root: RootProps; index: number; stackSize: number }
 
 /**
  * User props + the call prop
