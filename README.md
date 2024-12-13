@@ -22,7 +22,7 @@ As simple as `window.confirm()` but it's React:
 const message = 'Sure?'
 const yes = window.confirm(message)
 
-if (yes) thanosSnap()
+if (yes) thanosSnap() // 🫰
 ```
 
 </td>
@@ -32,7 +32,7 @@ if (yes) thanosSnap()
 const props = { message: 'Sure?' }
 const yes = await Confirm.call(props)
 
-if (yes) thanosSnap()
+if (yes) thanosSnap() // 🫰
 ```
 
 </td>
