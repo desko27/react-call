@@ -8,7 +8,7 @@
 
 # Call your React components
 
-As simple as `window.confirm()` but in React:
+As simple as `window.confirm()` but it's React:
 
 <table>
 <tr>
