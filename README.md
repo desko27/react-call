@@ -145,11 +145,11 @@ You may want to use Root props if you need to:
 
 # FAQ
 
-## What if more than one call is active?
+### What if more than one call is active?
 
 `<Root>` works as a call stack. Multiple calls will render one after another (newer below, which is one on top of the other if your CSS is position fixed/absolute).
 
-## Can I place more than one Root?
+### Can I place more than one Root?
 
 No. There can only be one `<Root>` mounted per createCallable(). Avoid placing it in multiple locations of the React Tree loaded at once, an error will be thrown if so.
 
