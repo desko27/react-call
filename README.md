@@ -1,32 +1,14 @@
 <div align="center">
-  <h1>
-    ⚛️ 📡
-    <br />
-    react-call
-  </h1>
-  <pre>npm i react-call</pre>
-
-  Call your React components — [demo ↗](https://react-call.desko.dev/)
+  <h2>
+    ⚛️ 📡 react-call
+    <sup><a href="https://react-call.desko.dev">demo</a></sup>
+  </h2>
+  ✓ Lightweight ✓ No deps ✓ SSR ✓ React Native
 </div>
 
-# Features
+# Call your React components
 
-Bring your React component, `react-call` gives you the `call(<props>)` method.
-
-- 🔰 Easy to use
-- ⛑️ Fully Type-Safe
-- ⚡️ Causes no renders at all
-- 🛜 Setup once, call from anywhere
-- ⛓️‍💥 Not limited by a context provider
-- 🤯 Call from outside React
-- 🌀 Flexible: it's your component
-- 🚀 Supports React Native and SSR
-- 📦 Extremely lightweight: ~500B
-- 🕳️ Zero dependencies
-
-# The pattern
-
-Imperatively call your React component the way `window.confirm()` calls a confirmation dialog.
+As simple as `window.confirm()` but it's React:
 
 <table>
 <tr>
@@ -40,7 +22,7 @@ Imperatively call your React component the way `window.confirm()` calls a confir
 const message = 'Sure?'
 const yes = window.confirm(message)
 
-if (yes) deleteItem()
+if (yes) thanosSnap() // 🫰
 ```
 
 </td>
@@ -50,35 +32,31 @@ if (yes) deleteItem()
 const props = { message: 'Sure?' }
 const yes = await Confirm.call(props)
 
-if (yes) deleteItem()
+if (yes) thanosSnap() // 🫰
 ```
 
 </td>
 </tr>
 </table>
 
-# Use cases
+# Simple yet flexible
 
-Present a piece of UI to the user, wait for it to be used and get the response data.
+Present any piece of UI to the user, wait for the response data:
 
-- ✅ Confirmations, dialogs
-- ✅ Notifications, toasts
-- ✅ Popup forms, modals
-- ✅ Or anything! 🦄 [Build your thing](#-build-your-thing)
+- 💬 Confirmations, dialogs, form modals
+- 🔔 Notifications, toasts, popups
+- 📋 Context menus
+- 🎉 Or anything!
 
-# Usage
+# Quick setup
 
-```tsx
-//        ↙ response             props ↘
-const accepted = await Confirm.call({ message: 'Continue?' })
+```sh
+npm install react-call
 ```
 
-> [!NOTE]
-> A confirmation dialog is used as an example, but any component can become callable. Plus you can create as many as you wish.
+We'll setup a confirmation dialog, but you can setup any component to be callable.
 
-# Setup
-
-## 1. ⚛️ Wrap your component
+## 1. ⚛️ Declaration
 
 ```tsx
 import { createCallable } from 'react-call'
@@ -95,25 +73,46 @@ export const Confirm = createCallable<Props, Response>(({ call, message }) => (
 ))
 ```
 
-Apart from your props, a special `call` prop is received containing the end() method, which will finish the call returning the given response.
+Along with your props, there is a special `call` prop containing the `end()` method, which you can use to finish the call and return a response. State, hooks and any other React features are totally fine too.
 
-> [!TIP]
-> Since it's just a component, state, hooks and any other React features are totally fine. You could have inputs, checkboxes, etc, bind them to a state and return such data via end() method.
+## 2. 📡 Rooting
 
-## 2. 📡 Place the Root
-
-Place `Root` once, which is what listens to every single call and renders it. Any component that is visible when making your calls will do.
+`<Root>` is what listens to every single call and renders it. Place it anywhere that is visible when making your calls, for instance in `App.tsx`:
 
 ```diff
 + <Confirm.Root />
-//  ^-- it will only render active calls
+//  ^-- it will render active calls
 ```
 
-> [!IMPORTANT]
-> If more than one call is active, they will render one after the other (newer below, which is one on top of the other if your CSS is position fixed/absolute). It works as a call stack.
+## 3. 🎉 Enjoy
 
-> [!WARNING]
-> Since it's the source of truth, there can only be one `Root` mounted per createCallable(). Avoid placing it in multiple locations of the React Tree loaded at once, an error will be thrown if so.
+You're all done! Now you can do this anywhere in your codebase:
+
+```tsx
+//        ↙ response             props ↘
+const accepted = await Confirm.call({ message: 'Continue?' })
+```
+
+Check out [the demo site](https://react-call.desko.dev/) to see some live examples of other React components being called.
+
+# Exit animations
+
+To animate the exit of your component when `call.end()` is run, just pass the duration of your animation in milliseconds to createCallable as a second argument:
+
+```diff
++ const UNMOUNTING_DELAY = 500
+
+export const Confirm = createCallable<Props, Response>(
+  ({ call }) => (
+    <div
++     className={call.ended ? 'exit-animation' : '' }
+    />
+  ),
++ UNMOUNTING_DELAY
+)
+```
+
+The `call.ended` boolean may be used to apply your animation CSS class.
 
 # Passing Root props
 
@@ -147,40 +146,15 @@ You may want to use Root props if you need to:
 - Use something that is availble in Root's parent
 - Update your active call components on data changes
 
-# Exit animations
+# FAQ
 
-To animate the exit of your component when `call.end()` is run, just pass the duration of your animation in milliseconds to createCallable as a second argument:
+### What if more than one call is active?
 
-```diff
-+ const UNMOUNTING_DELAY = 500
+`<Root>` works as a call stack. Multiple calls will render one after another (newer below, which is one on top of the other if your CSS is position fixed/absolute).
 
-export const Confirm = createCallable<Props, Response>(
-  ({ call }) => (
-    <div
-+     className={call.ended ? 'exit-animation' : '' }
-    />
-  ),
-+ UNMOUNTING_DELAY
-)
-```
+### Can I place more than one Root?
 
-The `call.ended` boolean may be used to apply your animation CSS class.
-
-# 🦄 Build your thing
-
-Again, this is no way limited to confirmation dialogs. You can build anything!
-
-For example, because of the nature of the call stack inside and its ability to display multiple calls at once, a particularly interesting use case is notifications, toasts or similar. You could end up with something like:
-
-```tsx
-const userAction = await Toast.call({
-  message: 'This is a toast',
-  duration: 5000,
-  type: 'success',
-})
-```
-
-But it's just another idea. It all depends on what you're building. The only thing `react-call` does is let you call components imperatively ⚛️ 📡
+No. There can only be one `<Root>` mounted per createCallable(). Avoid placing it in multiple locations of the React Tree loaded at once, an error will be thrown if so.
 
 # TypeScript types
 
