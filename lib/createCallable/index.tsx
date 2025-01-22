@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import type {
   UserComponent as UserComponentType,
+  PrivateResolve,
   PrivateStackState,
   PrivateStackStateSetter,
   Callable,
@@ -13,36 +14,43 @@ export function createCallable<Props = void, Response = void, RootProps = {}>(
   let $setStack: PrivateStackStateSetter<Props, Response> | null = null
   let $nextKey = 0
 
+  const createEnd = (promise: Promise<Response>) => (response: Response) => {
+    if (!$setStack) return
+    const scopedSetStack = $setStack
+
+    scopedSetStack((prev) => {
+      const target = prev.find((c) => c.promise === promise)
+      if (!target) return prev
+
+      target.resolve(response)
+      return prev.map((c) =>
+        c.promise !== promise ? c : { ...c, ended: true },
+      )
+    })
+
+    globalThis.setTimeout(
+      () => scopedSetStack((prev) => prev.filter((c) => c.promise !== promise)),
+      unmountingDelay,
+    )
+  }
+
   return {
     call: (props) => {
       if (!$setStack) throw new Error('No <Root> found!')
 
       const key = String($nextKey++)
-      let resolve: (value: Response | PromiseLike<Response>) => void
+      let resolve: PrivateResolve<Response>
       const promise = new Promise<Response>((res) => {
         resolve = res
       })
 
-      const end = (response: Response) => {
-        resolve(response)
-        if (!$setStack) return
-        const scopedSetStack = $setStack
-
-        if (unmountingDelay > 0) {
-          scopedSetStack((prev) =>
-            prev.map((c) => (c.key !== key ? c : { ...c, ended: true })),
-          )
-        }
-
-        globalThis.setTimeout(
-          () => scopedSetStack((prev) => prev.filter((c) => c.key !== key)),
-          unmountingDelay,
-        )
-      }
-
-      $setStack((prev) => [...prev, { key, props, end, ended: false }])
+      $setStack((prev) => [
+        ...prev,
+        { key, props, promise, resolve, end: createEnd(promise), ended: false },
+      ])
       return promise
     },
+    end: (promise, response) => createEnd(promise)(response),
     Root: (rootProps: RootProps) => {
       const [stack, setStack] = useState<PrivateStackState<Props, Response>>([])
 

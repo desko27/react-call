@@ -1,6 +1,12 @@
+export type PrivateResolve<Response> = (
+  value: Response | PromiseLike<Response>,
+) => void
+
 export interface PrivateCallContext<Props, Response> {
   key: string
   props: Props
+  promise: Promise<Response>
+  resolve: PrivateResolve<Response>
   end: (response: Response) => void
   ended: boolean
 }
@@ -45,4 +51,5 @@ export type UserComponent<Props, Response, RootProps> = React.FunctionComponent<
 export type Callable<Props, Response, RootProps> = {
   Root: React.FunctionComponent<RootProps>
   call: CallFunction<Props, Response>
+  end: (promise: Promise<Response>, response: Response) => void
 }
