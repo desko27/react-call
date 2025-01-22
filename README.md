@@ -95,6 +95,22 @@ const accepted = await Confirm.call({ message: 'Continue?' })
 
 Check out [the demo site](https://react-call.desko.dev/) to see some live examples of other React components being called.
 
+# Extra controls
+
+The returned promise can also be used to end the call from the caller scope:
+
+```tsx
+const promise = Confirm.call({ message: 'Continue?' })
+
+// For example, you could dismiss it on some event subscription
+onImportantEvent(() => {
+  Confirm.end(promise, false)
+})
+
+// While still awaiting the response where needed
+const accepted = await promise
+```
+
 # Exit animations
 
 To animate the exit of your component when `call.end()` is run, just pass the duration of your animation in milliseconds to createCallable as a second argument:
