@@ -54,7 +54,9 @@ export function createCallable<Props = void, Response = void, RootProps = {}>(
       const scopedSetStack = $setStack
 
       scopedSetStack((prev) =>
-        prev.map((c) => (c.promise !== promise ? c : { ...c, props })),
+        prev.map((c) =>
+          c.promise !== promise ? c : { ...c, props: { ...c.props, ...props } },
+        ),
       )
     },
     Root: (rootProps: RootProps) => {
