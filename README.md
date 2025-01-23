@@ -114,13 +114,13 @@ const accepted = await promise
 Or even update the call props on the fly, which is good for async sequences. For example, imagine an Alert component:
 
 ```tsx
-const promise = Alert.call({ message: 'Process started', canClose: false })
+const promise = Alert.call({ message: 'Completing steps... (0/2)' })
 
 await doStep1()
-Alert.update(promise, { message: 'Step #1 completed!' })
+Alert.update(promise, { message: 'Completing steps... (1/2)' })
 
 await doStep2()
-Alert.update(promise, { message: 'Step #2 completed!', canClose: true })
+Alert.update(promise, { message: 'All steps completed! (2/2)' })
 ```
 
 # Exit animations
