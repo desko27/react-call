@@ -111,6 +111,18 @@ onImportantEvent(() => {
 const accepted = await promise
 ```
 
+Or even update the call props on the fly, which is good for async sequences. For example, imagine an Alert component:
+
+```tsx
+const promise = Alert.call({ message: 'Completing steps... (0/2)' })
+
+await doStep1()
+Alert.update(promise, { message: 'Completing steps... (1/2)' })
+
+await doStep2()
+Alert.update(promise, { message: 'All steps completed! (2/2)' })
+```
+
 # Exit animations
 
 To animate the exit of your component when `call.end()` is run, just pass the duration of your animation in milliseconds to createCallable as a second argument:
