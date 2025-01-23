@@ -51,6 +51,16 @@ export function createCallable<Props = void, Response = void, RootProps = {}>(
       return promise
     },
     end: (promise, response) => createEnd(promise)(response),
+    update: (promise, props) => {
+      if (!$setStack) return
+      const scopedSetStack = $setStack
+
+      scopedSetStack((prev) => {
+        const target = prev.find((c) => c.promise === promise)
+        if (!target) return prev
+        return prev.map((c) => (c.promise !== promise ? c : { ...c, ...props }))
+      })
+    },
     Root: (rootProps: RootProps) => {
       const [stack, setStack] = useState<PrivateStackState<Props, Response>>([])
 

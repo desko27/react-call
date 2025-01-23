@@ -52,4 +52,5 @@ export type Callable<Props, Response, RootProps> = {
   Root: React.FunctionComponent<RootProps>
   call: CallFunction<Props, Response>
   end: (promise: Promise<Response>, response: Response) => void
+  update: (promise: Promise<Response>, props: Props) => void
 }
