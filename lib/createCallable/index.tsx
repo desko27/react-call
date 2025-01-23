@@ -18,15 +18,13 @@ export function createCallable<Props = void, Response = void, RootProps = {}>(
     if (!$setStack) return
     const scopedSetStack = $setStack
 
-    scopedSetStack((prev) => {
-      const target = prev.find((c) => c.promise === promise)
-      if (!target) return prev
-
-      target.resolve(response)
-      return prev.map((c) =>
-        c.promise !== promise ? c : { ...c, ended: true },
-      )
-    })
+    scopedSetStack((prev) =>
+      prev.map((call) => {
+        if (call.promise !== promise) return call
+        call.resolve(response)
+        return { ...call, ended: true }
+      }),
+    )
 
     globalThis.setTimeout(
       () => scopedSetStack((prev) => prev.filter((c) => c.promise !== promise)),
@@ -55,11 +53,9 @@ export function createCallable<Props = void, Response = void, RootProps = {}>(
       if (!$setStack) return
       const scopedSetStack = $setStack
 
-      scopedSetStack((prev) => {
-        const target = prev.find((c) => c.promise === promise)
-        if (!target) return prev
-        return prev.map((c) => (c.promise !== promise ? c : { ...c, ...props }))
-      })
+      scopedSetStack((prev) =>
+        prev.map((c) => (c.promise !== promise ? c : { ...c, props })),
+      )
     },
     Root: (rootProps: RootProps) => {
       const [stack, setStack] = useState<PrivateStackState<Props, Response>>([])
