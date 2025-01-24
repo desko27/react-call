@@ -14,23 +14,27 @@ export function createCallable<Props = void, Response = void, RootProps = {}>(
   let $setStack: PrivateStackStateSetter<Props, Response> | null = null
   let $nextKey = 0
 
-  const createEnd = (promise: Promise<Response>) => (response: Response) => {
-    if (!$setStack) return
-    const scopedSetStack = $setStack
+  const createEnd =
+    (promise: Promise<Response> | null) => (response: Response) => {
+      if (!$setStack) return
+      const scopedSetStack = $setStack
 
-    scopedSetStack((prev) =>
-      prev.map((call) => {
-        if (call.promise !== promise) return call
-        call.resolve(response)
-        return { ...call, ended: true }
-      }),
-    )
+      scopedSetStack((prev) =>
+        prev.map((call) => {
+          if (promise && call.promise !== promise) return call
+          call.resolve(response)
+          return { ...call, ended: true }
+        }),
+      )
 
-    globalThis.setTimeout(
-      () => scopedSetStack((prev) => prev.filter((c) => c.promise !== promise)),
-      unmountingDelay,
-    )
-  }
+      globalThis.setTimeout(
+        () =>
+          scopedSetStack((prev) =>
+            prev.filter((c) => promise && c.promise !== promise),
+          ),
+        unmountingDelay,
+      )
+    }
 
   return {
     call: (props) => {
@@ -48,14 +52,25 @@ export function createCallable<Props = void, Response = void, RootProps = {}>(
       ])
       return promise
     },
-    end: (promise, response) => createEnd(promise)(response),
-    update: (promise, props) => {
+    end: (...args: [Promise<Response>, Response] | [Response]) => {
+      const targeted = args.length === 2
+      return createEnd(targeted ? args[0] : null)(targeted ? args[1] : args[0])
+    },
+    update: (
+      ...args: [Promise<Response>, Partial<Props>] | [Partial<Props>]
+    ) => {
       if (!$setStack) return
       const scopedSetStack = $setStack
+      const targeted = args.length === 2
 
       scopedSetStack((prev) =>
-        prev.map((c) =>
-          c.promise !== promise ? c : { ...c, props: { ...c.props, ...props } },
+        prev.map((call) =>
+          targeted && call.promise !== args[0]
+            ? call
+            : {
+                ...call,
+                props: { ...call.props, ...(targeted ? args[1] : args[0]) },
+              },
         ),
       )
     },
