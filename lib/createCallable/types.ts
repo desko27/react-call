@@ -51,6 +51,8 @@ export type UserComponent<Props, Response, RootProps> = React.FunctionComponent<
 export type Callable<Props, Response, RootProps> = {
   Root: React.FunctionComponent<RootProps>
   call: CallFunction<Props, Response>
-  end: (promise: Promise<Response>, response: Response) => void
-  update: (promise: Promise<Response>, props: Partial<Props>) => void
+  end: ((promise: Promise<Response>, response: Response) => void) &
+    ((response: Response) => void)
+  update: ((promise: Promise<Response>, props: Partial<Props>) => void) &
+    ((props: Partial<Props>) => void)
 }
