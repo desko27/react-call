@@ -95,23 +95,23 @@ const accepted = await Confirm.call({ message: 'Continue?' })
 
 Check out [the demo site](https://react-call.desko.dev/) to see some live examples of other React components being called.
 
-# Extra controls
+# Advanced usage
 
 The returned promise can also be used to end the call from the caller scope:
 
 ```tsx
 const promise = Confirm.call({ message: 'Continue?' })
 
-// For example, you could end it on some event subscription
+// For example, on some event subscription
 onImportantEvent(() => {
   Confirm.end(promise, false)
 })
 
-// While still awaiting the response where needed
+// And still await the response where needed
 const accepted = await promise
 ```
 
-Or even update the call props on the fly. For example, imagine an Alert component:
+Or even update the call props on the fly:
 
 ```tsx
 const promise = Alert.call({ message: 'Starting operation...' })
@@ -119,7 +119,7 @@ await asyncOperation()
 Alert.update(promise, { message: 'Completed!' })
 ```
 
-Note that the promise argument is used to target that specific call, but you can affect all ongoing calls by omitting it:
+While the promise argument is used to target that specific call, all ongoing calls can be affected by omitting it:
 
 ```tsx
 // All confirm calls are ended with `false`
