@@ -102,7 +102,7 @@ The returned promise can also be used to end the call from the caller scope:
 ```tsx
 const promise = Confirm.call({ message: 'Continue?' })
 
-// For example, you could dismiss it on some event subscription
+// For example, you could end it on some event subscription
 onImportantEvent(() => {
   Confirm.end(promise, false)
 })
@@ -111,17 +111,25 @@ onImportantEvent(() => {
 const accepted = await promise
 ```
 
-Or even update the call props on the fly, which is good for async sequences. For example, imagine an Alert component:
+Or even update the call props on the fly. For example, imagine an Alert component:
 
 ```tsx
-const promise = Alert.call({ message: 'Completing steps... (0/2)' })
-
-await doStep1()
-Alert.update(promise, { message: 'Completing steps... (1/2)' })
-
-await doStep2()
-Alert.update(promise, { message: 'All steps completed! (2/2)' })
+const promise = Alert.call({ message: 'Starting operation...' })
+await asyncOperation()
+Alert.update(promise, { message: 'Completed!' })
 ```
+
+Note that the promise argument is used to target that specific call, but you can affect all ongoing calls by omitting it:
+
+```tsx
+// All confirm calls are ended with `false`
+Confirm.end(false)
+
+// All alert calls are updated with the new message prop
+Alert.update({ message: 'Completed!' })
+```
+
+This may also be cleaner for you if you're sure that only one call is run at once in your code.
 
 # Exit animations
 
