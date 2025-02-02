@@ -1,6 +1,4 @@
-export function CodeBlock({
-  componentName,
-}: { componentName: string }): JSX.Element {
+export function CodeBlock({ componentName }: { componentName: string }) {
   return (
     <div className="-mx-6 self-stretch bg-slate-700/50 animate-expand-horizontally animate-delay-400">
       <div className="px-6 py-5 space-y-4 overflow-auto">

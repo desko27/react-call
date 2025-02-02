@@ -1,0 +1,51 @@
+{
+  "name": "react-call",
+  "version": "1.7.0",
+  "description": "Call your React components",
+  "repository": "desko27/react-call",
+  "author": "Ismael Ramon <desko27@gmail.com> (https://desko.dev)",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "files": [
+    "dist"
+  ],
+  "module": "./dist/main.js",
+  "main": "./dist/main.cjs",
+  "types": "./dist/main.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/main.d.ts",
+      "import": {
+        "development": "./src/main.ts",
+        "default": "./dist/main.js"
+      },
+      "require": "./dist/main.cjs"
+    },
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "npm run check:types && vite build",
+    "lint": "biome check .",
+    "check:types": "tsc --noEmit",
+    "test": "exit 0",
+    "bundlesize": "npm run build && bundlesize",
+    "release": "np"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@types/node": "^22.10.3",
+    "@types/react": "^19.0.2",
+    "@types/react-dom": "^19.0.2",
+    "@vitejs/plugin-react": "^4.3.4",
+    "bundlesize": "^0.18.2",
+    "np": "^10.1.0",
+    "rollup-plugin-node-externals": "^8.0.0",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.6",
+    "vite-plugin-dts": "^4.4.0"
+  },
+  "peerDependencies": {
+    "react": ">=18"
+  }
+}

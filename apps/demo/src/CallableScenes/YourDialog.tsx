@@ -1,4 +1,4 @@
-import { createCallable } from '#lib/main'
+import { createCallable } from 'react-call'
 
 import { Dialog } from '../shared/Dialog'
 

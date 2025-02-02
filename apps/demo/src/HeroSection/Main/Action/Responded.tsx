@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { clsx } from 'clsx'
-import { createCallable } from '#lib/main'
+import { createCallable } from 'react-call'
 
 const DURATION = 2000
 

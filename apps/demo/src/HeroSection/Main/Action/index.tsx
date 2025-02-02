@@ -10,7 +10,7 @@ export function Action({
 }: {
   sceneName: string
   onNextScene: (name: string) => void
-}): JSX.Element {
+}) {
   const [callActive, setCallActive] = useState(false)
   const [isWobbling, setIsWobbling] = useState(false)
   const scene = getCurrentScene(sceneName)
