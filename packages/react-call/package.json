@@ -26,14 +26,12 @@
   },
   "scripts": {
     "build": "npm run check:types && vite build",
-    "lint": "biome check .",
     "check:types": "tsc --noEmit",
     "test": "exit 0",
     "bundlesize": "npm run build && bundlesize",
     "release": "np"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.9.4",
     "@types/node": "^22.10.3",
     "@types/react": "^19.0.2",
     "@types/react-dom": "^19.0.2",

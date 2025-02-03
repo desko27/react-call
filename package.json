@@ -3,12 +3,13 @@
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo run build",
-    "lint": "turbo run lint",
+    "lint": "biome check .",
     "check:types": "turbo run check:types",
     "phoenix": "rm -rf node_modules && npm i",
     "prepare": "husky"
   },
   "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
     "husky": "^9.1.7",
     "turbo": "latest"
   },
