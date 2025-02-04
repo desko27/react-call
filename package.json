@@ -5,11 +5,14 @@
     "build": "turbo run build",
     "lint": "biome check .",
     "check:types": "turbo run check:types",
+    "bump": "changeset version",
+    "release": "changeset publish",
     "phoenix": "rm -rf node_modules && npm i",
     "prepare": "husky"
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
+    "@changesets/cli": "^2.27.12",
     "husky": "^9.1.7",
     "turbo": "latest"
   },

@@ -28,8 +28,7 @@
     "build": "npm run check:types && vite build",
     "check:types": "tsc --noEmit",
     "test": "exit 0",
-    "bundlesize": "npm run build && bundlesize",
-    "release": "np"
+    "bundlesize": "npm run build && bundlesize"
   },
   "devDependencies": {
     "@types/node": "^22.10.3",
@@ -37,7 +36,6 @@
     "@types/react-dom": "^19.0.2",
     "@vitejs/plugin-react": "^4.3.4",
     "bundlesize": "^0.18.2",
-    "np": "^10.1.0",
     "rollup-plugin-node-externals": "^8.0.0",
     "typescript": "^5.7.2",
     "vite": "^6.0.6",
