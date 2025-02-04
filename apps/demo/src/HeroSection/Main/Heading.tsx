@@ -1,7 +1,7 @@
 import { clsx } from 'clsx'
 import { Github } from '@react-symbols/icons'
 
-export function Heading(): JSX.Element {
+export function Heading() {
   return (
     <div className="text-center space-y-1">
       <h1

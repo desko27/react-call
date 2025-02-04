@@ -1,9 +1,9 @@
 import { clsx } from 'clsx'
 import { Github } from '@react-symbols/icons'
 
-import { version } from '../../package.json'
+import { version } from 'react-call/package.json'
 
-export function Header(): JSX.Element {
+export function Header() {
   return (
     <header
       className={clsx(

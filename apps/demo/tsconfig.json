@@ -8,8 +8,7 @@
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "strict": true,
-    "skipLibCheck": true,
-    "paths": { "#lib/*": ["./lib/*"] }
+    "skipLibCheck": true
   },
-  "include": ["src", "lib"]
+  "include": ["src"]
 }

@@ -4,7 +4,7 @@ import { Heading } from './Heading'
 import { CodeBlock } from './CodeBlock'
 import { Action } from './Action'
 
-export function Main(): JSX.Element {
+export function Main() {
   const [sceneName, setSceneName] = useState('YourDialog')
 
   return (

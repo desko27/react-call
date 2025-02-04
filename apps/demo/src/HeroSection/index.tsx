@@ -2,7 +2,7 @@ import { Header } from './Header'
 import { Main } from './Main'
 import { Footer } from './Footer'
 
-export function HeroSection(): JSX.Element {
+export function HeroSection() {
   return (
     <div className="min-h-dvh bg-gradient-to-br from-slate-800 to-slate-900 flex flex-col gap-y-2">
       <Header />
