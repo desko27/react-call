@@ -223,3 +223,14 @@ However, bear in mind that because the call() method is meant to be triggered by
 
 > [!CAUTION]
 > If call() is run on the server a "No \<Root> found!" error will be thrown. As long as you don't run the call() method on the server you'll be fine.
+
+## Next.js / RSC
+
+If the original setup is not working for you, export the Root and the rest separately:
+
+```diff
++ 'use client'
+
+- export const Confirm = createCallable(...)
++ export const { Root, ...Confirm } = createCallable(...)
+```
