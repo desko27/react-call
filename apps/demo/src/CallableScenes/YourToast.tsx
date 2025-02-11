@@ -27,7 +27,7 @@ export const YourToast = createCallable<void, 'finished'>(({ call }) => {
         <div
           className={clsx(
             'pointer-events-auto',
-            'w-full max-w-sm rounded-xl bg-gradient-to-br from-blue-500/10 to-blue-600/10 p-4 backdrop-blur-2xl',
+            'w-full max-w-sm rounded-xl bg-linear-to-br from-blue-500/10 to-blue-600/10 p-4 backdrop-blur-2xl',
             `animate-duration-300 ${call.ended ? 'animate-fade-out-down' : 'animate-fade-in-up'}`,
           )}
         >

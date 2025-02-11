@@ -41,9 +41,9 @@ export const YourBubbles = createCallable<void, string>(({ call }) => {
             <div className="transition-all duration-500 hover:scale-150">
               <button
                 className={clsx(
-                  'bg-gradient-to-br opacity-75 from-yellow-300 to-yellow-600 backdrop-blur-2xl',
+                  'bg-linear-to-br opacity-75 from-yellow-300 to-yellow-600 backdrop-blur-2xl',
                   'w-12 h-12 rounded-full text-xl text-black font-semibold',
-                  'transition-all duration-500 hover:cursor-pointer hover:opacity-100',
+                  'transition-all duration-500 cursor-pointer hover:opacity-100',
                   'animate-bouncing animate-iteration-count-infinite animate-delay-[var(--delay)]',
                 )}
                 type="button"

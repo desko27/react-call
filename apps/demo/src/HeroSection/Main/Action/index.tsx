@@ -37,7 +37,7 @@ export function Action({
             className={clsx(
               'transition-all duration-500',
               'w-[calc-size(auto)] shadow-md px-3 py-1 text-base font-semibold rounded-md',
-              'focus:outline-none focus:outline-1 focus:outline-white',
+              'focus:outline-hidden focus:outline-1 focus:outline-white',
               callActive
                 ? `${DISABLED_COLORS} opacity-50`
                 : `${scene.buttonColors} hover:scale-110 hover:-rotate-1`,

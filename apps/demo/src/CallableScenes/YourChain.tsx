@@ -35,7 +35,7 @@ export const YourChain = createCallable<{ n: number }, FormData>(
                   type="text"
                   className={clsx(
                     'mt-2 block w-full rounded-lg border-none bg-white/5 py-1.5 px-3 text-sm/6 text-white',
-                    'focus:outline-none focus:outline-2 focus:-outline-offset-2 focus:outline-white/25',
+                    'focus:outline-hidden focus:outline-2 focus:-outline-offset-2 focus:outline-white/25',
                   )}
                   defaultValue={name}
                 />
@@ -48,7 +48,7 @@ export const YourChain = createCallable<{ n: number }, FormData>(
                   name="description"
                   className={clsx(
                     'mt-2 block w-full resize-none rounded-lg border-none bg-white/5 py-1.5 px-3 text-sm/6 text-white',
-                    'focus:outline-none focus:outline-2 focus:-outline-offset-2 focus:outline-white/25',
+                    'focus:outline-hidden focus:outline-2 focus:-outline-offset-2 focus:outline-white/25',
                   )}
                   rows={3}
                   defaultValue={description}
