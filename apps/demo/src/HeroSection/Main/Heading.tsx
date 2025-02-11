@@ -7,7 +7,7 @@ export function Heading() {
       <h1
         className={clsx(
           'font-bold text-5xl md:text-6xl',
-          'bg-gradient-to-br from-fuchsia-800 to-fuchsia-400 bg-clip-text text-transparent',
+          'bg-linear-to-br from-fuchsia-800 to-fuchsia-400 bg-clip-text text-transparent',
           'animate-fade-in-down',
         )}
       >
@@ -24,7 +24,7 @@ export function Heading() {
             'border-2 border-violet-400 text-violet-400 font-semibold',
             'hover:border-violet-200 hover:text-violet-200',
             'shadow-lg hover:shadow-violet-500/20 hover:scale-110',
-            'focus:outline-none focus:outline-1 focus:outline-white',
+            'focus:outline-hidden focus:outline-1 focus:outline-white',
             'inline-flex items-center gap-1',
           )}
           target="_blank"

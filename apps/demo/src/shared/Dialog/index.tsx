@@ -48,7 +48,7 @@ export function Dialog({ children, color, ended }: Props) {
           <div
             className={clsx(
               'space-y-2 w-full max-w-md rounded-xl p-6 backdrop-blur-2xl',
-              `bg-gradient-to-br ${SURFACE_COLOR[color]}`,
+              `bg-linear-to-br ${SURFACE_COLOR[color]}`,
               `animate-duration-300 ${ended ? 'animate-zoom-out' : 'animate-zoom-in'}`,
             )}
           >
@@ -91,9 +91,9 @@ function DialogButton({
       className={clsx(
         'transition-colors duration-300 rounded-md py-1.5 px-3 text-sm/6 font-semibold text-white',
         `${BUTTON_COLOR[color]} ${BUTTON_HOVER_COLOR[hoverColor || color]}`,
-        'focus:outline-none focus:outline-1 focus:outline-white select-none',
+        'focus:outline-hidden focus:outline-1 focus:outline-white select-none',
         shrink &&
-          'flex-shrink min-w-0 overflow-hidden overflow-ellipsis whitespace-nowrap',
+          'shrink min-w-0 overflow-hidden text-ellipsis whitespace-nowrap',
       )}
       type={type}
       onClick={onClick}
