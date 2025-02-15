@@ -6,6 +6,7 @@
     "lint": "biome check .",
     "check:types": "turbo run check:types",
     "test": "turbo run test",
+    "test:dev": "npm run test:dev -w tests",
     "bundlesize": "turbo run bundlesize",
     "add-changeset": "npx changeset",
     "bump-version": "npx changeset version",

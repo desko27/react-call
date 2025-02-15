@@ -1,11 +1,10 @@
 import { describe, expect, test } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render } from 'vitest-browser-react'
 import { createCallable } from 'react-call'
 
 const Confirm = createCallable<{ message: string }, boolean>(
   ({ call, message }) => (
-    // biome-ignore lint/a11y/useSemanticElements: needed for RTL
-    <div role="dialog">
+    <dialog open>
       <p>{message}</p>
       <button type="button" onClick={() => call.end(true)}>
         Yes
@@ -13,16 +12,16 @@ const Confirm = createCallable<{ message: string }, boolean>(
       <button type="button" onClick={() => call.end(false)}>
         No
       </button>
-    </div>
+    </dialog>
   ),
 )
 
 describe('Confirm', () => {
   test('test 1', async () => {
-    render(<Confirm.Root />)
+    const screen = render(<Confirm.Root />)
 
-    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    await expect.element(screen.getByRole('dialog')).not.toBeInTheDocument()
     Confirm.call({ message: 'Hey you!' })
-    expect(await screen.findByRole('dialog')).toBeInTheDocument()
+    await expect.element(screen.getByRole('dialog')).toBeInTheDocument()
   })
 })
