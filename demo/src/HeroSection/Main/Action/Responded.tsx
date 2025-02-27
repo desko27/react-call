@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { clsx } from 'clsx'
-import { createCallable } from '../../../../../react-call/dist/main'
+import { createCallable } from 'react-call'
 
 const DURATION = 2000
 

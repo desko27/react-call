@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { clsx } from 'clsx'
 
-import { createCallable } from '../../../react-call/dist/main'
+import { createCallable } from 'react-call'
 
 export const YourToast = createCallable<void, 'finished'>(({ call }) => {
   const [seconds, setSeconds] = useState(3)
