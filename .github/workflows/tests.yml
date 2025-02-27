@@ -15,5 +15,5 @@ jobs:
         with:
           node-version-file: '.node-version'
       - run: npm ci
-      - run: npx playwright install --with-deps
+      - run: npx playwright install chromium
       - run: node --run test
