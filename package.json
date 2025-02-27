@@ -21,8 +21,9 @@
     "turbo": "latest"
   },
   "workspaces": [
-    "apps/*",
-    "packages/*"
+    "demo",
+    "react-call",
+    "tests"
   ],
   "packageManager": "npm@11.1.0"
 }
