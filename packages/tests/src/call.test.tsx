@@ -1,10 +1,10 @@
 import { describe, expect, test } from 'vitest'
 import { render } from 'vitest-browser-react'
-import { Confirm } from './Confirm'
+import { Confirm } from './shared/Confirm'
 
 describe('call()', () => {
   describe('receives', () => {
-    test('params', async () => {
+    test('a message param', async () => {
       const screen = render(<Confirm.Root />)
       Confirm.call({ message: 'an important message' })
       await expect
@@ -13,13 +13,13 @@ describe('call()', () => {
     })
   })
   describe('returns', () => {
-    test('true', async () => {
+    test('true when yes is clicked', async () => {
       const screen = render(<Confirm.Root />)
       const promise = Confirm.call({ message: 'foo' })
       await screen.getByRole('button', { name: /yes/i }).click()
       expect(await promise).toBe(true)
     })
-    test('false', async () => {
+    test('false when no is clicked', async () => {
       const screen = render(<Confirm.Root />)
       const promise = Confirm.call({ message: 'foo' })
       await screen.getByRole('button', { name: /no/i }).click()
