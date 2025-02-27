@@ -1,7 +1,7 @@
 import { clsx } from 'clsx'
 import { Github } from '@react-symbols/icons'
 
-import { version } from 'react-call/package.json'
+import { version } from '../../../react-call/package.json'
 
 export function Header() {
   return (

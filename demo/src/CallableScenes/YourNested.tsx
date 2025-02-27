@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react'
-import { createCallable } from 'react-call'
+import { createCallable } from '../../../react-call/dist/main'
 
 import { Dialog } from '../shared/Dialog'
 

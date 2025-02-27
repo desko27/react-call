@@ -1,6 +1,6 @@
 import { useEffect } from 'react'
 import { clsx } from 'clsx'
-import { createCallable } from 'react-call'
+import { createCallable } from '../../../react-call/dist/main'
 
 export const YourUnlocked = createCallable<void, void>(({ call }) => {
   // biome-ignore lint/correctness/useExhaustiveDependencies: `call.end` is ok

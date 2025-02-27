@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { clsx } from 'clsx'
-import { createCallable } from 'react-call'
+import { createCallable } from '../../../react-call/dist/main'
 
 const MAX_DELAY = 1000
 const ABC = Array.from({ length: 26 }, (_, i) => String.fromCharCode(65 + i))

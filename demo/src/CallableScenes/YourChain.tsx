@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { clsx } from 'clsx'
 import { faker } from '@faker-js/faker'
-import { createCallable } from 'react-call'
+import { createCallable } from '../../../react-call/dist/main'
 
 import { Dialog } from '../shared/Dialog'
 
