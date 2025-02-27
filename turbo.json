@@ -12,6 +12,9 @@
     "check:types": {
       "dependsOn": ["^check:types"]
     },
+    "test": {
+      "dependsOn": ["^test"]
+    },
     "bundlesize": {
       "dependsOn": ["^bundlesize"]
     }

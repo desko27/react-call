@@ -27,7 +27,6 @@
   "scripts": {
     "build": "npm run check:types && vite build",
     "check:types": "tsc --noEmit",
-    "test": "exit 0",
     "bundlesize": "npm run build && bundlesize"
   },
   "devDependencies": {
