@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest'
 import { render } from 'vitest-browser-react'
 import { Confirm } from './shared/Confirm'
 
-describe('Root', () => {
+describe('<Root>', () => {
   describe('renders', () => {
     test('nothing when empty', async () => {
       const screen = render(<Confirm.Root />)

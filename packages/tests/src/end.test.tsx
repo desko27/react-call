@@ -14,10 +14,12 @@ describe('end()', () => {
       const screen = render(<Confirm.Root />)
       const messages = ['foo', 'bar', 'xyz', '123', '456']
       messages.forEach((message) => Confirm.call({ message }))
-      await screen
-        .getByRole('button', { name: /no/i })
-        .all()
-        .map((button) => button.click())
+      await Promise.all(
+        screen
+          .getByRole('button', { name: /no/i })
+          .all()
+          .map((button) => button.click()),
+      )
       await expect.element(screen.getByRole('dialog')).not.toBeInTheDocument()
     })
   })
