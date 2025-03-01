@@ -30,15 +30,15 @@
     "bundlesize": "npm run build && bundlesize"
   },
   "devDependencies": {
-    "@types/node": "^22.10.3",
+    "@types/node": "^22.13.8",
     "@types/react": "^19.0.2",
     "@types/react-dom": "^19.0.2",
     "@vitejs/plugin-react": "^4.3.4",
     "bundlesize": "^0.18.2",
     "rollup-plugin-node-externals": "^8.0.0",
-    "typescript": "^5.7.2",
+    "typescript": "^5.8.2",
     "vite": "^6.0.6",
-    "vite-plugin-dts": "^4.4.0"
+    "vite-plugin-dts": "^4.5.1"
   },
   "peerDependencies": {
     "react": ">=18"

@@ -8,7 +8,7 @@
     "check:types": "tsc --noEmit"
   },
   "dependencies": {
-    "@faker-js/faker": "^9.3.0",
+    "@faker-js/faker": "^9.5.1",
     "@midudev/tailwind-animations": "^0.1.0",
     "@react-symbols/icons": "^1.2.7",
     "clsx": "^2.1.1",
@@ -19,11 +19,11 @@
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.0.6",
-    "@types/node": "^22.10.3",
+    "@types/node": "^22.13.8",
     "@types/react": "^19.0.2",
     "@types/react-dom": "^19.0.2",
     "@vitejs/plugin-react": "^4.3.4",
-    "typescript": "^5.7.2",
+    "typescript": "^5.8.2",
     "vite": "^6.0.6"
   }
 }
