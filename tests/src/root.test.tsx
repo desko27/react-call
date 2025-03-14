@@ -26,4 +26,16 @@ describe('<Root>', () => {
       )
     })
   })
+  describe('throws', () => {
+    test('multiple instances of <Root> found', async () => {
+      expect(() =>
+        render(
+          <>
+            <Confirm.Root />
+            <Confirm.Root />
+          </>,
+        ),
+      ).toThrow(/multiple instances of <Root> found/i)
+    })
+  })
 })
