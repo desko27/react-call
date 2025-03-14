@@ -136,3 +136,6 @@ dist
 
 # monorepo
 .turbo
+
+# vitest browser mode
+__screenshots__
