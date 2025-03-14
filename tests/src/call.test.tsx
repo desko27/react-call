@@ -26,4 +26,11 @@ describe('call()', () => {
       expect(await promise).toBe(false)
     })
   })
+  describe('throws', () => {
+    test('no <Root> found', async () => {
+      expect(() => Confirm.call({ message: 'foo' })).toThrowError(
+        /no <Root> found/i,
+      )
+    })
+  })
 })
