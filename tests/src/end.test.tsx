@@ -14,12 +14,26 @@ describe('end()', () => {
       const screen = render(<Confirm.Root />)
       const messages = ['foo', 'bar', 'xyz', '123', '456']
       messages.forEach((message) => Confirm.call({ message }))
-      await Promise.all(
-        screen
-          .getByRole('button', { name: /no/i })
-          .all()
-          .map((button) => button.click()),
-      )
+      await screen
+        .getByRole('dialog', { name: /foo/i })
+        .getByRole('button', { name: /no/i })
+        .click()
+      await screen
+        .getByRole('dialog', { name: /bar/i })
+        .getByRole('button', { name: /no/i })
+        .click()
+      await screen
+        .getByRole('dialog', { name: /xyz/i })
+        .getByRole('button', { name: /no/i })
+        .click()
+      await screen
+        .getByRole('dialog', { name: /123/i })
+        .getByRole('button', { name: /no/i })
+        .click()
+      await screen
+        .getByRole('dialog', { name: /456/i })
+        .getByRole('button', { name: /no/i })
+        .click()
       await expect.element(screen.getByRole('dialog')).not.toBeInTheDocument()
     })
     describe('removes only specific target', () => {
