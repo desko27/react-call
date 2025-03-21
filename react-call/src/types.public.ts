@@ -4,4 +4,4 @@ export type {
   PropsWithCall as Props,
   UserComponent,
   Callable,
-} from './createCallable/types'
+} from './createCallable/types.public'

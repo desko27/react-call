@@ -1,12 +1,11 @@
 import { useSyncExternalStore } from 'react'
+import { createCallStackStore } from './store'
+import type { Resolve } from './types.private'
 import type {
   UserComponent as UserComponentType,
-  // PrivateResolve,
-  // PrivateStackStateSetter,
   Callable,
-} from './types'
-
-import { createCallStackStore } from './store'
+  CallContext,
+} from './types.public'
 
 export function createCallable<Props = void, Response = void, RootProps = {}>(
   UserComponent: UserComponentType<Props, Response, RootProps>,
@@ -27,19 +26,19 @@ export function createCallable<Props = void, Response = void, RootProps = {}>(
     call: (props) => {
       if (!$store.hasListeners()) throw new Error('No <Root> found!')
 
-      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-      let resolve: any // PrivateResolve<Response>
+      let resolve!: Resolve<Response>
       const promise = new Promise<Response>((res) => {
         resolve = res
       })
 
       $store.add({
         props,
-        promise,
-        resolve,
         end: createEnd(promise),
         ended: false,
+        promise,
+        resolve,
       })
+
       return promise
     },
     end: (...args: [Promise<Response>, Response] | [Response]) => {
@@ -57,16 +56,20 @@ export function createCallable<Props = void, Response = void, RootProps = {}>(
     },
     Root: (rootProps: RootProps) =>
       useSyncExternalStore($store.subscribe, $store.getSnapshot).map(
-        ({ props, ...call }, index, stack) => (
+        ({ props, key, end, ended }, index, stack) => (
           <UserComponent
             {...props}
-            key={call.key}
-            call={{
-              ...call,
-              root: rootProps,
-              index,
-              stackSize: stack.length,
-            }}
+            key={key}
+            call={
+              {
+                key,
+                end,
+                ended,
+                root: rootProps,
+                index,
+                stackSize: stack.length,
+              } satisfies CallContext<Props, Response, RootProps>
+            }
           />
         ),
       ),
