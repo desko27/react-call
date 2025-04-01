@@ -8,22 +8,22 @@
     "check:types": "tsc --noEmit"
   },
   "dependencies": {
-    "@faker-js/faker": "^9.5.1",
-    "@midudev/tailwind-animations": "^0.1.0",
+    "@faker-js/faker": "^9.6.0",
+    "@midudev/tailwind-animations": "^0.2.0",
     "@react-symbols/icons": "^1.2.7",
     "clsx": "^2.1.1",
-    "react": "^19.0.0",
+    "react": "^19.1.0",
     "react-call": "*",
-    "react-dom": "^19.0.0",
-    "tailwindcss": "^4.0.6"
+    "react-dom": "^19.1.0",
+    "tailwindcss": "^4.0.17"
   },
   "devDependencies": {
-    "@tailwindcss/vite": "^4.0.6",
-    "@types/node": "^22.13.8",
-    "@types/react": "^19.0.2",
+    "@tailwindcss/vite": "^4.0.17",
+    "@types/node": "^22.13.16",
+    "@types/react": "^19.0.12",
     "@types/react-dom": "^19.0.2",
     "@vitejs/plugin-react": "^4.3.4",
     "typescript": "^5.8.2",
-    "vite": "^6.0.6"
+    "vite": "^6.2.4"
   }
 }
