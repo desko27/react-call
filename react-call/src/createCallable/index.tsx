@@ -5,13 +5,20 @@ import type {
   UserComponent as UserComponentType,
   Callable,
   CallContext,
+  CreateCallableOptions,
 } from './types.public'
 
 export function createCallable<Props = void, Response = void, RootProps = {}>(
   UserComponent: UserComponentType<Props, Response, RootProps>,
-  unmountingDelay = 0,
+  unmountingDelayOrOptions?: number | CreateCallableOptions,
 ): Callable<Props, Response, RootProps> {
-  const $store = createCallStackStore<Props, Response>()
+  const options: CreateCallableOptions =
+    typeof unmountingDelayOrOptions === 'number'
+      ? { unmountingDelay: unmountingDelayOrOptions }
+      : { ...unmountingDelayOrOptions }
+  const $store = createCallStackStore<Props, Response>(
+    options.allowMultipleRootsWarning,
+  )
 
   const createEnd =
     (promise: Promise<Response> | null) => (response: Response) => {
@@ -19,7 +26,10 @@ export function createCallable<Props = void, Response = void, RootProps = {}>(
         call.resolve(response)
         return { ...call, ended: true }
       })
-      globalThis.setTimeout(() => $store.remove(promise), unmountingDelay)
+      globalThis.setTimeout(
+        () => $store.remove(promise),
+        options.unmountingDelay || 0,
+      )
     }
 
   return {

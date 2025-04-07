@@ -15,7 +15,9 @@ export type CallItemPublicProperties<_, Response> = {
   ended: boolean
 }
 
-export function createCallStackStore<Props, Response>() {
+export function createCallStackStore<Props, Response>(
+  allowMultipleRootsWarning = false,
+) {
   let nextKey = 0
   let stack: CallStack<Props, Response> = []
   let listeners: Listener<Props, Response>[] = []
@@ -41,8 +43,11 @@ export function createCallStackStore<Props, Response>() {
       emitChange()
     },
     subscribe: (listener: Listener<Props, Response>) => {
-      if (listeners.length)
-        throw new Error('Multiple instances of <Root> found!')
+      if (listeners.length) {
+        const message = 'Multiple instances of <Root> found!'
+        if (!allowMultipleRootsWarning) throw new Error(message)
+        console.warn(message)
+      }
       listeners = [...listeners, listener]
 
       return () => {
