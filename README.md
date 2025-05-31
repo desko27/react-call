@@ -132,6 +132,41 @@ Alert.update({ message: 'Completed!' })
 
 This may also be cleaner for you if you're sure that only one call is run at once in your code.
 
+When you need to ensure only one instance of a component is active at a time, use `upsert()` instead of `call()`. This is particularly useful for notifications, loading states, or any singleton-like UI:
+
+```tsx
+// First call creates a new instance
+const promise1 = Toast.upsert({ message: 'Loading...' })
+
+// Second call updates the existing instance instead of creating a new one
+const promise2 = Toast.upsert({ message: 'Almost done...' })
+
+// promise1 === promise2 (same instance)
+console.log(promise1 === promise2) // true
+```
+
+The `upsert()` method behaves as follows:
+
+- **Creates** a new instance if no upsert instance is currently active
+- **Updates** the existing upsert instance if one is already active  
+- **Does not affect** normal `call()` instances
+- **Creates** a new instance if the previous upsert instance was ended
+
+```tsx
+// Example: Progress notification that updates itself
+const showProgress = async () => {
+  Toast.upsert({ message: 'Starting download...' })
+  
+  for (let i = 0; i <= 100; i += 10) {
+    await new Promise(resolve => setTimeout(resolve, 100))
+    Toast.upsert({ message: `Progress: ${i}%` })
+  }
+  
+  // End the notification
+  Toast.end(true)
+}
+```
+
 # Exit animations
 
 To animate the exit of your component when `call.end()` is run, just pass the duration of your animation in milliseconds to createCallable as a second argument:
@@ -204,6 +239,7 @@ import type { ReactCall } from 'react-call'
 Type | Description
 --- | ---
 ReactCall.Function<Props?, Response?> | The call() method
+ReactCall.UpsertFunction<Props?, Response?> | The upsert() method
 ReactCall.Context<Props?, Response?, RootProps?> | The call prop in UserComponent
 ReactCall.Props<Props?, Response?, RootProps?> | Your props + the call prop
 ReactCall.UserComponent<Props?, Response?, RootProps?> | What is passed to createCallable
