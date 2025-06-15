@@ -19,10 +19,7 @@
   "exports": {
     ".": {
       "types": "./dist/main.d.ts",
-      "import": {
-        "development": "./src/main.ts",
-        "default": "./dist/main.js"
-      },
+      "import": "./dist/main.js",
       "require": "./dist/main.cjs"
     },
     "./package.json": "./package.json"
