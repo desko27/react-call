@@ -78,11 +78,6 @@ export function createCallable<Props = void, Response = void, RootProps = {}>(
       })
       $upsertPromise = promise
 
-      const createUpsertEnd = (response: Response) => {
-        $upsertPromise = null
-        createEnd(promise)(response)
-      }
-
       $setStack((prev) => [
         ...prev,
         {
@@ -90,7 +85,10 @@ export function createCallable<Props = void, Response = void, RootProps = {}>(
           props,
           promise,
           resolve,
-          end: createUpsertEnd,
+          end: (response: Response) => {
+            $upsertPromise = null
+            createEnd(promise)(response)
+          },
           ended: false,
           isUpsert: true,
         },
