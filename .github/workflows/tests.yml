@@ -15,5 +15,6 @@ jobs:
         with:
           node-version-file: '.node-version'
       - run: npm ci
+      - run: node --run build -- --filter=react-call
       - run: npx playwright install chromium
       - run: node --run test
