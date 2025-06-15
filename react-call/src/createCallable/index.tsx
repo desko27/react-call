@@ -13,6 +13,7 @@ export function createCallable<Props = void, Response = void, RootProps = {}>(
 ): Callable<Props, Response, RootProps> {
   let $setStack: PrivateStackStateSetter<Props, Response> | null = null
   let $nextKey = 0
+  let $upsertPromise: Promise<Response> | null = null
 
   const createEnd =
     (promise: Promise<Response> | null) => (response: Response) => {
@@ -52,6 +53,48 @@ export function createCallable<Props = void, Response = void, RootProps = {}>(
       ])
       return promise
     },
+    upsert: (props) => {
+      if (!$setStack) throw new Error('No <Root> found!')
+
+      if ($upsertPromise) {
+        $setStack((prev) => {
+          const existingCall = prev.find(
+            (call) => call.promise === $upsertPromise && !call.ended,
+          )
+          if (existingCall) {
+            return prev.map((call) =>
+              call === existingCall ? { ...call, props } : call,
+            )
+          }
+          return prev
+        })
+        return $upsertPromise
+      }
+
+      const key = String($nextKey++)
+      let resolve: PrivateResolve<Response>
+      const promise = new Promise<Response>((res) => {
+        resolve = res
+      })
+      $upsertPromise = promise
+
+      $setStack((prev) => [
+        ...prev,
+        {
+          key,
+          props,
+          promise,
+          resolve,
+          end: (response: Response) => {
+            $upsertPromise = null
+            createEnd(promise)(response)
+          },
+          ended: false,
+          isUpsert: true,
+        },
+      ])
+      return promise
+    },
     end: (...args: [Promise<Response>, Response] | [Response]) => {
       const targeted = args.length === 2
       return createEnd(targeted ? args[0] : null)(targeted ? args[1] : args[0])
@@ -82,6 +125,7 @@ export function createCallable<Props = void, Response = void, RootProps = {}>(
         $setStack = setStack
         return () => {
           $setStack = null
+          $upsertPromise = null
           $nextKey = 0
         }
       }, [])
