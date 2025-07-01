@@ -16,7 +16,7 @@
   },
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
-    "@changesets/cli": "^2.29.4",
+    "@changesets/cli": "^2.29.5",
     "husky": "^9.1.7",
     "turbo": "latest"
   },
