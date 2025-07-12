@@ -5,6 +5,7 @@ import {
   YourChain,
   YourUnlocked,
   YourBubbles,
+  YourLazy,
 } from './CallableScenes'
 import { HeroSection } from './HeroSection'
 
@@ -18,6 +19,7 @@ export function App() {
       <YourChain.Root />
       <YourUnlocked.Root />
       <YourBubbles.Root />
+      <YourLazy.Root />
     </>
   )
 }
