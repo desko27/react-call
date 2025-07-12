@@ -96,6 +96,40 @@ const accepted = await Confirm.call({ message: 'Continue?' })
 
 Check out [the demo site](https://react-call.desko.dev/) to see some live examples of other React components being called.
 
+# Lazy loading
+
+For performance optimization, you can use `createLazyCallable` to load components on demand:
+
+```tsx
+import { createLazyCallable } from 'react-call'
+
+// Before: Component is included in the main bundle
+const MyDialog = createCallable(lazy(() => import('./MyDialog')))
+
+// After: Simplified lazy loading
+const MyDialog = createLazyCallable(() => import('./MyDialog'))
+```
+
+The `createLazyCallable` function:
+
+- **Simplifies** the lazy loading syntax by automatically wrapping with `React.lazy()`
+- **Reduces bundle size** by code-splitting the component into a separate chunk
+- **Loads on demand** - the component is only downloaded when first called
+- **Supports all features** - works with unmounting delays, Root props, etc.
+
+```tsx
+// Example: Heavy form component loaded only when needed
+const EditUserForm = createLazyCallable<UserProps, UserData>(
+  () => import('./components/EditUserForm'),
+  500 // unmounting delay
+)
+
+// The component will be downloaded only when this runs:
+const userData = await EditUserForm.call({ userId: 123 })
+```
+
+**Bundle evidence**: When built, lazy components are split into separate chunks (e.g., `EditUserForm-abc123.js`) instead of being included in the main bundle.
+
 # Advanced usage
 
 ## End from caller

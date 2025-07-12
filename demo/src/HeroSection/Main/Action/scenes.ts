@@ -5,6 +5,7 @@ import {
   YourChain,
   YourUnlocked,
   YourBubbles,
+  YourLazy,
 } from '../../../CallableScenes'
 
 export const DISABLED_COLORS = 'bg-gray-700 text-slate-100 hover:text-white'
@@ -117,6 +118,23 @@ const SCENES = new Map([
       },
       buttonColors:
         'bg-yellow-400 hover:bg-yellow-300 hover:shadow-yellow-500/20 text-black hover:text-slate-800',
+    },
+  ],
+  [
+    'YourLazy',
+    {
+      trigger: async () => {
+        console.group('YourLazy')
+        console.log('await YourLazy.call() ⏳ (lazy loading...)')
+        const res = await YourLazy.call({
+          message: 'This dialog was loaded on demand!',
+        })
+        console.log('await YourLazy.call() ✅', '→', `'${res}'`)
+        console.groupEnd()
+        return `'${res}'`
+      },
+      buttonColors:
+        'bg-purple-700 hover:bg-purple-600 hover:shadow-purple-500/20 text-slate-100 hover:text-white',
     },
   ],
 ])
