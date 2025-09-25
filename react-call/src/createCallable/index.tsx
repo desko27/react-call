@@ -65,23 +65,25 @@ export function createCallable<Props = void, Response = void, RootProps = {}>(
       }))
     },
     Root: (rootProps: RootProps) =>
-      useSyncExternalStore($store.subscribe, $store.getSnapshot).map(
-        ({ props, key, end, ended }, index, stack) => (
-          <UserComponent
-            {...props}
-            key={key}
-            call={
-              {
-                key,
-                end,
-                ended,
-                root: rootProps,
-                index,
-                stackSize: stack.length,
-              } satisfies CallContext<Props, Response, RootProps>
-            }
-          />
-        ),
-      ),
+      useSyncExternalStore(
+        $store.subscribe,
+        $store.getSnapshot,
+        $store.getServerSnapshot,
+      ).map(({ props, key, end, ended }, index, stack) => (
+        <UserComponent
+          {...props}
+          key={key}
+          call={
+            {
+              key,
+              end,
+              ended,
+              root: rootProps,
+              index,
+              stackSize: stack.length,
+            } satisfies CallContext<Props, Response, RootProps>
+          }
+        />
+      )),
   }
 }

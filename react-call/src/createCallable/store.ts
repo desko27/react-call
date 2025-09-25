@@ -59,6 +59,7 @@ export function createStackStore<Props, Response>(
       }
     },
     getSnapshot: () => stack,
+    getServerSnapshot: () => [],
     hasListeners: () => !!listeners.length,
   }
 }
