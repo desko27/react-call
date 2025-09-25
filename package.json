@@ -3,6 +3,7 @@
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo run build",
+    "watch:react-call": "chokidar 'react-call/src/**/*' -c 'npm run build -w=react-call'",
     "lint": "biome check .",
     "check:types": "turbo run check:types",
     "test": "turbo run test",
@@ -17,6 +18,7 @@
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
     "@changesets/cli": "^2.29.5",
+    "chokidar-cli": "^3.0.0",
     "husky": "^9.1.7",
     "turbo": "latest"
   },
