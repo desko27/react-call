@@ -1,7 +1,7 @@
 import type { Resolve } from './types.private'
 
-type CallStack<Props, Response> = CallItem<Props, Response>[]
-type Listener<Props, Response> = (stack: CallStack<Props, Response>) => void
+type Stack<Props, Response> = CallItem<Props, Response>[]
+type Listener<Props, Response> = (stack: Stack<Props, Response>) => void
 
 type CallItem<Props, Response> = CallItemPublicProperties<Props, Response> & {
   props: Props
@@ -15,11 +15,11 @@ export type CallItemPublicProperties<_, Response> = {
   ended: boolean
 }
 
-export function createCallStackStore<Props, Response>(
+export function createStackStore<Props, Response>(
   allowMultipleRootsWarning = false,
 ) {
   let nextKey = 0
-  let stack: CallStack<Props, Response> = []
+  let stack: Stack<Props, Response> = []
   let listeners: Listener<Props, Response>[] = []
 
   const emitChange = () => listeners.forEach((listener) => listener(stack))

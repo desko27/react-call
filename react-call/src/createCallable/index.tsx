@@ -1,5 +1,5 @@
 import { useSyncExternalStore } from 'react'
-import { createCallStackStore } from './store'
+import { createStackStore } from './store'
 import type { Resolve } from './types.private'
 import type {
   UserComponent as UserComponentType,
@@ -16,7 +16,7 @@ export function createCallable<Props = void, Response = void, RootProps = {}>(
     typeof unmountingDelayOrOptions === 'number'
       ? { unmountingDelay: unmountingDelayOrOptions }
       : { ...unmountingDelayOrOptions }
-  const $store = createCallStackStore<Props, Response>(
+  const $store = createStackStore<Props, Response>(
     options.allowMultipleRootsWarning,
   )
 
