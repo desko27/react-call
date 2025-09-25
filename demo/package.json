@@ -5,25 +5,26 @@
   "scripts": {
     "dev": "vite",
     "build": "npm run check:types && vite build",
-    "check:types": "tsc --noEmit"
+    "check:types": "tsgo --noEmit"
   },
   "dependencies": {
-    "@faker-js/faker": "^9.5.1",
-    "@midudev/tailwind-animations": "^0.1.0",
-    "@react-symbols/icons": "^1.2.7",
+    "@faker-js/faker": "^9.8.0",
+    "@midudev/tailwind-animations": "^0.2.0",
+    "@react-symbols/icons": "^1.2.10",
     "clsx": "^2.1.1",
-    "react": "^19.0.0",
+    "react": "^19.1.0",
     "react-call": "*",
-    "react-dom": "^19.0.0",
-    "tailwindcss": "^4.0.6"
+    "react-dom": "^19.1.0",
+    "tailwindcss": "^4.1.11"
   },
   "devDependencies": {
-    "@tailwindcss/vite": "^4.0.6",
-    "@types/node": "^22.13.8",
-    "@types/react": "^19.0.2",
-    "@types/react-dom": "^19.0.2",
-    "@vitejs/plugin-react": "^4.3.4",
-    "typescript": "^5.8.2",
-    "vite": "^6.0.6"
+    "@tailwindcss/vite": "^4.1.11",
+    "@types/node": "^22.15.3",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
+    "@typescript/native-preview": "^7.0.0-dev.20250701.1",
+    "@vitejs/plugin-react": "^4.6.0",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.5"
   }
 }
