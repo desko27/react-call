@@ -32,5 +32,16 @@ describe('call()', () => {
         /no <Root> found/i,
       )
     })
+    test('multiple instances of <Root> found', async () => {
+      render(
+        <>
+          <Confirm.Root />
+          <Confirm.Root />
+        </>,
+      )
+      expect(() => Confirm.call({ message: 'foo' })).toThrowError(
+        /multiple instances of <Root> found/i,
+      )
+    })
   })
 })

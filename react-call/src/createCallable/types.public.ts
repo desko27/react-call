@@ -32,14 +32,6 @@ export type UserComponent<Props, Response, RootProps> = React.FunctionComponent<
 >
 
 /**
- * The options passed to createCallable
- */
-export type CreateCallableOptions = {
-  unmountingDelay?: number
-  allowMultipleRootsWarning?: boolean
-}
-
-/**
  * What createCallable returns
  */
 export type Callable<Props, Response, RootProps> = {

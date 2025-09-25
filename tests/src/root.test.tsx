@@ -1,6 +1,6 @@
-import { vi, describe, expect, test } from 'vitest'
+import { describe, expect, test } from 'vitest'
 import { render } from 'vitest-browser-react'
-import { Confirm, ConfirmMultipleRoots } from './shared/Confirm'
+import { Confirm } from './shared/Confirm'
 
 describe('<Root>', () => {
   describe('renders', () => {
@@ -23,32 +23,6 @@ describe('<Root>', () => {
             .element(screen.getByRole('dialog', { name }))
             .toBeInTheDocument(),
         ),
-      )
-    })
-  })
-  describe('throws', () => {
-    test('multiple instances of <Root> found', async () => {
-      expect(() =>
-        render(
-          <>
-            <Confirm.Root />
-            <Confirm.Root />
-          </>,
-        ),
-      ).toThrow('Multiple instances of <Root> found!')
-    })
-  })
-  describe('warns', () => {
-    test('multiple instances of <Root> found', async () => {
-      const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
-      render(
-        <>
-          <ConfirmMultipleRoots.Root />
-          <ConfirmMultipleRoots.Root />
-        </>,
-      )
-      expect(warnSpy).toHaveBeenCalledWith(
-        'Multiple instances of <Root> found!',
       )
     })
   })

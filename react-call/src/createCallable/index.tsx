@@ -5,20 +5,13 @@ import type {
   UserComponent as UserComponentType,
   Callable,
   CallContext,
-  CreateCallableOptions,
 } from './types.public'
 
 export function createCallable<Props = void, Response = void, RootProps = {}>(
   UserComponent: UserComponentType<Props, Response, RootProps>,
-  unmountingDelayOrOptions?: number | CreateCallableOptions,
+  unmountingDelay = 0,
 ): Callable<Props, Response, RootProps> {
-  const options: CreateCallableOptions =
-    typeof unmountingDelayOrOptions === 'number'
-      ? { unmountingDelay: unmountingDelayOrOptions }
-      : { ...unmountingDelayOrOptions }
-  const $store = createStackStore<Props, Response>(
-    options.allowMultipleRootsWarning,
-  )
+  const $store = createStackStore<Props, Response>()
 
   const createEnd =
     (promise: Promise<Response> | null) => (response: Response) => {
@@ -26,15 +19,15 @@ export function createCallable<Props = void, Response = void, RootProps = {}>(
         call.resolve(response)
         return { ...call, ended: true }
       })
-      globalThis.setTimeout(
-        () => $store.remove(promise),
-        options.unmountingDelay || 0,
-      )
+      globalThis.setTimeout(() => $store.remove(promise), unmountingDelay)
     }
 
   return {
     call: (props) => {
-      if (!$store.hasListeners()) throw new Error('No <Root> found!')
+      const listenersSize = $store.getListenersSize()
+      if (!listenersSize) throw new Error('No <Root> found!')
+      if (listenersSize > 1)
+        throw new Error('Multiple instances of <Root> found!')
 
       let resolve!: Resolve<Response>
       const promise = new Promise<Response>((res) => {

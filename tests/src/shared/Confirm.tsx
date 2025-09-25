@@ -24,6 +24,3 @@ const ConfirmComponent: ReactCall.UserComponent<Props, boolean, {}> = ({
 }
 
 export const Confirm = createCallable(ConfirmComponent)
-export const ConfirmMultipleRoots = createCallable(ConfirmComponent, {
-  allowMultipleRootsWarning: true,
-})
