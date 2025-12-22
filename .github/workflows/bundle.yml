@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v6
-    - uses: actions/setup-node@v5
+    - uses: actions/setup-node@v6
       with:
         node-version-file: '.node-version'
     - run: npm ci
@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v6
-    - uses: actions/setup-node@v5
+    - uses: actions/setup-node@v6
       with:
         node-version-file: '.node-version'
     - run: npm ci
