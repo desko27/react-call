@@ -1,5 +1,11 @@
 # react-call
 
+## 1.8.2
+
+### Patch Changes
+
+- Fix upsert promise when ending externally
+
 ## 1.8.0
 
 ### Minor Changes
