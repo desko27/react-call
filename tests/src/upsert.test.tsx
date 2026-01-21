@@ -88,4 +88,26 @@ describe('upsert()', () => {
       .element(screen.getByRole('dialog', { name: 'Second' }))
       .toBeInTheDocument()
   })
+
+  test('creates new instance after previous one is ended externally', async () => {
+    const screen = render(<Confirm.Root />)
+
+    Confirm.upsert({ message: 'First' })
+
+    await expect
+      .element(screen.getByRole('dialog', { name: 'First' }))
+      .toBeInTheDocument()
+
+    Confirm.end(false)
+
+    await expect
+      .element(screen.container.querySelector('[role="dialog"]'))
+      .not.toBeInTheDocument()
+
+    Confirm.upsert({ message: 'Second' })
+
+    await expect
+      .element(screen.getByRole('dialog', { name: 'Second' }))
+      .toBeInTheDocument()
+  })
 })

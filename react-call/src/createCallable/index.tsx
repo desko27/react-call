@@ -97,7 +97,12 @@ export function createCallable<Props = void, Response = void, RootProps = {}>(
     },
     end: (...args: [Promise<Response>, Response] | [Response]) => {
       const targeted = args.length === 2
-      return createEnd(targeted ? args[0] : null)(targeted ? args[1] : args[0])
+      const promise = targeted ? args[0] : null
+      const response = targeted ? args[1] : args[0]
+
+      if (!targeted || promise === $upsertPromise) $upsertPromise = null
+
+      return createEnd(promise)(response)
     },
     update: (
       ...args: [Promise<Response>, Partial<Props>] | [Partial<Props>]
