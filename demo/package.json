@@ -8,8 +8,8 @@
     "check:types": "tsgo --noEmit"
   },
   "dependencies": {
-    "@faker-js/faker": "^9.8.0",
-    "@midudev/tailwind-animations": "^0.2.0",
+    "@faker-js/faker": "^10.2.0",
+    "@midudev/tailwind-animations": "^1.0.1",
     "@react-symbols/icons": "^1.2.10",
     "clsx": "^2.1.1",
     "react": "^19.1.0",
@@ -19,12 +19,12 @@
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.11",
-    "@types/node": "^22.15.3",
+    "@types/node": "^25.1.0",
     "@types/react": "^19.1.8",
     "@types/react-dom": "^19.1.6",
     "@typescript/native-preview": "^7.0.0-dev.20250701.1",
-    "@vitejs/plugin-react": "^4.6.0",
+    "@vitejs/plugin-react": "^5.1.2",
     "typescript": "^5.8.3",
-    "vite": "^6.3.5"
+    "vite": "^7.3.1"
   }
 }
