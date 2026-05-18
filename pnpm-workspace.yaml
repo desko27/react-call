@@ -6,3 +6,6 @@ allowBuilds:
   "@biomejs/biome": true
   esbuild: true
   iltorb: false
+
+overrides:
+  fflate: "0.8.2"

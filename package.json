@@ -4,10 +4,12 @@
     "build": "pnpm -r run build",
     "lint": "biome check .",
     "check:types": "tsc -b",
-    "test": "pnpm -r run test",
-    "test:dev": "pnpm --filter react-call run test:dev",
+    "test": "vitest run --project unit",
+    "test:dev": "vitest --project unit",
+    "test:dist": "vitest run --project dist",
+    "dist-lint": "publint packages/react-call --strict && attw --pack packages/react-call",
     "dev": "pnpm --filter demo run dev",
-    "bundlesize": "pnpm --filter react-call run bundlesize",
+    "size": "pnpm --filter react-call run size",
     "add-changeset": "changeset",
     "bump-version": "changeset version",
     "release": "pnpm --filter react-call run build && changeset publish",
@@ -15,10 +17,14 @@
     "prepare": "husky"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.2",
     "@biomejs/biome": "^1.9.4",
     "@changesets/cli": "^2.29.5",
+    "happy-dom": "^20.9.0",
     "husky": "^9.1.7",
-    "typescript": "^5.8.3"
+    "publint": "^0.3.21",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.4"
   },
   "packageManager": "pnpm@11.1.3",
   "engines": {

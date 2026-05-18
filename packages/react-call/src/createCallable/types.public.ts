@@ -1,3 +1,4 @@
+import type { FunctionComponent } from 'react'
 import type { CallItemPublicProperties } from './store'
 
 /**
@@ -34,7 +35,7 @@ export type PropsWithCall<Props, Response, RootProps> = Props & {
 /**
  * What is passed to createCallable
  */
-export type UserComponent<Props, Response, RootProps> = React.FunctionComponent<
+export type UserComponent<Props, Response, RootProps> = FunctionComponent<
   PropsWithCall<Props, Response, RootProps>
 >
 
@@ -42,7 +43,7 @@ export type UserComponent<Props, Response, RootProps> = React.FunctionComponent<
  * What createCallable returns
  */
 export type Callable<Props, Response, RootProps> = {
-  Root: React.FunctionComponent<RootProps>
+  Root: FunctionComponent<RootProps>
   call: CallFunction<Props, Response>
   upsert: UpsertFunction<Props, Response>
   end: ((promise: Promise<Response>, response: Response) => void) &
