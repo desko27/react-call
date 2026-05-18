@@ -1,9 +1,9 @@
 import { useId } from 'react'
-import { type ReactCall, createCallable } from 'react-call'
+import { createCallable } from '../../createCallable'
+import type * as ReactCall from '../../types.public'
 
 type Props = { message: string }
 
-// biome-ignore lint/complexity/noBannedTypes: {}
 const ConfirmComponent: ReactCall.UserComponent<Props, boolean, {}> = ({
   call,
   message,

@@ -5,7 +5,7 @@
     "lint": "biome check .",
     "check:types": "tsc -b",
     "test": "pnpm -r run test",
-    "test:dev": "pnpm --filter tests run test:dev",
+    "test:dev": "pnpm --filter react-call run test:dev",
     "dev": "pnpm --filter demo run dev",
     "bundlesize": "pnpm --filter react-call run bundlesize",
     "add-changeset": "changeset",
