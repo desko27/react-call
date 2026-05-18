@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "npm run check:types && vite build",
+    "build": "pnpm run check:types && vite build",
     "check:types": "tsgo --noEmit"
   },
   "dependencies": {
