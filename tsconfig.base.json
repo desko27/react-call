@@ -8,7 +8,6 @@
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "skipLibCheck": true,
-    "isolatedModules": true,
-    "declaration": true
+    "isolatedModules": true
   }
 }
