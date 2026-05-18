@@ -12,7 +12,7 @@
     "size": "pnpm --filter react-call run size",
     "add-changeset": "changeset",
     "bump-version": "changeset version",
-    "release": "pnpm --filter react-call run build && changeset publish",
+    "release": "changeset publish",
     "phoenix": "rm -rf node_modules **/node_modules && pnpm install",
     "prepare": "lefthook install"
   },
