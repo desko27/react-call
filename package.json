@@ -14,14 +14,14 @@
     "bump-version": "changeset version",
     "release": "pnpm --filter react-call run build && changeset publish",
     "phoenix": "rm -rf node_modules **/node_modules && pnpm install",
-    "prepare": "husky"
+    "prepare": "lefthook install"
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.2",
     "@biomejs/biome": "^1.9.4",
     "@changesets/cli": "^2.29.5",
     "happy-dom": "^20.9.0",
-    "husky": "^9.1.7",
+    "lefthook": "^2.1.6",
     "publint": "^0.3.21",
     "typescript": "^5.8.3",
     "vitest": "^3.2.4"

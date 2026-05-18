@@ -1,0 +1,11 @@
+pre-commit:
+  parallel: true
+  jobs:
+    - name: lint
+      glob: "*.{ts,tsx,json}"
+      run: pnpm biome check --write --no-errors-on-unmatched {staged_files}
+      stage_fixed: true
+      skip: [rebase, merge]
+    - name: check:types
+      run: pnpm check:types
+      skip: [rebase, merge]
