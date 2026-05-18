@@ -17,6 +17,9 @@ importers:
       husky:
         specifier: ^9.1.7
         version: 9.1.7
+      typescript:
+        specifier: ^5.8.3
+        version: 5.9.3
 
   packages/react-call:
     dependencies:

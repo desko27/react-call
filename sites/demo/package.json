@@ -4,8 +4,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "pnpm run check:types && vite build",
-    "check:types": "tsgo --noEmit"
+    "build": "vite build",
+    "check:types": "tsc --noEmit"
   },
   "dependencies": {
     "@faker-js/faker": "^9.8.0",
