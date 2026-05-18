@@ -1,0 +1,8 @@
+packages:
+  - "packages/*"
+  - "sites/*"
+
+allowBuilds:
+  "@biomejs/biome": true
+  esbuild: true
+  iltorb: false

@@ -59,7 +59,7 @@
   },
   "overrides": [
     {
-      "include": ["react-call/**"],
+      "include": ["packages/react-call/**"],
       "linter": {
         "rules": {
           "complexity": {
