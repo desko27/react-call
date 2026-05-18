@@ -15,7 +15,7 @@ export type CallItemPublicProperties<_, Response> = {
   ended: boolean
 }
 
-export function createStackStore<Props, Response>() {
+export function createStackStore<Props, Response>(onReset?: () => void) {
   let nextKey = 0
   let stack: Stack<Props, Response> = []
   const listeners: Set<Listener<Props, Response>> = new Set()
@@ -48,6 +48,7 @@ export function createStackStore<Props, Response>() {
         if (!listeners.size) {
           nextKey = 0
           stack = []
+          onReset?.()
         }
       }
     },

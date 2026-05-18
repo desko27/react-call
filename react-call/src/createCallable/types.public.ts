@@ -6,6 +6,13 @@ import type { CallItemPublicProperties } from './store'
 export type CallFunction<Props, Response> = (props: Props) => Promise<Response>
 
 /**
+ * The upsert() method
+ */
+export type UpsertFunction<Props, Response> = (
+  props: Props,
+) => Promise<Response>
+
+/**
  * The special call prop in UserComponent
  */
 export type CallContext<Props, Response, RootProps> = CallItemPublicProperties<
@@ -37,6 +44,7 @@ export type UserComponent<Props, Response, RootProps> = React.FunctionComponent<
 export type Callable<Props, Response, RootProps> = {
   Root: React.FunctionComponent<RootProps>
   call: CallFunction<Props, Response>
+  upsert: UpsertFunction<Props, Response>
   end: ((promise: Promise<Response>, response: Response) => void) &
     ((response: Response) => void)
   update: ((promise: Promise<Response>, props: Partial<Props>) => void) &
