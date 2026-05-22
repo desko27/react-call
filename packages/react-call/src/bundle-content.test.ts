@@ -10,7 +10,7 @@ import { describe, expect, it } from 'vitest'
 // the moment they slip into a build, instead of waiting for an RN user to
 // file an issue.
 
-const DIST = resolve(__dirname, '..', 'dist')
+const DIST = resolve(import.meta.dirname, '..', 'dist')
 
 const FORBIDDEN_SYMBOLS = [
   'react-dom',
@@ -25,16 +25,16 @@ const FORBIDDEN_SYMBOLS = [
 ] as const
 
 describe('bundle content — ADR-0007 React Native compatibility', () => {
-  it.each(['main.js', 'main.cjs'] as const)(
-    'dist/%s has no DOM-only / react-dom references',
-    async (filename) => {
-      const code = await readFile(resolve(DIST, filename), 'utf-8')
-      for (const symbol of FORBIDDEN_SYMBOLS) {
-        expect(
-          code,
-          `forbidden symbol "${symbol}" found in ${filename}`,
-        ).not.toContain(symbol)
-      }
-    },
-  )
+  it.each([
+    'main.js',
+    'main.cjs',
+  ] as const)('dist/%s has no DOM-only / react-dom references', async (filename) => {
+    const code = await readFile(resolve(DIST, filename), 'utf-8')
+    for (const symbol of FORBIDDEN_SYMBOLS) {
+      expect(
+        code,
+        `forbidden symbol "${symbol}" found in ${filename}`,
+      ).not.toContain(symbol)
+    }
+  })
 })

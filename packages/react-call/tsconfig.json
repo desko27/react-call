@@ -3,7 +3,8 @@
   "compilerOptions": {
     "composite": true,
     "outDir": ".tsbuild",
-    "rootDir": "src"
+    "rootDir": "src",
+    "types": ["node"]
   },
   "include": ["src"]
 }

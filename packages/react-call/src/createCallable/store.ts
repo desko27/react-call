@@ -20,7 +20,9 @@ export function createStackStore<Props, Response>(onReset?: () => void) {
   let stack: Stack<Props, Response> = []
   const listeners: Set<Listener<Props, Response>> = new Set()
 
-  const emitChange = () => listeners.forEach((listener) => listener(stack))
+  const emitChange = () => {
+    for (const listener of listeners) listener(stack)
+  }
 
   return {
     add: (call: Omit<CallItem<Props, Response>, 'key'>) => {

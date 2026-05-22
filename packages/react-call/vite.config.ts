@@ -1,7 +1,6 @@
 import { copyFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import react from '@vitejs/plugin-react'
-import { nodeExternals } from 'rollup-plugin-node-externals'
 import { defineConfig } from 'vite'
 import dts from 'vite-plugin-dts'
 
@@ -14,20 +13,23 @@ const copyDtsToCts = {
   name: 'copy-dts-to-cts',
   closeBundle: async () => {
     await copyFile(
-      resolve(__dirname, 'dist/main.d.ts'),
-      resolve(__dirname, 'dist/main.d.cts'),
+      resolve(import.meta.dirname, 'dist/main.d.ts'),
+      resolve(import.meta.dirname, 'dist/main.d.cts'),
     )
   },
 }
 
 export default defineConfig({
-  plugins: [react(), nodeExternals(), dts({ rollupTypes: true }), copyDtsToCts],
+  plugins: [react(), dts({ rollupTypes: true }), copyDtsToCts],
   build: {
     copyPublicDir: false,
     lib: {
       fileName: 'main',
-      entry: resolve(__dirname, 'src/main.ts'),
+      entry: resolve(import.meta.dirname, 'src/main.ts'),
       formats: ['es', 'cjs'],
+    },
+    rollupOptions: {
+      external: ['react', 'react/jsx-runtime'],
     },
   },
 })
