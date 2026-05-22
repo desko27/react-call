@@ -1,6 +1,7 @@
 import { render, screen, waitFor, within } from '@testing-library/react'
 import { userEvent } from '@testing-library/user-event'
 import { describe, expect, test } from 'vitest'
+import { withAct } from './shared/act'
 import { Confirm } from './shared/Confirm'
 
 describe('end()', () => {
@@ -8,41 +9,39 @@ describe('end()', () => {
     test('removes one', async () => {
       const user = userEvent.setup()
       render(<Confirm.Root />)
-      Confirm.call({ message: 'foo' })
-      await user.click(await screen.findByRole('button', { name: /no/i }))
-      await waitFor(() => {
-        expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
-      })
+      withAct(() => Confirm.call({ message: 'foo' }))
+      await user.click(screen.getByRole('button', { name: /no/i }))
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
     })
     test('removes all', async () => {
       const user = userEvent.setup()
       render(<Confirm.Root />)
       const messages = ['foo', 'bar', 'xyz', '123', '456']
-      for (const message of messages) Confirm.call({ message })
+      withAct(() => {
+        for (const message of messages) Confirm.call({ message })
+      })
       for (const name of messages) {
-        const dialog = await screen.findByRole('dialog', {
+        const dialog = screen.getByRole('dialog', {
           name: new RegExp(name, 'i'),
         })
         await user.click(within(dialog).getByRole('button', { name: /no/i }))
       }
-      await waitFor(() => {
-        expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
-      })
+      expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
     })
     describe('removes only specific target', () => {
       test('first one', async () => {
         const user = userEvent.setup()
         render(<Confirm.Root />)
-        Confirm.call({ message: 'first one' })
-        Confirm.call({ message: 'middle one' })
-        Confirm.call({ message: 'last one' })
-        const first = await screen.findByRole('dialog', { name: /first one/i })
-        await user.click(within(first).getByRole('button', { name: /no/i }))
-        await waitFor(() => {
-          expect(
-            screen.queryByRole('dialog', { name: /first one/i }),
-          ).not.toBeInTheDocument()
+        withAct(() => {
+          Confirm.call({ message: 'first one' })
+          Confirm.call({ message: 'middle one' })
+          Confirm.call({ message: 'last one' })
         })
+        const first = screen.getByRole('dialog', { name: /first one/i })
+        await user.click(within(first).getByRole('button', { name: /no/i }))
+        expect(
+          screen.queryByRole('dialog', { name: /first one/i }),
+        ).not.toBeInTheDocument()
         expect(
           screen.getByRole('dialog', { name: /middle one/i }),
         ).toBeInTheDocument()
@@ -53,18 +52,16 @@ describe('end()', () => {
       test('middle one', async () => {
         const user = userEvent.setup()
         render(<Confirm.Root />)
-        Confirm.call({ message: 'first one' })
-        Confirm.call({ message: 'middle one' })
-        Confirm.call({ message: 'last one' })
-        const middle = await screen.findByRole('dialog', {
-          name: /middle one/i,
+        withAct(() => {
+          Confirm.call({ message: 'first one' })
+          Confirm.call({ message: 'middle one' })
+          Confirm.call({ message: 'last one' })
         })
+        const middle = screen.getByRole('dialog', { name: /middle one/i })
         await user.click(within(middle).getByRole('button', { name: /no/i }))
-        await waitFor(() => {
-          expect(
-            screen.queryByRole('dialog', { name: /middle one/i }),
-          ).not.toBeInTheDocument()
-        })
+        expect(
+          screen.queryByRole('dialog', { name: /middle one/i }),
+        ).not.toBeInTheDocument()
         expect(
           screen.getByRole('dialog', { name: /first one/i }),
         ).toBeInTheDocument()
@@ -75,16 +72,16 @@ describe('end()', () => {
       test('last one', async () => {
         const user = userEvent.setup()
         render(<Confirm.Root />)
-        Confirm.call({ message: 'first one' })
-        Confirm.call({ message: 'middle one' })
-        Confirm.call({ message: 'last one' })
-        const last = await screen.findByRole('dialog', { name: /last one/i })
-        await user.click(within(last).getByRole('button', { name: /no/i }))
-        await waitFor(() => {
-          expect(
-            screen.queryByRole('dialog', { name: /last one/i }),
-          ).not.toBeInTheDocument()
+        withAct(() => {
+          Confirm.call({ message: 'first one' })
+          Confirm.call({ message: 'middle one' })
+          Confirm.call({ message: 'last one' })
         })
+        const last = screen.getByRole('dialog', { name: /last one/i })
+        await user.click(within(last).getByRole('button', { name: /no/i }))
+        expect(
+          screen.queryByRole('dialog', { name: /last one/i }),
+        ).not.toBeInTheDocument()
         expect(
           screen.getByRole('dialog', { name: /first one/i }),
         ).toBeInTheDocument()
@@ -97,9 +94,8 @@ describe('end()', () => {
   describe('outside', () => {
     test('removes one', async () => {
       render(<Confirm.Root />)
-      const promise = Confirm.call({ message: 'foo' })
-      await screen.findByRole('dialog')
-      Confirm.end(promise, false)
+      const promise = withAct(() => Confirm.call({ message: 'foo' }))
+      withAct(() => Confirm.end(promise, false))
       await waitFor(() => {
         expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
       })
@@ -107,9 +103,10 @@ describe('end()', () => {
     test('removes all', async () => {
       render(<Confirm.Root />)
       const messages = ['foo', 'bar', 'xyz', '123', '456']
-      for (const message of messages) Confirm.call({ message })
-      await screen.findByRole('dialog', { name: /foo/i })
-      Confirm.end(false)
+      withAct(() => {
+        for (const message of messages) Confirm.call({ message })
+      })
+      withAct(() => Confirm.end(false))
       await waitFor(() => {
         expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
       })
@@ -117,11 +114,13 @@ describe('end()', () => {
     describe('removes only specific target', () => {
       test('first one', async () => {
         render(<Confirm.Root />)
-        const firstPromise = Confirm.call({ message: 'first one' })
-        Confirm.call({ message: 'middle one' })
-        Confirm.call({ message: 'last one' })
-        await screen.findByRole('dialog', { name: /first one/i })
-        Confirm.end(firstPromise, false)
+        let firstPromise!: Promise<boolean>
+        withAct(() => {
+          firstPromise = Confirm.call({ message: 'first one' })
+          Confirm.call({ message: 'middle one' })
+          Confirm.call({ message: 'last one' })
+        })
+        withAct(() => Confirm.end(firstPromise, false))
         await waitFor(() => {
           expect(
             screen.queryByRole('dialog', { name: /first one/i }),
@@ -136,11 +135,13 @@ describe('end()', () => {
       })
       test('middle one', async () => {
         render(<Confirm.Root />)
-        Confirm.call({ message: 'first one' })
-        const middlePromise = Confirm.call({ message: 'middle one' })
-        Confirm.call({ message: 'last one' })
-        await screen.findByRole('dialog', { name: /middle one/i })
-        Confirm.end(middlePromise, false)
+        let middlePromise!: Promise<boolean>
+        withAct(() => {
+          Confirm.call({ message: 'first one' })
+          middlePromise = Confirm.call({ message: 'middle one' })
+          Confirm.call({ message: 'last one' })
+        })
+        withAct(() => Confirm.end(middlePromise, false))
         await waitFor(() => {
           expect(
             screen.queryByRole('dialog', { name: /middle one/i }),
@@ -155,11 +156,13 @@ describe('end()', () => {
       })
       test('last one', async () => {
         render(<Confirm.Root />)
-        Confirm.call({ message: 'first one' })
-        Confirm.call({ message: 'middle one' })
-        const lastPromise = Confirm.call({ message: 'last one' })
-        await screen.findByRole('dialog', { name: /last one/i })
-        Confirm.end(lastPromise, false)
+        let lastPromise!: Promise<boolean>
+        withAct(() => {
+          Confirm.call({ message: 'first one' })
+          Confirm.call({ message: 'middle one' })
+          lastPromise = Confirm.call({ message: 'last one' })
+        })
+        withAct(() => Confirm.end(lastPromise, false))
         await waitFor(() => {
           expect(
             screen.queryByRole('dialog', { name: /last one/i }),

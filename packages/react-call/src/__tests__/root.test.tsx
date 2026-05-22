@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import { describe, expect, test } from 'vitest'
+import { withAct } from './shared/act'
 import { Confirm } from './shared/Confirm'
 
 describe('<Root>', () => {
@@ -8,17 +9,19 @@ describe('<Root>', () => {
       render(<Confirm.Root />)
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
     })
-    test('one item at one call', async () => {
+    test('one item at one call', () => {
       render(<Confirm.Root />)
-      Confirm.call({ message: 'foo' })
-      expect(await screen.findByRole('dialog')).toBeInTheDocument()
+      withAct(() => Confirm.call({ message: 'foo' }))
+      expect(screen.getByRole('dialog')).toBeInTheDocument()
     })
-    test('multiple items at multiple calls', async () => {
+    test('multiple items at multiple calls', () => {
       render(<Confirm.Root />)
       const messages = ['foo', 'bar', 'xyz', '123', '456']
-      for (const message of messages) Confirm.call({ message })
+      withAct(() => {
+        for (const message of messages) Confirm.call({ message })
+      })
       for (const name of messages) {
-        expect(await screen.findByRole('dialog', { name })).toBeInTheDocument()
+        expect(screen.getByRole('dialog', { name })).toBeInTheDocument()
       }
     })
   })
