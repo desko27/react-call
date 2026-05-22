@@ -1,3 +1,4 @@
+LICENSE
 dist/main.cjs
 dist/main.d.cts
 dist/main.d.ts
