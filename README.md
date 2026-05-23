@@ -338,11 +338,12 @@ However, bear in mind that because the call() method is meant to be triggered by
 
 ## Next.js / RSC
 
-If the original setup is not working for you, export the Root and the rest separately:
+Mark the file where you call `createCallable(...)` as a Client Component (the lib uses `useSyncExternalStore`):
 
 ```diff
 + 'use client'
 
-- export const Confirm = createCallable(...)
-+ export const { Root, ...Confirm } = createCallable(...)
+export const Confirm = createCallable(...)
 ```
+
+Then `<Confirm />` mounts cleanly from any Server Component (e.g. `app/layout.tsx`). Verified end-to-end against the Next.js 15 App Router in [`apps/nextjs/`](./apps/nextjs/).
