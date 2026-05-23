@@ -122,12 +122,16 @@ export function createCallable<
         return
       }
 
+      // Capture the narrowed value into a const so the closure can
+      // call it without a non-null assertion — the early-return guard
+      // above proved storedMutationFn is defined.
+      const fn = storedMutationFn
       const mutationContext: MutationContext<Response> = {
         end: createEnd(promise),
       }
 
       Promise.resolve()
-        .then(() => storedMutationFn!(mutationContext, payload))
+        .then(() => fn(mutationContext, payload))
         .catch(() => {
           // Swallow — the caller's own try/catch inside mutationFn handles
           // UI side-effects (toasts, alerts, etc.). The dialog stays open

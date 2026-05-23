@@ -379,6 +379,7 @@ describe('CallOptions plumbing', () => {
   })
 
   test('void Props: call(options) form (no props arg) routes options correctly', async () => {
+    // biome-ignore lint/suspicious/noConfusingVoidType: matching the lib's `Props = void` default to exercise the void-Props ergonomic form
     type NoProps = void
     const NoPropsComp: ReactCall.UserComponent<
       NoProps,
