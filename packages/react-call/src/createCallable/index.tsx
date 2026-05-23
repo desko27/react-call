@@ -56,9 +56,7 @@ export function createCallable<Props = void, Response = void, RootProps = {}>(
 
       if ($upsertPromise) {
         const upsertPromise = $upsertPromise
-        $store.set(upsertPromise, (call) =>
-          call.ended ? call : { ...call, props },
-        )
+        $store.set(upsertPromise, (call) => ({ ...call, props }))
         return upsertPromise
       }
 
