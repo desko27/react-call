@@ -7,7 +7,7 @@ import { Confirm } from './shared/Confirm'
 describe('call()', () => {
   describe('receives', () => {
     test('a message param', () => {
-      render(<Confirm.Root />)
+      render(<Confirm />)
       withAct(() => Confirm.call({ message: 'an important message' }))
       expect(
         screen.getByRole('dialog', { name: 'an important message' }),
@@ -17,14 +17,14 @@ describe('call()', () => {
   describe('returns', () => {
     test('true when yes is clicked', async () => {
       const user = userEvent.setup()
-      render(<Confirm.Root />)
+      render(<Confirm />)
       const promise = withAct(() => Confirm.call({ message: 'foo' }))
       await user.click(screen.getByRole('button', { name: /yes/i }))
       expect(await promise).toBe(true)
     })
     test('false when no is clicked', async () => {
       const user = userEvent.setup()
-      render(<Confirm.Root />)
+      render(<Confirm />)
       const promise = withAct(() => Confirm.call({ message: 'foo' }))
       await user.click(screen.getByRole('button', { name: /no/i }))
       expect(await promise).toBe(false)
@@ -39,8 +39,8 @@ describe('call()', () => {
     test('multiple instances of <Root> found', () => {
       render(
         <>
-          <Confirm.Root />
-          <Confirm.Root />
+          <Confirm />
+          <Confirm />
         </>,
       )
       expect(() => Confirm.call({ message: 'foo' })).toThrowError(

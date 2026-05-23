@@ -58,6 +58,10 @@ describe('Callable<> shape', () => {
   })
 
   test('Root is a FunctionComponent of RootProps', () => {
+    // ADR-0013: `Callable.Root` is a deprecated alias kept for
+    // backwards compatibility. This assertion documents that the
+    // deprecated property is still a typed-correctly part of the
+    // public API — do not delete thinking it covers dead code.
     expectTypeOf(Callable.Root).toEqualTypeOf<
       FunctionComponent<{ y: string }>
     >()
@@ -82,6 +86,7 @@ describe('createCallable generic defaults', () => {
 
   test('RootProps defaults to {} (Root accepts empty/no props)', () => {
     const NoRootProps = createCallable<{ x: number }, boolean>(() => null)
+    // Deprecated alias kept for backwards compat (ADR-0013).
     expectTypeOf(NoRootProps.Root).toEqualTypeOf<FunctionComponent<{}>>()
   })
 

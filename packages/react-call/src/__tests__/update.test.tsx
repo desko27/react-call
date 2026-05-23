@@ -6,13 +6,13 @@ import { Confirm } from './shared/Confirm'
 describe('update()', () => {
   describe('target promise', () => {
     test('updates params one time', () => {
-      render(<Confirm.Root />)
+      render(<Confirm />)
       const promise = withAct(() => Confirm.call({ message: 'one' }))
       withAct(() => Confirm.update(promise, { message: 'two' }))
       expect(screen.getByRole('dialog', { name: 'two' })).toBeInTheDocument()
     })
     test('updates params multiple times', () => {
-      render(<Confirm.Root />)
+      render(<Confirm />)
       const promise = withAct(() => Confirm.call({ message: 'one' }))
       withAct(() => Confirm.update(promise, { message: 'two' }))
       withAct(() => Confirm.update(promise, { message: 'three' }))
@@ -23,7 +23,7 @@ describe('update()', () => {
   })
   describe('all', () => {
     test('update params one time', () => {
-      render(<Confirm.Root />)
+      render(<Confirm />)
       withAct(() => {
         Confirm.call({ message: 'one' })
         Confirm.call({ message: 'one' })
@@ -33,7 +33,7 @@ describe('update()', () => {
       expect(screen.getAllByRole('dialog', { name: 'two' })).toHaveLength(3)
     })
     test('update params multiple times', () => {
-      render(<Confirm.Root />)
+      render(<Confirm />)
       withAct(() => {
         Confirm.call({ message: 'one' })
         Confirm.call({ message: 'one' })

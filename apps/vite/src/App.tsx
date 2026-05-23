@@ -27,7 +27,7 @@ export function App() {
       >
         Open dialog
       </button>
-      <Confirm.Root />
+      <Confirm />
     </>
   )
 }

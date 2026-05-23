@@ -36,14 +36,14 @@ const SlowConfirm = createCallable(SlowConfirmComponent, UNMOUNTING_DELAY)
 
 describe('Exit animations (unmountingDelay + call.ended)', () => {
   test('call.ended starts false during the active call', () => {
-    render(<SlowConfirm.Root />)
+    render(<SlowConfirm />)
     withAct(() => SlowConfirm.call({ message: 'foo' }))
     expect(screen.getByRole('dialog').dataset.ended).toBe('false')
   })
 
   test('call.ended flips to true on end() and the dialog stays mounted until unmountingDelay elapses', async () => {
     const user = userEvent.setup()
-    render(<SlowConfirm.Root />)
+    render(<SlowConfirm />)
     withAct(() => SlowConfirm.call({ message: 'foo' }))
 
     await user.click(screen.getByRole('button', { name: /no/i }))
@@ -64,7 +64,7 @@ describe('Exit animations (unmountingDelay + call.ended)', () => {
   })
 
   test('external Confirm.end(false) honours unmountingDelay the same way an inside end() does', async () => {
-    render(<SlowConfirm.Root />)
+    render(<SlowConfirm />)
     withAct(() => SlowConfirm.call({ message: 'foo' }))
 
     withAct(() => SlowConfirm.end(false))

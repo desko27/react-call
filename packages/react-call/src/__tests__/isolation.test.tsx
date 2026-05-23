@@ -37,8 +37,8 @@ describe('Multiple createCallable instances are independent', () => {
     const B = createCallable(dialog('b'))
     render(
       <>
-        <A.Root />
-        <B.Root />
+        <A />
+        <B />
       </>,
     )
 
@@ -53,8 +53,8 @@ describe('Multiple createCallable instances are independent', () => {
     const B = createCallable(dialog('b'))
     render(
       <>
-        <A.Root />
-        <B.Root />
+        <A />
+        <B />
       </>,
     )
 
@@ -74,8 +74,8 @@ describe('Multiple createCallable instances are independent', () => {
     const B = createCallable(dialog('b'))
     render(
       <>
-        <A.Root />
-        <B.Root />
+        <A />
+        <B />
       </>,
     )
 
@@ -97,8 +97,8 @@ describe('Multiple createCallable instances are independent', () => {
     const B = createCallable(dialog('b'))
     render(
       <>
-        <A.Root />
-        <B.Root />
+        <A />
+        <B />
       </>,
     )
 

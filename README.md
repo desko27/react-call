@@ -78,10 +78,10 @@ Along with your props, there is a special `call` prop containing the `end()` met
 
 ## 2. 📡 Rooting
 
-`<Root>` is what listens to every single call and renders it. Place it anywhere that is visible when making your calls, for instance in `App.tsx`:
+The Callable itself is the mounting point — it listens to every call and renders the active ones. Place it anywhere visible when making calls, for instance in `App.tsx`:
 
 ```diff
-+ <Confirm.Root />
++ <Confirm />
 //  ^-- it will render active calls
 ```
 
@@ -109,13 +109,13 @@ const Confirm = createCallable(
   lazy(() => import('./Confirm')), // default export required
 )
 
-// 2) Place Root inside a Suspense boundary
+// 2) Place the Callable inside a Suspense boundary
 export function App() {
   return (
     <>
       {/* Other app UI */}
       <Suspense fallback={null}>
-        <Confirm.Root />
+        <Confirm />
       </Suspense>
     </>
   )
@@ -127,7 +127,7 @@ const accepted = await Confirm.call({ message: 'Continue?' })
 
 Notes:
 - Make sure the lazily imported file has a default export (React.lazy requirement).
-- Wrap `<Confirm.Root />` (or an ancestor) in `<Suspense>` to handle the loading state.
+- Wrap `<Confirm />` (or an ancestor) in `<Suspense>` to handle the loading state.
 - The lazy component is split into a separate chunk and downloaded only when first called.
 
 # Advanced usage
@@ -249,7 +249,7 @@ export const Confirm = createCallable<
 ```
 
 ```diff
-<Confirm.Root
+<Confirm
 + userName='John Doe'
 />
 ```

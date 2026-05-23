@@ -12,12 +12,12 @@ export function App() {
   return (
     <>
       <HeroSection />
-      <YourDialog.Root />
-      <YourToast.Root />
-      <YourNested.Root />
-      <YourChain.Root />
-      <YourUnlocked.Root />
-      <YourBubbles.Root />
+      <YourDialog />
+      <YourToast />
+      <YourNested />
+      <YourChain />
+      <YourUnlocked />
+      <YourBubbles />
     </>
   )
 }

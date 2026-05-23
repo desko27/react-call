@@ -29,7 +29,7 @@ describe('Lazy loading', () => {
     const { LazyConfirm } = makeLazyConfirm()
     render(
       <Suspense fallback={<div data-testid="fallback">loading</div>}>
-        <LazyConfirm.Root />
+        <LazyConfirm />
       </Suspense>,
     )
     expect(screen.queryByTestId('fallback')).not.toBeInTheDocument()
@@ -40,7 +40,7 @@ describe('Lazy loading', () => {
     const { LazyConfirm, resolveLazy } = makeLazyConfirm()
     render(
       <Suspense fallback={<div data-testid="fallback">loading</div>}>
-        <LazyConfirm.Root />
+        <LazyConfirm />
       </Suspense>,
     )
 

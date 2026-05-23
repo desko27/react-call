@@ -12,7 +12,7 @@ import { Confirm } from './shared/Confirm'
 
 describe('SSR — getServerSnapshot', () => {
   test('Root renders empty markup on the server when no calls exist', () => {
-    expect(renderToString(<Confirm.Root />)).toBe('')
+    expect(renderToString(<Confirm />)).toBe('')
   })
 
   test('Root still renders empty markup on the server even when a Root is mounted on the (separate) client', () => {
@@ -20,7 +20,7 @@ describe('SSR — getServerSnapshot', () => {
     // Even if a (hypothetical) client had previously made calls, the server's
     // getServerSnapshot path must still yield an empty stack — proven here by
     // the markup being unconditionally empty.
-    expect(renderToString(<Confirm.Root />)).toBe('')
-    expect(renderToString(<Confirm.Root />)).toBe('')
+    expect(renderToString(<Confirm />)).toBe('')
+    expect(renderToString(<Confirm />)).toBe('')
   })
 })

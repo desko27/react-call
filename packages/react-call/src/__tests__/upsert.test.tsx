@@ -6,13 +6,13 @@ import { Confirm } from './shared/Confirm'
 
 describe('upsert()', () => {
   test('creates new instance when called without existing instance', () => {
-    render(<Confirm.Root />)
+    render(<Confirm />)
     withAct(() => Confirm.upsert({ message: 'Hello' }))
     expect(screen.getByRole('dialog', { name: 'Hello' })).toBeInTheDocument()
   })
 
   test('updates existing instance when called with existing instance', () => {
-    render(<Confirm.Root />)
+    render(<Confirm />)
 
     const promise1 = withAct(() => Confirm.upsert({ message: 'First' }))
     expect(screen.getByRole('dialog', { name: 'First' })).toBeInTheDocument()
@@ -25,7 +25,7 @@ describe('upsert()', () => {
   })
 
   test('does not affect normal calls', () => {
-    render(<Confirm.Root />)
+    render(<Confirm />)
 
     withAct(() => Confirm.call({ message: 'Normal 1' }))
     expect(screen.getByRole('dialog', { name: 'Normal 1' })).toBeInTheDocument()
@@ -48,7 +48,7 @@ describe('upsert()', () => {
 
   test('creates new instance after previous one is ended', async () => {
     const user = userEvent.setup()
-    render(<Confirm.Root />)
+    render(<Confirm />)
 
     withAct(() => Confirm.upsert({ message: 'First' }))
     expect(screen.getByRole('dialog', { name: 'First' })).toBeInTheDocument()
@@ -61,7 +61,7 @@ describe('upsert()', () => {
   })
 
   test('creates new instance after previous one is ended externally', async () => {
-    render(<Confirm.Root />)
+    render(<Confirm />)
 
     withAct(() => Confirm.upsert({ message: 'First' }))
     expect(screen.getByRole('dialog', { name: 'First' })).toBeInTheDocument()

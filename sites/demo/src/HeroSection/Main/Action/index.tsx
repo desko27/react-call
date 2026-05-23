@@ -53,7 +53,7 @@ export function Action({
       </div>
       <div className="pt-6 overflow-hidden select-none">
         <div className="h-8">
-          <Responded.Root />
+          <Responded />
         </div>
       </div>
     </div>

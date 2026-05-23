@@ -6,16 +6,16 @@ import { Confirm } from './shared/Confirm'
 describe('<Root>', () => {
   describe('renders', () => {
     test('nothing when empty', () => {
-      render(<Confirm.Root />)
+      render(<Confirm />)
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
     })
     test('one item at one call', () => {
-      render(<Confirm.Root />)
+      render(<Confirm />)
       withAct(() => Confirm.call({ message: 'foo' }))
       expect(screen.getByRole('dialog')).toBeInTheDocument()
     })
     test('multiple items at multiple calls', () => {
-      render(<Confirm.Root />)
+      render(<Confirm />)
       const messages = ['foo', 'bar', 'xyz', '123', '456']
       withAct(() => {
         for (const message of messages) Confirm.call({ message })

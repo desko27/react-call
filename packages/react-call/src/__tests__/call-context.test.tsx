@@ -26,7 +26,7 @@ const Probe = createCallable(ProbeComponent)
 
 describe('CallContext lifecycle invariants', () => {
   test('call.index reflects the item position in the stack (0-based)', () => {
-    render(<Probe.Root />)
+    render(<Probe />)
     withAct(() => {
       Probe.call({ id: 'a' })
       Probe.call({ id: 'b' })
@@ -38,7 +38,7 @@ describe('CallContext lifecycle invariants', () => {
   })
 
   test('call.stackSize is the total active items, seen identically by every item', () => {
-    render(<Probe.Root />)
+    render(<Probe />)
     withAct(() => Probe.call({ id: 'first' }))
     expect(screen.getByTestId('probe-first').dataset.stackSize).toBe('1')
 
@@ -53,7 +53,7 @@ describe('CallContext lifecycle invariants', () => {
   })
 
   test('call.key is unique per call within a single Root lifetime', () => {
-    render(<Probe.Root />)
+    render(<Probe />)
     withAct(() => {
       Probe.call({ id: 'a' })
       Probe.call({ id: 'b' })

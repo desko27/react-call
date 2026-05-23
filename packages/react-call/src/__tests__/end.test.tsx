@@ -8,14 +8,14 @@ describe('end()', () => {
   describe('inside', () => {
     test('removes one', async () => {
       const user = userEvent.setup()
-      render(<Confirm.Root />)
+      render(<Confirm />)
       withAct(() => Confirm.call({ message: 'foo' }))
       await user.click(screen.getByRole('button', { name: /no/i }))
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
     })
     test('removes all', async () => {
       const user = userEvent.setup()
-      render(<Confirm.Root />)
+      render(<Confirm />)
       const messages = ['foo', 'bar', 'xyz', '123', '456']
       withAct(() => {
         for (const message of messages) Confirm.call({ message })
@@ -31,7 +31,7 @@ describe('end()', () => {
     describe('removes only specific target', () => {
       test('first one', async () => {
         const user = userEvent.setup()
-        render(<Confirm.Root />)
+        render(<Confirm />)
         withAct(() => {
           Confirm.call({ message: 'first one' })
           Confirm.call({ message: 'middle one' })
@@ -51,7 +51,7 @@ describe('end()', () => {
       })
       test('middle one', async () => {
         const user = userEvent.setup()
-        render(<Confirm.Root />)
+        render(<Confirm />)
         withAct(() => {
           Confirm.call({ message: 'first one' })
           Confirm.call({ message: 'middle one' })
@@ -71,7 +71,7 @@ describe('end()', () => {
       })
       test('last one', async () => {
         const user = userEvent.setup()
-        render(<Confirm.Root />)
+        render(<Confirm />)
         withAct(() => {
           Confirm.call({ message: 'first one' })
           Confirm.call({ message: 'middle one' })
@@ -93,7 +93,7 @@ describe('end()', () => {
   })
   describe('outside', () => {
     test('removes one', async () => {
-      render(<Confirm.Root />)
+      render(<Confirm />)
       const promise = withAct(() => Confirm.call({ message: 'foo' }))
       withAct(() => Confirm.end(promise, false))
       await waitFor(() => {
@@ -101,7 +101,7 @@ describe('end()', () => {
       })
     })
     test('removes all', async () => {
-      render(<Confirm.Root />)
+      render(<Confirm />)
       const messages = ['foo', 'bar', 'xyz', '123', '456']
       withAct(() => {
         for (const message of messages) Confirm.call({ message })
@@ -113,7 +113,7 @@ describe('end()', () => {
     })
     describe('removes only specific target', () => {
       test('first one', async () => {
-        render(<Confirm.Root />)
+        render(<Confirm />)
         let firstPromise!: Promise<boolean>
         withAct(() => {
           firstPromise = Confirm.call({ message: 'first one' })
@@ -134,7 +134,7 @@ describe('end()', () => {
         ).toBeInTheDocument()
       })
       test('middle one', async () => {
-        render(<Confirm.Root />)
+        render(<Confirm />)
         let middlePromise!: Promise<boolean>
         withAct(() => {
           Confirm.call({ message: 'first one' })
@@ -155,7 +155,7 @@ describe('end()', () => {
         ).toBeInTheDocument()
       })
       test('last one', async () => {
-        render(<Confirm.Root />)
+        render(<Confirm />)
         let lastPromise!: Promise<boolean>
         withAct(() => {
           Confirm.call({ message: 'first one' })

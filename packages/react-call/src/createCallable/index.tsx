@@ -158,7 +158,7 @@ export function createCallable<Props = void, Response = void, RootProps = {}>(
 
   // ADR-0010: the consumer's `Confirm.displayName = 'Confirm'` triggers
   // registry adoption synchronously during module evaluation, before
-  // any render of <Confirm.Root />. First assignment wins; later writes
+  // any render of <Confirm />. First assignment wins; later writes
   // are ignored (renaming displayName mid-lifecycle is not supported).
   // ADR-0011: the registry is meaningful only in dev (HMR re-evaluates
   // the consumer's module); this whole block is dead code in the
