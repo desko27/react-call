@@ -15,6 +15,15 @@ export type CallItemPublicProperties<_, Response> = {
   ended: boolean
 }
 
+// React's useSyncExternalStore compares snapshots with Object.is and
+// throws "The result of getServerSnapshot should be cached to avoid an
+// infinite loop" if the function returns a fresh value every call.
+// A single per-store stable reference is enough — on the server the
+// stack is always empty (no `call()` can run before hydration), and
+// hydration switches the hook to `getSnapshot` immediately. Surfaced
+// by the apps/nextjs playground; Vite CSR never hit this path.
+const EMPTY_STACK: Stack<unknown, unknown> = []
+
 export function createStackStore<Props, Response>() {
   let nextKey = 0
   let stack: Stack<Props, Response> = []
@@ -56,7 +65,7 @@ export function createStackStore<Props, Response>() {
       }
     },
     getSnapshot: () => stack,
-    getServerSnapshot: () => [],
+    getServerSnapshot: () => EMPTY_STACK as Stack<Props, Response>,
     getListenersSize: () => listeners.size,
     getUpsertPromise: () => upsertPromise,
     setUpsertPromise: (p: Promise<Response> | null) => {
