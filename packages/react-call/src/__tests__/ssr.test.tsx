@@ -1,5 +1,6 @@
 import { renderToString } from 'react-dom/server'
 import { describe, expect, test } from 'vitest'
+import { createStackStore } from '../createCallable/store'
 import { Confirm } from './shared/Confirm'
 
 // React Native + Next.js / RSC consumers care that the lib's Root component
@@ -22,5 +23,19 @@ describe('SSR — getServerSnapshot', () => {
     // the markup being unconditionally empty.
     expect(renderToString(<Confirm />)).toBe('')
     expect(renderToString(<Confirm />)).toBe('')
+  })
+
+  test('getServerSnapshot returns a stable reference across calls', () => {
+    // React's useSyncExternalStore compares snapshots with Object.is
+    // and throws "The result of getServerSnapshot should be cached to
+    // avoid an infinite loop" if a fresh value comes back each call.
+    // The output array would be `[]` in both cases (so a renderToString
+    // diff would still pass), but the reference must be stable. The
+    // apps/nextjs playground surfaced this when the unstable variant
+    // shipped briefly in 2.0.0-next.1.
+    const store = createStackStore<void, void>()
+    expect(
+      Object.is(store.getServerSnapshot(), store.getServerSnapshot()),
+    ).toBe(true)
   })
 })

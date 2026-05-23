@@ -6,6 +6,12 @@
       "runtimeExecutable": "pnpm",
       "runtimeArgs": ["--filter", "vite-playground", "run", "dev"],
       "port": 5174
+    },
+    {
+      "name": "nextjs-playground",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "nextjs-playground", "run", "dev"],
+      "port": 3001
     }
   ]
 }

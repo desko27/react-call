@@ -80,6 +80,18 @@
           }
         }
       }
+    },
+    {
+      "includes": [
+        "**/apps/nextjs/app/**/{page,layout,template,loading,error,not-found,default,route}.{ts,tsx}"
+      ],
+      "linter": {
+        "rules": {
+          "style": {
+            "noDefaultExport": "off"
+          }
+        }
+      }
     }
   ]
 }
