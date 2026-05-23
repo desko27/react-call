@@ -7,14 +7,14 @@ import type {
   CallContext,
 } from './types.public'
 
-// HMR persistence registry (see ADR-0009). Keyed by UserComponent name —
-// when the consumer's module is re-evaluated by Vite's HMR, the second
-// invocation of createCallable() with the same named component reuses
-// the existing store, so active calls (open dialogs, in-flight upserts)
-// survive across saves. Components with no name (inline anonymous
-// arrows) get a fresh store every HMR cycle — Fast Refresh still works
-// (sibling state preserved), but the open dialog resets.
-//
+// HMR persistence registry (see ADR-0009 and ADR-0010). Keyed by the
+// `displayName` the consumer assigns on the returned Callable. When
+// Vite's HMR re-evaluates the consumer's module, the new createCallable
+// runs first (with a fresh local store), then the consumer's
+// `Confirm.displayName = 'Confirm'` setter fires synchronously and
+// adopts the previously-registered store from this map. Callables
+// without a displayName assignment never register — Fast Refresh still
+// works, but the open dialog resets on save.
 const storeRegistry = new Map<
   string,
   // biome-ignore lint/suspicious/noExplicitAny: registry values are heterogeneous by design
@@ -25,30 +25,24 @@ export function createCallable<Props = void, Response = void, RootProps = {}>(
   UserComponent: UserComponentType<Props, Response, RootProps>,
   unmountingDelay = 0,
 ): Callable<Props, Response, RootProps> {
-  const hmrKey = UserComponent.displayName ?? UserComponent.name
-  const $store = (() => {
-    if (hmrKey) {
-      const existing = storeRegistry.get(hmrKey)
-      if (existing)
-        return existing as ReturnType<typeof createStackStore<Props, Response>>
-      const fresh = createStackStore<Props, Response>()
-      storeRegistry.set(hmrKey, fresh)
-      return fresh
-    }
-    return createStackStore<Props, Response>()
-  })()
+  const storeRef: {
+    current: ReturnType<typeof createStackStore<Props, Response>>
+  } = { current: createStackStore<Props, Response>() }
 
   const createEnd =
     (promise: Promise<Response> | null) => (response: Response) => {
-      $store.set(promise, (call) => {
+      storeRef.current.set(promise, (call) => {
         call.resolve(response)
         return { ...call, ended: true }
       })
-      globalThis.setTimeout(() => $store.remove(promise), unmountingDelay)
+      globalThis.setTimeout(
+        () => storeRef.current.remove(promise),
+        unmountingDelay,
+      )
     }
 
   const assertSingleRoot = () => {
-    const listenersSize = $store.getListenersSize()
+    const listenersSize = storeRef.current.getListenersSize()
     if (!listenersSize) throw new Error('No <Root> found!')
     if (listenersSize > 1)
       throw new Error('Multiple instances of <Root> found!')
@@ -62,7 +56,7 @@ export function createCallable<Props = void, Response = void, RootProps = {}>(
       resolve = res
     })
 
-    $store.add({
+    storeRef.current.add({
       props,
       end: createEnd(promise),
       ended: false,
@@ -76,9 +70,9 @@ export function createCallable<Props = void, Response = void, RootProps = {}>(
   const upsert: Callable<Props, Response, RootProps>['upsert'] = (props) => {
     assertSingleRoot()
 
-    const existing = $store.getUpsertPromise()
+    const existing = storeRef.current.getUpsertPromise()
     if (existing) {
-      $store.set(existing, (c) => ({ ...c, props }))
+      storeRef.current.set(existing, (c) => ({ ...c, props }))
       return existing
     }
 
@@ -86,12 +80,12 @@ export function createCallable<Props = void, Response = void, RootProps = {}>(
     const promise = new Promise<Response>((res) => {
       resolve = res
     })
-    $store.setUpsertPromise(promise)
+    storeRef.current.setUpsertPromise(promise)
 
-    $store.add({
+    storeRef.current.add({
       props,
       end: (response: Response) => {
-        $store.setUpsertPromise(null)
+        storeRef.current.setUpsertPromise(null)
         createEnd(promise)(response)
       },
       ended: false,
@@ -109,8 +103,8 @@ export function createCallable<Props = void, Response = void, RootProps = {}>(
     const promise = targeted ? args[0] : null
     const response = targeted ? args[1] : args[0]
 
-    if (!targeted || promise === $store.getUpsertPromise())
-      $store.setUpsertPromise(null)
+    if (!targeted || promise === storeRef.current.getUpsertPromise())
+      storeRef.current.setUpsertPromise(null)
 
     return createEnd(promise)(response)
   }
@@ -119,7 +113,7 @@ export function createCallable<Props = void, Response = void, RootProps = {}>(
     ...args: [Promise<Response>, Partial<Props>] | [Partial<Props>]
   ) => {
     const targeted = args.length === 2
-    $store.set(targeted ? args[0] : null, (c) => ({
+    storeRef.current.set(targeted ? args[0] : null, (c) => ({
       ...c,
       props: { ...c.props, ...(targeted ? args[1] : args[0]) },
     }))
@@ -127,9 +121,9 @@ export function createCallable<Props = void, Response = void, RootProps = {}>(
 
   const Root: FunctionComponent<RootProps> = function Root(rootProps) {
     return useSyncExternalStore(
-      $store.subscribe,
-      $store.getSnapshot,
-      $store.getServerSnapshot,
+      storeRef.current.subscribe,
+      storeRef.current.getSnapshot,
+      storeRef.current.getServerSnapshot,
     ).map(({ props, key, end: callEnd, ended }, index, stack) => (
       <UserComponent
         {...props}
@@ -148,11 +142,39 @@ export function createCallable<Props = void, Response = void, RootProps = {}>(
     ))
   }
 
-  return Object.assign(Root, {
+  const callable = Object.assign(Root, {
     Root,
     call,
     upsert,
     end,
     update,
   })
+
+  // ADR-0010: the consumer's `Confirm.displayName = 'Confirm'` triggers
+  // registry adoption synchronously during module evaluation, before
+  // any render of <Confirm.Root />. First assignment wins; later writes
+  // are ignored (renaming displayName mid-lifecycle is not supported).
+  let displayName: string | undefined
+  let registered = false
+  Object.defineProperty(callable, 'displayName', {
+    configurable: true,
+    enumerable: true,
+    get: () => displayName,
+    set: (value: string | undefined) => {
+      if (registered) return
+      displayName = value
+      if (!value) return
+      registered = true
+      const existing = storeRegistry.get(value)
+      if (existing) {
+        storeRef.current = existing as ReturnType<
+          typeof createStackStore<Props, Response>
+        >
+      } else {
+        storeRegistry.set(value, storeRef.current)
+      }
+    },
+  })
+
+  return callable
 }
