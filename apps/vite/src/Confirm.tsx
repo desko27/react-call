@@ -1,10 +1,10 @@
 import { createCallable } from 'react-call'
 
-// ADR-0010: assigning `Confirm.displayName` is what makes the HMR
-// persistence registry key off this callable. Edit the JSX below while
-// the dialog is open: it should hot-update IN PLACE without the dialog
-// disappearing. Remove the `displayName` line to see the open dialog
-// reset on save (Fast Refresh still works, only persistence is lost).
+// ADR-0012: the `react-call/vite` plugin enabled in vite.config.ts
+// auto-injects `Confirm.displayName = 'Confirm'` at module eval time,
+// so HMR persistence works without the manual line that ADR-0010 would
+// otherwise require. Edit the JSX below while the dialog is open: it
+// should hot-update IN PLACE without the dialog disappearing.
 
 export const Confirm = createCallable<{ message: string }, boolean>(
   ({ call, message }) => (
@@ -30,4 +30,3 @@ export const Confirm = createCallable<{ message: string }, boolean>(
     </div>
   ),
 )
-Confirm.displayName = 'Confirm'
