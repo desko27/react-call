@@ -20,7 +20,15 @@ const copyDtsToCts = {
 }
 
 export default defineConfig({
-  plugins: [react(), dts({ rollupTypes: true }), copyDtsToCts],
+  plugins: [
+    react(),
+    dts({
+      bundleTypes: true,
+      insertTypesEntry: true,
+      exclude: ['src/**/*.test.ts', 'src/**/*.test.tsx', 'src/__tests__/**'],
+    }),
+    copyDtsToCts,
+  ],
   build: {
     copyPublicDir: false,
     lib: {

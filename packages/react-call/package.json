@@ -45,6 +45,7 @@
     }
   ],
   "devDependencies": {
+    "@microsoft/api-extractor": "^7.58.7",
     "@size-limit/preset-small-lib": "^12.1.0",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
@@ -57,7 +58,7 @@
     "size-limit": "^12.1.0",
     "typescript": "^6.0.3",
     "vite": "^8.0.14",
-    "vite-plugin-dts": "^4.5.4"
+    "vite-plugin-dts": "^5.0.1"
   },
   "peerDependencies": {
     "react": ">=18"
