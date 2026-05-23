@@ -4,7 +4,7 @@ import type * as ReactCall from '../../types.public'
 
 type Props = { message: string }
 
-const ConfirmComponent: ReactCall.UserComponent<Props, boolean, {}> = ({
+export const ConfirmComponent: ReactCall.UserComponent<Props, boolean, {}> = ({
   call,
   message,
 }) => {
