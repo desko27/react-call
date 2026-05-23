@@ -4,19 +4,22 @@ import { createCallable } from '../createCallable'
 import type * as ReactCall from '../types.public'
 import { withAct } from './shared/act'
 
-// Each createCallable() invocation builds an independent store (the
-// closure captures fresh nextKey/stack/listeners/upsertPromise). This
-// invariant is implicit in the factory pattern but never asserted — and
-// is the difference between "two dialogs in an app" working and not.
-// These tests pin it.
+// Each createCallable() invocation builds an independent store. This
+// invariant is implicit in the factory pattern but never asserted —
+// and is the difference between "two dialogs in an app" working and
+// silently bleeding into each other.
+//
+// Inline anonymous arrows are used intentionally so the HMR-persistence
+// registry (see ADR-0009) does NOT key them together: a registered
+// component name would collapse the two instances into one shared
+// store, which is correct behaviour for HMR but the opposite of what
+// this test is meant to exercise.
 
 type Props = { message: string }
 
-const makeDialogCallable = (instanceLabel: string) => {
-  const Component: ReactCall.UserComponent<Props, void, {}> = ({
-    call,
-    message,
-  }) => (
+const dialog =
+  (instanceLabel: string): ReactCall.UserComponent<Props, void, {}> =>
+  ({ call, message }) => (
     <div
       role="dialog"
       aria-label={message}
@@ -27,13 +30,11 @@ const makeDialogCallable = (instanceLabel: string) => {
       </button>
     </div>
   )
-  return createCallable(Component)
-}
 
 describe('Multiple createCallable instances are independent', () => {
   test('a call on instance A renders only inside A.Root, not B.Root', () => {
-    const A = makeDialogCallable('a')
-    const B = makeDialogCallable('b')
+    const A = createCallable(dialog('a'))
+    const B = createCallable(dialog('b'))
     render(
       <>
         <A.Root />
@@ -48,8 +49,8 @@ describe('Multiple createCallable instances are independent', () => {
   })
 
   test('each instance maintains its own independent stack', () => {
-    const A = makeDialogCallable('a')
-    const B = makeDialogCallable('b')
+    const A = createCallable(dialog('a'))
+    const B = createCallable(dialog('b'))
     render(
       <>
         <A.Root />
@@ -64,14 +65,13 @@ describe('Multiple createCallable instances are independent', () => {
 
     expect(screen.getByTestId('dialog-a-a-only')).toBeInTheDocument()
     expect(screen.getByTestId('dialog-b-b-only')).toBeInTheDocument()
-    // Crossed lookups must miss.
     expect(screen.queryByTestId('dialog-b-a-only')).not.toBeInTheDocument()
     expect(screen.queryByTestId('dialog-a-b-only')).not.toBeInTheDocument()
   })
 
   test('B.end() does not touch A', async () => {
-    const A = makeDialogCallable('a')
-    const B = makeDialogCallable('b')
+    const A = createCallable(dialog('a'))
+    const B = createCallable(dialog('b'))
     render(
       <>
         <A.Root />
@@ -93,8 +93,8 @@ describe('Multiple createCallable instances are independent', () => {
   })
 
   test('upsert state is per-instance: A.upsert returns its own promise, not shared with B', () => {
-    const A = makeDialogCallable('a')
-    const B = makeDialogCallable('b')
+    const A = createCallable(dialog('a'))
+    const B = createCallable(dialog('b'))
     render(
       <>
         <A.Root />
@@ -107,10 +107,8 @@ describe('Multiple createCallable instances are independent', () => {
 
     expect(pa).not.toBe(pb)
 
-    // A second upsert on A returns A's same promise (per-instance upsert state).
     const pa2 = withAct(() => A.upsert({ message: 'a2' }))
     expect(pa2).toBe(pa)
-    // B's upsert state is independent — re-upserting on B returns B's promise.
     const pb2 = withAct(() => B.upsert({ message: 'b2' }))
     expect(pb2).toBe(pb)
     expect(pb2).not.toBe(pa2)

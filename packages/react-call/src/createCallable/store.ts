@@ -15,9 +15,10 @@ export type CallItemPublicProperties<_, Response> = {
   ended: boolean
 }
 
-export function createStackStore<Props, Response>(onReset?: () => void) {
+export function createStackStore<Props, Response>() {
   let nextKey = 0
   let stack: Stack<Props, Response> = []
+  let upsertPromise: Promise<Response> | null = null
   const listeners: Set<Listener<Props, Response>> = new Set()
 
   const emitChange = () => {
@@ -50,12 +51,16 @@ export function createStackStore<Props, Response>(onReset?: () => void) {
         if (!listeners.size) {
           nextKey = 0
           stack = []
-          onReset?.()
+          upsertPromise = null
         }
       }
     },
     getSnapshot: () => stack,
     getServerSnapshot: () => [],
     getListenersSize: () => listeners.size,
+    getUpsertPromise: () => upsertPromise,
+    setUpsertPromise: (p: Promise<Response> | null) => {
+      upsertPromise = p
+    },
   }
 }

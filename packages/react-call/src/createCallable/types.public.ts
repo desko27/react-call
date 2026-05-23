@@ -40,14 +40,21 @@ export type UserComponent<Props, Response, RootProps> = FunctionComponent<
 >
 
 /**
- * What createCallable returns
+ * What createCallable returns.
+ *
+ * The Callable is the Root component itself (so it can be used directly
+ * as `<Confirm />` in JSX, or via `<Confirm.Root />` for backwards-compat —
+ * `Confirm.Root === Confirm`). Imperative methods (`call`, `upsert`, `end`,
+ * `update`) are properties on the same function. This dual shape makes the
+ * export Fast-Refresh-compatible under vite-plugin-react. See ADR-0009.
  */
-export type Callable<Props, Response, RootProps> = {
-  Root: FunctionComponent<RootProps>
-  call: CallFunction<Props, Response>
-  upsert: UpsertFunction<Props, Response>
-  end: ((promise: Promise<Response>, response: Response) => void) &
-    ((response: Response) => void)
-  update: ((promise: Promise<Response>, props: Partial<Props>) => void) &
-    ((props: Partial<Props>) => void)
-}
+export type Callable<Props, Response, RootProps> =
+  FunctionComponent<RootProps> & {
+    Root: FunctionComponent<RootProps>
+    call: CallFunction<Props, Response>
+    upsert: UpsertFunction<Props, Response>
+    end: ((promise: Promise<Response>, response: Response) => void) &
+      ((response: Response) => void)
+    update: ((promise: Promise<Response>, props: Partial<Props>) => void) &
+      ((props: Partial<Props>) => void)
+  }
