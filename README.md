@@ -260,6 +260,29 @@ You may want to use Root props if you need to:
 - Use something that is availble in Root's parent
 - Update your active call components on data changes
 
+# Hot reload (HMR)
+
+`createCallable` is Fast Refresh friendly — edits to your callable's source hot-update in place without a full page reload.
+
+If you want the **open dialog to survive across saves** of its own source, give the UserComponent a name:
+
+```diff
+- export const Confirm = createCallable(({ call, message }) => (
+-   <div role="dialog">
+-     {/* ... */}
+-   </div>
+- ))
++ export const Confirm = createCallable(function ConfirmDialog({ call, message }) {
++   return (
++     <div role="dialog">
++       {/* ... */}
++     </div>
++   )
++ })
+```
+
+Inline anonymous arrows still HMR — only the dialog you're editing resets; sibling state in the rest of the page is preserved either way.
+
 # FAQ
 
 ### What if more than one call is active?
