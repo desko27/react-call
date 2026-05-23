@@ -78,10 +78,10 @@ Along with your props, there is a special `call` prop containing the `end()` met
 
 ## 2. 📡 Rooting
 
-`<Root>` is what listens to every single call and renders it. Place it anywhere that is visible when making your calls, for instance in `App.tsx`:
+The Callable itself is the mounting point — it listens to every call and renders the active ones. Place it anywhere visible when making calls, for instance in `App.tsx`:
 
 ```diff
-+ <Confirm.Root />
++ <Confirm />
 //  ^-- it will render active calls
 ```
 
@@ -109,13 +109,13 @@ const Confirm = createCallable(
   lazy(() => import('./Confirm')), // default export required
 )
 
-// 2) Place Root inside a Suspense boundary
+// 2) Place the Callable inside a Suspense boundary
 export function App() {
   return (
     <>
       {/* Other app UI */}
       <Suspense fallback={null}>
-        <Confirm.Root />
+        <Confirm />
       </Suspense>
     </>
   )
@@ -127,7 +127,7 @@ const accepted = await Confirm.call({ message: 'Continue?' })
 
 Notes:
 - Make sure the lazily imported file has a default export (React.lazy requirement).
-- Wrap `<Confirm.Root />` (or an ancestor) in `<Suspense>` to handle the loading state.
+- Wrap `<Confirm />` (or an ancestor) in `<Suspense>` to handle the loading state.
 - The lazy component is split into a separate chunk and downloaded only when first called.
 
 # Advanced usage
@@ -249,7 +249,7 @@ export const Confirm = createCallable<
 ```
 
 ```diff
-<Confirm.Root
+<Confirm
 + userName='John Doe'
 />
 ```
@@ -259,6 +259,39 @@ You may want to use Root props if you need to:
 - Share the same piece of data to every call
 - Use something that is availble in Root's parent
 - Update your active call components on data changes
+
+# Hot reload (HMR)
+
+`createCallable` is Fast Refresh friendly — edits to your callable's source hot-update in place without a full page reload.
+
+If you want the **open dialog to survive across saves** of its own source, set a `displayName` on the callable:
+
+```diff
+  export const Confirm = createCallable(({ call, message }) => (
+    <div role="dialog">
+      {/* ... */}
+    </div>
+  ))
++ Confirm.displayName = 'Confirm'
+```
+
+Callables without a `displayName` still HMR — only the dialog you're editing resets; sibling state in the rest of the page is preserved either way.
+
+## Vite plugin (optional)
+
+If you're on Vite, the bundled plugin auto-injects the `displayName` line so you don't have to write it:
+
+```ts
+// vite.config.ts
+import react from '@vitejs/plugin-react'
+import reactCall from 'react-call/vite'
+
+export default {
+  plugins: [react(), reactCall()],
+}
+```
+
+With the plugin enabled, every top-level `(export) const X = createCallable(...)` gets `X.displayName = 'X'` appended at dev time only — no source change, no production overhead.
 
 # FAQ
 

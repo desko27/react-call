@@ -134,8 +134,8 @@ dist
 # system
 .DS_Store
 
-# monorepo
-.turbo
+# typecheck composite emit (see tsconfig.base.json)
+.tsbuild
 
 # vitest browser mode
 __screenshots__

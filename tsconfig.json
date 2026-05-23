@@ -1,0 +1,4 @@
+{
+  "files": [],
+  "references": [{ "path": "packages/react-call" }, { "path": "sites/demo" }]
+}

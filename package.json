@@ -1,29 +1,34 @@
 {
   "private": true,
   "scripts": {
-    "dev": "turbo run dev",
-    "build": "turbo run build",
+    "build": "pnpm -r run build",
     "lint": "biome check .",
-    "check:types": "turbo run check:types",
-    "test": "turbo run test",
-    "test:dev": "npm run test:dev -w tests",
-    "bundlesize": "turbo run bundlesize",
-    "add-changeset": "npx changeset",
-    "bump-version": "npx changeset version",
-    "release": "turbo run build --filter=react-call && npx changeset publish",
-    "phoenix": "rm -rf node_modules && npm i",
-    "prepare": "husky"
+    "check:types": "tsc -b",
+    "test": "vitest run --project unit",
+    "test:dev": "vitest --project unit",
+    "test:dist": "vitest run --project dist",
+    "dist-lint": "publint packages/react-call --strict && attw --pack packages/react-call",
+    "dev": "pnpm --filter demo run dev",
+    "size": "pnpm --filter react-call run size",
+    "add-changeset": "changeset",
+    "bump-version": "changeset version",
+    "release": "changeset publish",
+    "phoenix": "rm -rf node_modules **/node_modules && pnpm install",
+    "prepare": "lefthook install"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.9.4",
-    "@changesets/cli": "^2.29.5",
-    "husky": "^9.1.7",
-    "turbo": "latest"
+    "@arethetypeswrong/cli": "^0.18.2",
+    "@biomejs/biome": "^2.4.15",
+    "@changesets/cli": "^2.31.0",
+    "happy-dom": "^20.9.0",
+    "lefthook": "^2.1.8",
+    "publint": "^0.3.21",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.7"
   },
-  "workspaces": [
-    "demo",
-    "react-call",
-    "tests"
-  ],
-  "packageManager": "npm@11.1.0"
+  "packageManager": "pnpm@11.1.3",
+  "engines": {
+    "node": ">=22",
+    "pnpm": ">=11 <12"
+  }
 }

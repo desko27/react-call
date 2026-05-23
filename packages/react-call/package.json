@@ -1,0 +1,93 @@
+{
+  "name": "react-call",
+  "version": "1.9.0-dev.0",
+  "description": "Call your React components",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/desko27/react-call.git"
+  },
+  "author": "Ismael Ramon <desko27@gmail.com> (https://desko.dev)",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "files": [
+    "dist"
+  ],
+  "module": "./dist/main.js",
+  "main": "./dist/main.cjs",
+  "types": "./dist/main.d.ts",
+  "typesVersions": {
+    "*": {
+      "vite": [
+        "./dist/vite.d.ts"
+      ]
+    }
+  },
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/main.d.ts",
+        "default": "./dist/main.js"
+      },
+      "require": {
+        "types": "./dist/main.d.cts",
+        "default": "./dist/main.cjs"
+      }
+    },
+    "./vite": {
+      "import": {
+        "types": "./dist/vite.d.ts",
+        "default": "./dist/vite.js"
+      },
+      "require": {
+        "types": "./dist/vite.d.cts",
+        "default": "./dist/vite.cjs"
+      }
+    },
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "vite build",
+    "check:types": "tsc --noEmit",
+    "size": "size-limit"
+  },
+  "size-limit": [
+    {
+      "path": "dist/main.js",
+      "limit": "1 KB"
+    },
+    {
+      "path": "dist/main.cjs",
+      "limit": "1 KB"
+    }
+  ],
+  "devDependencies": {
+    "@microsoft/api-extractor": "^7.58.7",
+    "@size-limit/preset-small-lib": "^12.1.0",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/node": "^25.9.1",
+    "@types/react": "^19.2.15",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.2",
+    "react-dom": "^19.2.6",
+    "size-limit": "^12.1.0",
+    "typescript": "^6.0.3",
+    "vite": "^8.0.14",
+    "vite-plugin-dts": "^5.0.1"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "vite": ">=8"
+  },
+  "peerDependenciesMeta": {
+    "vite": {
+      "optional": true
+    }
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  }
+}

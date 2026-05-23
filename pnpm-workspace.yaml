@@ -1,0 +1,13 @@
+packages:
+  - "packages/*"
+  - "sites/*"
+  - "apps/*"
+
+allowBuilds:
+  "@biomejs/biome": true
+  esbuild: true
+  iltorb: false
+  lefthook: true
+
+overrides:
+  fflate: "0.8.2"
