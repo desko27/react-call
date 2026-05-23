@@ -1,6 +1,7 @@
 packages:
   - "packages/*"
   - "sites/*"
+  - "apps/*"
 
 allowBuilds:
   "@biomejs/biome": true

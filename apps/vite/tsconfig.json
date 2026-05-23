@@ -1,0 +1,11 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "noEmit": true,
+    "paths": {
+      "react-call": ["../../packages/react-call/src/main.ts"]
+    }
+  },
+  "include": ["src"],
+  "references": [{ "path": "../../packages/react-call" }]
+}
