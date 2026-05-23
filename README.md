@@ -277,6 +277,22 @@ If you want the **open dialog to survive across saves** of its own source, set a
 
 Callables without a `displayName` still HMR — only the dialog you're editing resets; sibling state in the rest of the page is preserved either way.
 
+## Vite plugin (optional)
+
+If you're on Vite, the bundled plugin auto-injects the `displayName` line so you don't have to write it:
+
+```ts
+// vite.config.ts
+import react from '@vitejs/plugin-react'
+import reactCall from 'react-call/vite'
+
+export default {
+  plugins: [react(), reactCall()],
+}
+```
+
+With the plugin enabled, every top-level `(export) const X = createCallable(...)` gets `X.displayName = 'X'` appended at dev time only — no source change, no production overhead.
+
 # FAQ
 
 ### What if more than one call is active?
