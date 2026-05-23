@@ -209,6 +209,62 @@ const showProgress = async () => {
 }
 ```
 
+## Async mutations
+
+For the common "click → run async op → close on success / stay on failure" flow, the `call` prop exposes `call.pending` and `call.mutate(payload)`. The async operation itself lives in a `mutationFn` slot you pass at `call()` time — naming and signature follow TanStack Query so the mental model is the same: `mutationFn` is the work, `mutate(payload)` triggers it, `pending` reflects in-flight state.
+
+```tsx
+type Props = { message: string }
+type Payload = { id: string }
+
+export const Confirm = createCallable<Props, boolean, Payload>(({ call, message }) => (
+  <div role="dialog">
+    <p>{message}</p>
+    <button
+      disabled={call.pending}
+      onClick={() => call.mutate({ id: 'abc' })}
+    >
+      Delete
+    </button>
+    <button onClick={() => call.end(false)}>Cancel</button>
+  </div>
+))
+
+// At the call site, supply the async work in the optional second arg:
+Confirm.call(
+  { message: 'Delete this item?' },
+  {
+    mutationFn: async (call, { id }) => {
+      try {
+        await api.delete(id)
+        call.end(true)
+        toast.success('Deleted')
+      } catch (err) {
+        toast.error(err)
+        // no end → dialog stays open, pending clears, user can retry
+      }
+    },
+  },
+)
+```
+
+The library handles the `pending` lifecycle (true while the `mutationFn` runs, false when it settles) and silently swallows any throw — your own `try/catch` inside `mutationFn` decides whether to close the dialog (`call.end(value)`) or leave it open for a retry. The mutation context (`call` inside `mutationFn`) exposes only `end` to keep the contract minimal.
+
+**Concurrency rules:**
+- Only one mutation can be in-flight per call — re-entrant `call.mutate()` while `pending` is a no-op (with a dev warning).
+- `call.end()` invoked directly (e.g. from a Cancel button) during a pending mutation wins; the still-running `mutationFn`'s eventual `call.end(value)` is a silent no-op.
+
+`upsert()` accepts the same options bag for symmetry:
+
+```tsx
+Toast.upsert(
+  { message: 'Saving…' },
+  { mutationFn: async (call, payload) => { /* … */ } },
+)
+```
+
+If your component doesn't need a payload (e.g. a confirm with no extra data), the `MutationPayload` generic defaults to `void` and `call.mutate()` takes no args.
+
 # Exit animations
 
 To animate the exit of your component when `call.end()` is run, just pass the duration of your animation in milliseconds to createCallable as a second argument:
@@ -240,7 +296,8 @@ Root props will be available to your component via `call.root` object.
 export const Confirm = createCallable<
   Props,
   Response,
-+ RootProps
++ void,        // ← MutationPayload (3rd) — pass void if you don't use mutations
++ RootProps    // ← RootProps moved to 4th in v2 (ADR-0014)
 >(({ call, message }) => (
   ...
 +   Hi {call.root.userName}!
@@ -313,12 +370,15 @@ import type { ReactCall } from 'react-call'
 
 Type | Description
 --- | ---
-ReactCall.Function<Props?, Response?> | The call() method
-ReactCall.UpsertFunction<Props?, Response?> | The upsert() method
-ReactCall.Context<Props?, Response?, RootProps?> | The call prop in UserComponent
-ReactCall.Props<Props?, Response?, RootProps?> | Your props + the call prop
-ReactCall.UserComponent<Props?, Response?, RootProps?> | What is passed to createCallable
-ReactCall.Callable<Props?, Response?, RootProps?> | What createCallable returns
+ReactCall.Function<Props?, Response?, MutationPayload?> | The call() method
+ReactCall.UpsertFunction<Props?, Response?, MutationPayload?> | The upsert() method
+ReactCall.Context<Props?, Response?, MutationPayload?, RootProps?> | The call prop in UserComponent
+ReactCall.Props<Props?, Response?, MutationPayload?, RootProps?> | Your props + the call prop
+ReactCall.UserComponent<Props?, Response?, MutationPayload?, RootProps?> | What is passed to createCallable
+ReactCall.Callable<Props?, Response?, MutationPayload?, RootProps?> | What createCallable returns
+ReactCall.CallOptions<MutationPayload?, Response?> | Optional 2nd arg of `call()` / `upsert()` (`{ mutationFn? }`)
+ReactCall.MutationContext<Response?> | The `call` arg the `mutationFn` receives (`{ end }`)
+ReactCall.MutationFunction<MutationPayload?, Response?> | Full signature of the `mutationFn` slot
 
 # Errors
 

@@ -10,10 +10,7 @@ import { withAct } from './shared/act'
 
 type Props = { id: string }
 
-const ProbeComponent: ReactCall.UserComponent<Props, void, {}> = ({
-  call,
-  id,
-}) => (
+const ProbeComponent: ReactCall.UserComponent<Props, void> = ({ call, id }) => (
   <div
     data-testid={`probe-${id}`}
     data-key={call.key}

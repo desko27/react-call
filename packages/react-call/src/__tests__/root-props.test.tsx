@@ -12,10 +12,15 @@ import { withAct } from './shared/act'
 type Props = { message: string }
 type RootProps = { userName: string }
 
-const GreeterComponent: ReactCall.UserComponent<Props, void, RootProps> = ({
-  call,
-  message,
-}) => (
+// v2 BREAKING (ADR-0014): RootProps moved from 3rd to 4th generic
+// position. `void` in the 3rd slot is the MutationPayload default for
+// callables that don't use the mutation primitive.
+const GreeterComponent: ReactCall.UserComponent<
+  Props,
+  void,
+  void,
+  RootProps
+> = ({ call, message }) => (
   <div role="dialog" aria-label={message}>
     <p>Hi {call.root.userName}!</p>
     <p>{message}</p>

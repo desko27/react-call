@@ -17,7 +17,7 @@ const UNMOUNTING_DELAY = 50
 
 type Props = { message: string }
 
-const SlowConfirmComponent: ReactCall.UserComponent<Props, boolean, {}> = ({
+const SlowConfirmComponent: ReactCall.UserComponent<Props, boolean> = ({
   call,
   message,
 }) => (

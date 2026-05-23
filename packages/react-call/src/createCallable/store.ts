@@ -1,47 +1,56 @@
 import type { Resolve } from './types.private'
+import type { MutationFunction } from './types.public'
 
-type Stack<Props, Response> = CallItem<Props, Response>[]
-type Listener<Props, Response> = (stack: Stack<Props, Response>) => void
+type Stack<Props, Response, MutationPayload> = CallItem<
+  Props,
+  Response,
+  MutationPayload
+>[]
+type Listener<Props, Response, MutationPayload> = (
+  stack: Stack<Props, Response, MutationPayload>,
+) => void
 
-type CallItem<Props, Response> = CallItemPublicProperties<Props, Response> & {
+type CallItem<Props, Response, MutationPayload> = CallItemPublicProperties<
+  Props,
+  Response,
+  MutationPayload
+> & {
   props: Props
   promise: Promise<Response>
   resolve: Resolve<Response>
+  mutationFn?: MutationFunction<MutationPayload, Response>
 }
 
-export type CallItemPublicProperties<_, Response> = {
+export type CallItemPublicProperties<_Props, Response, MutationPayload> = {
   key: string
   end: (response: Response) => void
   ended: boolean
+  pending: boolean
+  mutate: (payload: MutationPayload) => void
 }
 
-// React's useSyncExternalStore compares snapshots with Object.is and
-// throws "The result of getServerSnapshot should be cached to avoid an
-// infinite loop" if the function returns a fresh value every call.
-// A single per-store stable reference is enough — on the server the
-// stack is always empty (no `call()` can run before hydration), and
-// hydration switches the hook to `getSnapshot` immediately. Surfaced
-// by the apps/nextjs playground; Vite CSR never hit this path.
-const EMPTY_STACK: Stack<unknown, unknown> = []
+const EMPTY_STACK: Stack<unknown, unknown, unknown> = []
 
-export function createStackStore<Props, Response>() {
+export function createStackStore<Props, Response, MutationPayload = void>() {
   let nextKey = 0
-  let stack: Stack<Props, Response> = []
+  let stack: Stack<Props, Response, MutationPayload> = []
   let upsertPromise: Promise<Response> | null = null
-  const listeners: Set<Listener<Props, Response>> = new Set()
+  const listeners: Set<Listener<Props, Response, MutationPayload>> = new Set()
 
   const emitChange = () => {
     for (const listener of listeners) listener(stack)
   }
 
   return {
-    add: (call: Omit<CallItem<Props, Response>, 'key'>) => {
+    add: (call: Omit<CallItem<Props, Response, MutationPayload>, 'key'>) => {
       stack = [...stack, { ...call, key: String(nextKey++) }]
       emitChange()
     },
     set: (
       promise: Promise<Response> | null,
-      updateFn: (call: CallItem<Props, Response>) => CallItem<Props, Response>,
+      updateFn: (
+        call: CallItem<Props, Response, MutationPayload>,
+      ) => CallItem<Props, Response, MutationPayload>,
     ) => {
       stack = stack.map((call) =>
         promise && call.promise !== promise ? call : updateFn(call),
@@ -52,7 +61,7 @@ export function createStackStore<Props, Response>() {
       stack = stack.filter((c) => promise && c.promise !== promise)
       emitChange()
     },
-    subscribe: (listener: Listener<Props, Response>) => {
+    subscribe: (listener: Listener<Props, Response, MutationPayload>) => {
       listeners.add(listener)
 
       return () => {
@@ -65,7 +74,8 @@ export function createStackStore<Props, Response>() {
       }
     },
     getSnapshot: () => stack,
-    getServerSnapshot: () => EMPTY_STACK as Stack<Props, Response>,
+    getServerSnapshot: () =>
+      EMPTY_STACK as Stack<Props, Response, MutationPayload>,
     getListenersSize: () => listeners.size,
     getUpsertPromise: () => upsertPromise,
     setUpsertPromise: (p: Promise<Response> | null) => {

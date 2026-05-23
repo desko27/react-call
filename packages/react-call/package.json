@@ -54,11 +54,11 @@
   "size-limit": [
     {
       "path": "dist/main.js",
-      "limit": "1 KB"
+      "limit": "1.25 KB"
     },
     {
       "path": "dist/main.cjs",
-      "limit": "1 KB"
+      "limit": "1.25 KB"
     }
   ],
   "devDependencies": {

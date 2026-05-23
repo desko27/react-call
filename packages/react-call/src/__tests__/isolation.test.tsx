@@ -18,7 +18,7 @@ import { withAct } from './shared/act'
 type Props = { message: string }
 
 const dialog =
-  (instanceLabel: string): ReactCall.UserComponent<Props, void, {}> =>
+  (instanceLabel: string): ReactCall.UserComponent<Props, void> =>
   ({ call, message }) => (
     <div
       role="dialog"
