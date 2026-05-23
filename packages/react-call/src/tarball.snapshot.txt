@@ -3,6 +3,10 @@ dist/main.cjs
 dist/main.d.cts
 dist/main.d.ts
 dist/main.js
+dist/mutation-flow.cjs
+dist/mutation-flow.d.cts
+dist/mutation-flow.d.ts
+dist/mutation-flow.js
 dist/vite.cjs
 dist/vite.d.cts
 dist/vite.d.ts

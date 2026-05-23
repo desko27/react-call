@@ -260,6 +260,104 @@ You may want to use Root props if you need to:
 - Use something that is availble in Root's parent
 - Update your active call components on data changes
 
+# Async submission flow
+
+For dialogs that run an async operation on confirm — disable while loading,
+keep open on failure, end on success — opt into the `useMutationFlow` hook
+from the `react-call/mutation-flow` subpath. The hook manages the pending
+lifecycle and swallows throws so the dialog stays open for retry.
+
+```tsx
+import { createCallable } from 'react-call'
+import { useMutationFlow, type MutationFn } from 'react-call/mutation-flow'
+
+type Props = {
+  message: string
+  mutationFn: MutationFn<boolean>
+}
+
+export const Confirm = createCallable<Props, boolean>(
+  ({ call, message, mutationFn }) => {
+    const submit = useMutationFlow(call, mutationFn)
+    return (
+      <div role="dialog">
+        <p>{message}</p>
+        <button disabled={submit.pending} onClick={() => submit()}>
+          Yes
+        </button>
+        <button onClick={() => call.end(false)}>No</button>
+      </div>
+    )
+  },
+)
+
+// Caller scope owns the async logic; closes via `call.end`:
+await Confirm.call({
+  message: 'Delete?',
+  mutationFn: async (call) => {
+    try {
+      await api.delete(id)
+      call.end(true)
+    } catch (err) {
+      toast.error(err) // dialog stays open, pending clears
+    }
+  },
+})
+```
+
+The `mutationFn` receives a narrow view of the call — just `{ end }` — so
+it does not need to know `RootProps`. Throws are swallowed by the trigger:
+the dialog stays open, `submit.pending` returns to `false`, and the user
+can retry. The `mutationFn` decides when (if ever) to call `call.end()`.
+
+## Optional `mutationFn` with a fallback
+
+If your component should still close cleanly when no `mutationFn` was
+provided (e.g. a plain "Are you sure?" without any side effect), type the
+prop as optional and pass a third `fallback` argument to the hook. The
+type system enforces this — the fallback is required exactly when the
+`mutationFn` parameter may be undefined.
+
+```tsx
+type Props = {
+  message: string
+  mutationFn?: MutationFn<boolean>
+}
+
+export const Confirm = createCallable<Props, boolean>(
+  ({ call, message, mutationFn }) => {
+    //                                            ↓ closes with `true` if no mutationFn
+    const submit = useMutationFlow(call, mutationFn, true)
+    return (
+      <button disabled={submit.pending} onClick={() => submit()}>
+        Yes
+      </button>
+    )
+  },
+)
+```
+
+## Passing a runtime payload
+
+`submit(payload)` forwards a typed payload to the `mutationFn`. Useful
+when the same handler covers multiple buttons or carries DOM-event data.
+
+```tsx
+type Props = {
+  mutationFn: MutationFn<string, { choice: 'A' | 'B' }>
+}
+
+export const Picker = createCallable<Props, string>(({ call, mutationFn }) => {
+  const submit = useMutationFlow(call, mutationFn)
+  return (
+    <>
+      <button onClick={() => submit({ choice: 'A' })}>A</button>
+      <button onClick={() => submit({ choice: 'B' })}>B</button>
+    </>
+  )
+})
+```
+
 # Hot reload (HMR)
 
 `createCallable` is Fast Refresh friendly — edits to your callable's source hot-update in place without a full page reload.
