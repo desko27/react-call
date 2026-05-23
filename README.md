@@ -264,24 +264,18 @@ You may want to use Root props if you need to:
 
 `createCallable` is Fast Refresh friendly — edits to your callable's source hot-update in place without a full page reload.
 
-If you want the **open dialog to survive across saves** of its own source, give the UserComponent a name:
+If you want the **open dialog to survive across saves** of its own source, set a `displayName` on the callable:
 
 ```diff
-- export const Confirm = createCallable(({ call, message }) => (
--   <div role="dialog">
--     {/* ... */}
--   </div>
-- ))
-+ export const Confirm = createCallable(function ConfirmDialog({ call, message }) {
-+   return (
-+     <div role="dialog">
-+       {/* ... */}
-+     </div>
-+   )
-+ })
+  export const Confirm = createCallable(({ call, message }) => (
+    <div role="dialog">
+      {/* ... */}
+    </div>
+  ))
++ Confirm.displayName = 'Confirm'
 ```
 
-Inline anonymous arrows still HMR — only the dialog you're editing resets; sibling state in the rest of the page is preserved either way.
+Callables without a `displayName` still HMR — only the dialog you're editing resets; sibling state in the rest of the page is preserved either way.
 
 # FAQ
 
