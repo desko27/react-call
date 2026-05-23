@@ -346,4 +346,4 @@ Mark the file where you call `createCallable(...)` as a Client Component (the li
 export const Confirm = createCallable(...)
 ```
 
-Then `<Confirm />` mounts cleanly from any Server Component (e.g. `app/layout.tsx`). Verified end-to-end against the Next.js 15 App Router in [`apps/nextjs/`](./apps/nextjs/).
+Then `<Confirm />` mounts cleanly from any Server Component (e.g. `app/layout.tsx`).
