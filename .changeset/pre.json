@@ -4,5 +4,9 @@
   "initialVersions": {
     "react-call": "1.9.0-dev.0"
   },
-  "changesets": []
+  "changesets": [
+    "breaking-call-context-cleanup",
+    "feat-hmr-and-deprecations",
+    "feat-vite-plugin"
+  ]
 }

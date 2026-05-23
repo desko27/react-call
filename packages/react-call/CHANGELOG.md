@@ -1,5 +1,57 @@
 # react-call
 
+## 2.0.0-next.1
+
+### Major Changes
+
+- a64c1a3: Breaking changes for 2.0:
+
+  - **`"Multiple instances of <Root> found!"` now fires at `call()` time instead of at Root mount time** (ADR-0001). This makes the error compatible with `React.lazy`-wrapped Roots inside `<Suspense>` boundaries, React StrictMode's double-invoke, and HMR re-mounts — all patterns that briefly create transient second listeners that aren't real consumer errors. Migration: any test of the form `expect(() => render(<><Root /><Root /></>)).toThrow(...)` should now assert the throw at the `call()` site instead.
+
+  - **`CallContext` (the `call` prop your UserComponent receives) no longer leaks three internal fields** that 1.8.x exposed by accident: `promise`, `resolve`, and `isUpsert`. The public surface is now exactly `{ key, end, ended, root, index, stackSize }`. Migration:
+    - Replace `call.resolve(value)` with `call.end(value)`.
+    - `call.promise` and `call.isUpsert` have no public-API equivalent — they were never meant to be touched.
+
+### Minor Changes
+
+- a64c1a3: - **HMR persistence under Vite Fast Refresh.** `createCallable` now keeps active calls (open dialogs, in-flight upserts) alive across saves of the consumer's module. Persistence is gated on a `displayName` set on the returned Callable:
+
+  ```tsx
+  export const Confirm = createCallable((props) => {
+    /* ... */
+  });
+  Confirm.displayName = "Confirm";
+  ```
+
+  Callables without a `displayName` still HMR — only the dialog being edited resets. The new [`react-call/vite`](#) plugin automates the `displayName` assignment.
+
+  - **`Callable.Root` is deprecated** (no removal date). Both `<Confirm />` and `<Confirm.Root />` mount the same component since the Callable IS its own Root component. The deprecation is marked via JSDoc on the type, so editors surface a strikethrough; the property keeps working forever for backwards compatibility.
+
+  - **The `Callable<P, R, RP>` type widened** from `{ Root, call, upsert, end, update }` to `FunctionComponent<RP> & { Root, call, upsert, end, update }`. This is additive — existing code using `<Confirm.Root />` keeps working unchanged. A consumer who hand-constructed a `Callable<...>` literal (rare) will get a type error because their literal is not a function; the fix is to use `createCallable()`, which is the only supported way to produce a `Callable`.
+
+- a64c1a3: **New `react-call/vite` subpath export** — a Vite plugin that auto-injects `<Callable>.displayName = '<Callable>'` for every top-level `(export) const X = createCallable(...)` it finds in dev mode. With the plugin enabled, the natural form
+
+  ```tsx
+  export const Confirm = createCallable((props) => {
+    /* ... */
+  });
+  ```
+
+  keeps HMR persistence working without the manual displayName line.
+
+  Enable from `vite.config.ts`:
+
+  ```ts
+  import react from "@vitejs/plugin-react";
+  import reactCall from "react-call/vite";
+
+  export default {
+    plugins: [react(), reactCall()],
+  };
+  ```
+
+  Dev-only — no production bundle overhead. Strict detection (only top-level `(export) const` with `createCallable` imported by name from `'react-call'`, optionally renamed). Skips files that already set `displayName` manually. Requires `vite >= 8` (optional peer dependency — the runtime library itself has no Vite dependency).
+
 ## 1.8.2
 
 ### Patch Changes
