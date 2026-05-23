@@ -7,15 +7,21 @@ import type {
   CallContext,
 } from './types.public'
 
-// HMR persistence registry (see ADR-0009 and ADR-0010). Keyed by the
-// `displayName` the consumer assigns on the returned Callable. When
-// Vite's HMR re-evaluates the consumer's module, the new createCallable
-// runs first (with a fresh local store), then the consumer's
-// `Confirm.displayName = 'Confirm'` setter fires synchronously and
-// adopts the previously-registered store from this map. Callables
-// without a displayName assignment never register — Fast Refresh still
-// works, but the open dialog resets on save.
-const storeRegistry = new Map<
+// HMR persistence registry (see ADR-0009, ADR-0010, ADR-0011). Keyed
+// by the `displayName` the consumer assigns on the returned Callable.
+// When Vite's HMR re-evaluates the consumer's module, the new
+// createCallable runs first (with a fresh local store), then the
+// consumer's `Confirm.displayName = 'Confirm'` setter fires
+// synchronously and adopts the previously-registered store from this
+// map. Callables without a displayName assignment never register —
+// Fast Refresh still works, but the open dialog resets on save.
+//
+// Both this Map and the `displayName` setter below are gated on
+// `process.env.NODE_ENV !== 'production'`. With `sideEffects: false`
+// in package.json and the /* @__PURE__ */ annotation, the consumer's
+// production build substitutes NODE_ENV, dead-code-eliminates the
+// setter block, and then drops this unreferenced Map declaration.
+const storeRegistry = /* @__PURE__ */ new Map<
   string,
   // biome-ignore lint/suspicious/noExplicitAny: registry values are heterogeneous by design
   ReturnType<typeof createStackStore<any, any>>
@@ -154,27 +160,32 @@ export function createCallable<Props = void, Response = void, RootProps = {}>(
   // registry adoption synchronously during module evaluation, before
   // any render of <Confirm.Root />. First assignment wins; later writes
   // are ignored (renaming displayName mid-lifecycle is not supported).
-  let displayName: string | undefined
-  let registered = false
-  Object.defineProperty(callable, 'displayName', {
-    configurable: true,
-    enumerable: true,
-    get: () => displayName,
-    set: (value: string | undefined) => {
-      if (registered) return
-      displayName = value
-      if (!value) return
-      registered = true
-      const existing = storeRegistry.get(value)
-      if (existing) {
-        storeRef.current = existing as ReturnType<
-          typeof createStackStore<Props, Response>
-        >
-      } else {
-        storeRegistry.set(value, storeRef.current)
-      }
-    },
-  })
+  // ADR-0011: the registry is meaningful only in dev (HMR re-evaluates
+  // the consumer's module); this whole block is dead code in the
+  // consumer's production bundle.
+  if (process.env.NODE_ENV !== 'production') {
+    let displayName: string | undefined
+    let registered = false
+    Object.defineProperty(callable, 'displayName', {
+      configurable: true,
+      enumerable: true,
+      get: () => displayName,
+      set: (value: string | undefined) => {
+        if (registered) return
+        displayName = value
+        if (!value) return
+        registered = true
+        const existing = storeRegistry.get(value)
+        if (existing) {
+          storeRef.current = existing as ReturnType<
+            typeof createStackStore<Props, Response>
+          >
+        } else {
+          storeRegistry.set(value, storeRef.current)
+        }
+      },
+    })
+  }
 
   return callable
 }
