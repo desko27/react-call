@@ -8,6 +8,9 @@ allowBuilds:
   esbuild: true
   iltorb: false
   lefthook: true
+  # Next.js image optimization native binary; not needed in the
+  # apps/nextjs playground (no <Image /> usage).
+  sharp: false
 
 overrides:
   fflate: "0.8.2"
