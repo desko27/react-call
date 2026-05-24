@@ -262,129 +262,73 @@ You may want to use Root props if you need to:
 
 # Async submission flow
 
-For dialogs that run an async operation on confirm — disable while loading,
-keep open on failure, end on success — opt into the `useMutationFlow` hook
-from the `react-call/mutation-flow` subpath. The hook manages the pending
-lifecycle and swallows throws so the dialog stays open for retry.
+Use `useMutationFlow` from `react-call/mutation-flow` to wire a confirm button to an async action. The hook manages `pending` for you and **swallows throws so the dialog stays open** — the user can retry without losing their place.
 
 ```tsx
 import { createCallable } from 'react-call'
 import { useMutationFlow, type MutationFn } from 'react-call/mutation-flow'
 
-type Props = {
-  message: string
-  mutationFn: MutationFn<boolean>
-}
+type Props = { mutationFn: MutationFn<boolean> }
 
 export const Confirm = createCallable<Props, boolean>(
-  ({ call, message, mutationFn }) => {
+  ({ call, mutationFn }) => {
     const submit = useMutationFlow(call, mutationFn)
     return (
       <div role="dialog">
-        <p>{message}</p>
-        <button disabled={submit.pending} onClick={() => submit()}>
-          Yes
-        </button>
+        <button disabled={submit.pending} onClick={() => submit()}>Yes</button>
         <button onClick={() => call.end(false)}>No</button>
       </div>
     )
   },
 )
 
-// Caller scope owns the async logic; closes via `call.end`:
 await Confirm.call({
-  message: 'Delete?',
   mutationFn: async (call) => {
-    try {
-      await api.delete(id)
-      call.end(true)
-    } catch (err) {
-      toast.error(err) // dialog stays open, pending clears
-    }
+    await api.delete(id) // throws → dialog stays open, pending clears
+    call.end(true)
   },
 })
 ```
 
-The `mutationFn` receives a narrow view of the call — just `{ end }` — so
-it does not need to know `RootProps`. Throws are swallowed by the trigger:
-the dialog stays open, `submit.pending` returns to `false`, and the user
-can retry. The `mutationFn` decides when (if ever) to call `call.end()`.
+The `mutationFn` receives a narrow `{ end }` view of the call (no `RootProps` leakage) and decides when — if ever — to close.
 
-## Optional `mutationFn` with a fallback
+## Optional handlers
 
-If your component should still close cleanly when no `mutationFn` was
-provided (e.g. a plain "Are you sure?" without any side effect), type the
-prop as optional and chain `.orEnd(value)` at the submit callsite. When
-the `mutationFn` parameter may be undefined, `submit(payload)` returns
-a chain object exposing `.orEnd(value)`; when it's provided, the chain
-is a no-op and the managed flow runs as normal.
+If a caller may omit `mutationFn`, type the prop as optional and chain `.orEnd(value)` at the callsite. The chain fires only when no `mutationFn` was provided; with one, it's a no-op.
 
 ```tsx
-type Props = {
-  message: string
-  mutationFn?: MutationFn<boolean>
-}
+type Props = { mutationFn?: MutationFn<boolean> }
 
-export const Confirm = createCallable<Props, boolean>(
-  ({ call, message, mutationFn }) => {
-    const submit = useMutationFlow(call, mutationFn)
-    return (
-      //                                          ↓ closes with `true` if no mutationFn
-      <button disabled={submit.pending} onClick={() => submit().orEnd(true)}>
-        Yes
-      </button>
-    )
-  },
-)
+export const Confirm = createCallable<Props, boolean>(({ call, mutationFn }) => {
+  const submit = useMutationFlow(call, mutationFn)
+  return (
+    //                                          ↓ closes with `true` if no mutationFn
+    <button disabled={submit.pending} onClick={() => submit().orEnd(true)}>Yes</button>
+  )
+})
 ```
 
-Because the fallback is declared at the callsite (not on the hook), each
-button can chain its own value. Useful in pickers where the response is
-exactly the option the user picked:
+## Per-button payload and fallback
+
+`submit(payload)` forwards a typed payload to `mutationFn`. Because `.orEnd` lives at the callsite, sibling buttons can chain different values — useful in pickers where the response *is* the option picked:
 
 ```tsx
-type Props = {
-  mutationFn?: MutationFn<'A' | 'B', { choice: 'A' | 'B' }>
-}
+type Props = { mutationFn?: MutationFn<'A' | 'B', { choice: 'A' | 'B' }> }
 
-export const Picker = createCallable<Props, 'A' | 'B'>(
-  ({ call, mutationFn }) => {
-    const submit = useMutationFlow(call, mutationFn)
-    return (
-      <>
-        <button onClick={() => submit({ choice: 'A' }).orEnd('A')}>A</button>
-        <button onClick={() => submit({ choice: 'B' }).orEnd('B')}>B</button>
-      </>
-    )
-  },
-)
-```
-
-If you'd rather leave the call open when no `mutationFn` was provided —
-e.g. let the user dismiss via a "No" button — omit the chain entirely.
-`submit()` is a no-op in that case; the dialog stays mounted until
-something else closes it.
-
-## Passing a runtime payload
-
-`submit(payload)` forwards a typed payload to the `mutationFn`. Useful
-when the same handler covers multiple buttons or carries DOM-event data.
-
-```tsx
-type Props = {
-  mutationFn: MutationFn<string, { choice: 'A' | 'B' }>
-}
-
-export const Picker = createCallable<Props, string>(({ call, mutationFn }) => {
+export const Picker = createCallable<Props, 'A' | 'B'>(({ call, mutationFn }) => {
   const submit = useMutationFlow(call, mutationFn)
   return (
     <>
-      <button onClick={() => submit({ choice: 'A' })}>A</button>
-      <button onClick={() => submit({ choice: 'B' })}>B</button>
+      <button onClick={() => submit({ choice: 'A' }).orEnd('A')}>A</button>
+      <button onClick={() => submit({ choice: 'B' }).orEnd('B')}>B</button>
     </>
   )
 })
 ```
+
+## Leave the dialog open
+
+To let the user dismiss manually when no `mutationFn` was provided — via a "No" button, click-outside, etc. — omit `.orEnd` entirely. `submit()` is a no-op in that case; the dialog stays mounted until something else closes it.
 
 # Hot reload (HMR)
 
