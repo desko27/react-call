@@ -74,16 +74,28 @@ _Avoid_: MutationContext (would falsely suggest a separate React
 Context), Closer.
 
 **Trigger**:
-The callable function returned by `useMutationFlow`. Calling it runs the
-MutationFn (or the fallback) while exposing `trigger.pending`. One
-trigger per call to `useMutationFlow`.
+The callable function returned by `useMutationFlow`. Calling it runs
+the MutationFn while exposing `trigger.pending`. When the MutationFn
+may be undefined, the Trigger's call returns a chain object that
+exposes `.orEnd(value)` to deliver the Fallback response at the
+callsite.
 _Avoid_: Submit, runner, dispatcher.
 
 **Fallback response**:
-The Response value used when `submit()` fires but no MutationFn was
-provided. Required in `useMutationFlow`'s options object exactly when
-the MutationFn parameter is typed as possibly-undefined.
+The Response value used to close the Call when `submit()` fires but
+no MutationFn was provided. Delivered at the Trigger callsite via
+`.orEnd(value)`. Only meaningful when the MutationFn parameter is
+typed as possibly-undefined; omitting it puts the Call on the
+Manual-close path.
 _Avoid_: Default, no-op.
+
+**Manual-close path**:
+The execution branch where neither a MutationFn nor a Fallback
+response closes the Call — the consumer leaves it open intentionally
+(e.g. for a "No" button or a click-outside to handle the close). Only
+reachable when the MutationFn parameter is typed as possibly-undefined
+and the Trigger callsite omits `.orEnd`.
+_Avoid_: Stuck call, dangling call, no-op path.
 
 ## Relationships
 
@@ -96,6 +108,9 @@ _Avoid_: Default, no-op.
   **MutationCall** view of the **CallContext**, not the full one.
 - The **Fallback response** is only meaningful when the **MutationFn**
   may be absent at the **Call** site.
+- When the **MutationFn** is absent at runtime and the **Trigger**
+  callsite omits the **Fallback response**, the **Call** is on the
+  **Manual-close path**.
 
 ## Example dialogue
 
@@ -107,9 +122,10 @@ _Avoid_: Default, no-op.
 >
 > **Maintainer:** "And if the caller never provides a **MutationFn**?"
 >
-> **Designer:** "Then `submit()` closes the **Call** with the
-> **Fallback response** — but the type signature only lets you omit the
-> fallback when the **MutationFn** parameter is non-nullable."
+> **Designer:** "It depends what the **Trigger** callsite chains. With
+> `.orEnd(value)`, the **Call** closes with the **Fallback response**.
+> Without it, the **Call** is on the **Manual-close path** — open
+> until something else closes it."
 
 ## Flagged ambiguities
 
