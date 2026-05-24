@@ -81,7 +81,7 @@ _Avoid_: Submit, runner, dispatcher.
 
 **Fallback response**:
 The Response value used when `submit()` fires but no MutationFn was
-provided. Required as the 3rd argument to `useMutationFlow` exactly when
+provided. Required in `useMutationFlow`'s options object exactly when
 the MutationFn parameter is typed as possibly-undefined.
 _Avoid_: Default, no-op.
 

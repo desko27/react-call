@@ -278,7 +278,7 @@ type Props = {
 
 export const Confirm = createCallable<Props, boolean>(
   ({ call, message, mutationFn }) => {
-    const submit = useMutationFlow(call, mutationFn)
+    const submit = useMutationFlow(call, { mutationFn })
     return (
       <div role="dialog">
         <p>{message}</p>
@@ -314,9 +314,9 @@ can retry. The `mutationFn` decides when (if ever) to call `call.end()`.
 
 If your component should still close cleanly when no `mutationFn` was
 provided (e.g. a plain "Are you sure?" without any side effect), type the
-prop as optional and pass a third `fallback` argument to the hook. The
-type system enforces this — the fallback is required exactly when the
-`mutationFn` parameter may be undefined.
+prop as optional and pass a `fallback` alongside it in the options
+object. The type system enforces this — `fallback` is required exactly
+when the `mutationFn` parameter may be undefined.
 
 ```tsx
 type Props = {
@@ -326,8 +326,8 @@ type Props = {
 
 export const Confirm = createCallable<Props, boolean>(
   ({ call, message, mutationFn }) => {
-    //                                            ↓ closes with `true` if no mutationFn
-    const submit = useMutationFlow(call, mutationFn, true)
+    //                                                       ↓ closes with `true` if no mutationFn
+    const submit = useMutationFlow(call, { mutationFn, fallback: true })
     return (
       <button disabled={submit.pending} onClick={() => submit()}>
         Yes
@@ -348,7 +348,7 @@ type Props = {
 }
 
 export const Picker = createCallable<Props, string>(({ call, mutationFn }) => {
-  const submit = useMutationFlow(call, mutationFn)
+  const submit = useMutationFlow(call, { mutationFn })
   return (
     <>
       <button onClick={() => submit({ choice: 'A' })}>A</button>

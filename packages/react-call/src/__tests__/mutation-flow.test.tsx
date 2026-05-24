@@ -7,8 +7,8 @@ import type * as ReactCall from '../types.public'
 import { withAct } from './shared/act'
 
 // Component fixtures cover the two consumer patterns: a Required-handler
-// dialog (the 2-arg overload, no fallback) and an Optional-handler dialog
-// (the 3-arg overload, fallback required by the type system).
+// dialog (no fallback) and an Optional-handler dialog (fallback required
+// by the type system because mutationFn may be undefined).
 
 type RequiredProps = { mutationFn: MutationFn<boolean> }
 
@@ -18,7 +18,7 @@ const RequiredComponent: ReactCall.UserComponent<
   {}
 > = ({ call, mutationFn }) => {
   const a11yId = useId()
-  const submit = useMutationFlow(call, mutationFn)
+  const submit = useMutationFlow(call, { mutationFn })
   return (
     <div role="dialog" aria-labelledby={a11yId}>
       <p id={a11yId}>Are you sure?</p>
@@ -47,7 +47,7 @@ const OptionalComponent: ReactCall.UserComponent<
   boolean,
   {}
 > = ({ call, mutationFn }) => {
-  const submit = useMutationFlow(call, mutationFn, true)
+  const submit = useMutationFlow(call, { mutationFn, fallback: true })
   return (
     <button
       type="button"
@@ -69,7 +69,7 @@ const PayloadComponent: ReactCall.UserComponent<PayloadProps, string, {}> = ({
   call,
   mutationFn,
 }) => {
-  const submit = useMutationFlow(call, mutationFn)
+  const submit = useMutationFlow(call, { mutationFn })
   return (
     <>
       <button type="button" onClick={() => submit({ choice: 'A' })}>
@@ -129,7 +129,7 @@ describe('useMutationFlow — pending lifecycle', () => {
   })
 })
 
-describe('useMutationFlow — fallback (3-arg overload)', () => {
+describe('useMutationFlow — fallback', () => {
   test('submit() without a mutationFn closes the call with the fallback response', async () => {
     render(<Optional />)
     const promise = withAct(() => Optional.call({}))

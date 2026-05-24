@@ -31,23 +31,28 @@ export type Trigger<Payload> = ((payload: Payload) => void) & {
 
 // Overloads encode the invariant "fallback is required iff mutationFn
 // may be undefined". When the consumer types the prop as required, the
-// 2-arg form applies and no fallback is needed. When the prop is
-// possibly-undefined, TypeScript forces the 3-arg form. No third dead-
-// weight optional argument leaks into the required-handler case.
+// fallback-less options shape applies. When the prop is possibly-
+// undefined, TypeScript forces the shape that requires `fallback`. No
+// dead-weight optional field leaks into the required-handler case.
 export function useMutationFlow<Response, Payload = void>(
   call: MutationCall<Response>,
-  mutationFn: MutationFn<Response, Payload>,
+  options: { mutationFn: MutationFn<Response, Payload> },
 ): Trigger<Payload>
 export function useMutationFlow<Response, Payload = void>(
   call: MutationCall<Response>,
-  mutationFn: MutationFn<Response, Payload> | undefined,
-  fallback: Response,
+  options: {
+    mutationFn: MutationFn<Response, Payload> | undefined
+    fallback: Response
+  },
 ): Trigger<Payload>
 export function useMutationFlow<Response, Payload = void>(
   call: MutationCall<Response>,
-  mutationFn: MutationFn<Response, Payload> | undefined,
-  fallback?: Response,
+  options: {
+    mutationFn: MutationFn<Response, Payload> | undefined
+    fallback?: Response
+  },
 ): Trigger<Payload> {
+  const { mutationFn, fallback } = options
   const [pending, setPending] = useState(false)
   // Synchronous re-entry guard. `pending` state alone can't guard against
   // a second call dispatched programmatically inside the same event-loop
