@@ -278,7 +278,7 @@ type Props = {
 
 export const Confirm = createCallable<Props, boolean>(
   ({ call, message, mutationFn }) => {
-    const submit = useMutationFlow(call, { mutationFn })
+    const submit = useMutationFlow(call, mutationFn)
     return (
       <div role="dialog">
         <p>{message}</p>
@@ -314,9 +314,10 @@ can retry. The `mutationFn` decides when (if ever) to call `call.end()`.
 
 If your component should still close cleanly when no `mutationFn` was
 provided (e.g. a plain "Are you sure?" without any side effect), type the
-prop as optional and pass a `fallback` alongside it in the options
-object. The type system enforces this — `fallback` is required exactly
-when the `mutationFn` parameter may be undefined.
+prop as optional and chain `.orEnd(value)` at the submit callsite. When
+the `mutationFn` parameter may be undefined, `submit(payload)` returns
+a chain object exposing `.orEnd(value)`; when it's provided, the chain
+is a no-op and the managed flow runs as normal.
 
 ```tsx
 type Props = {
@@ -326,16 +327,43 @@ type Props = {
 
 export const Confirm = createCallable<Props, boolean>(
   ({ call, message, mutationFn }) => {
-    //                                                       ↓ closes with `true` if no mutationFn
-    const submit = useMutationFlow(call, { mutationFn, fallback: true })
+    const submit = useMutationFlow(call, mutationFn)
     return (
-      <button disabled={submit.pending} onClick={() => submit()}>
+      //                                          ↓ closes with `true` if no mutationFn
+      <button disabled={submit.pending} onClick={() => submit().orEnd(true)}>
         Yes
       </button>
     )
   },
 )
 ```
+
+Because the fallback is declared at the callsite (not on the hook), each
+button can chain its own value. Useful in pickers where the response is
+exactly the option the user picked:
+
+```tsx
+type Props = {
+  mutationFn?: MutationFn<'A' | 'B', { choice: 'A' | 'B' }>
+}
+
+export const Picker = createCallable<Props, 'A' | 'B'>(
+  ({ call, mutationFn }) => {
+    const submit = useMutationFlow(call, mutationFn)
+    return (
+      <>
+        <button onClick={() => submit({ choice: 'A' }).orEnd('A')}>A</button>
+        <button onClick={() => submit({ choice: 'B' }).orEnd('B')}>B</button>
+      </>
+    )
+  },
+)
+```
+
+If you'd rather leave the call open when no `mutationFn` was provided —
+e.g. let the user dismiss via a "No" button — omit the chain entirely.
+`submit()` is a no-op in that case; the dialog stays mounted until
+something else closes it.
 
 ## Passing a runtime payload
 
@@ -348,7 +376,7 @@ type Props = {
 }
 
 export const Picker = createCallable<Props, string>(({ call, mutationFn }) => {
-  const submit = useMutationFlow(call, { mutationFn })
+  const submit = useMutationFlow(call, mutationFn)
   return (
     <>
       <button onClick={() => submit({ choice: 'A' })}>A</button>

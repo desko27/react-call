@@ -21,38 +21,43 @@ export type MutationFn<Response, Payload = void> = (
 ) => Promise<void>
 
 /**
- * The callable returned by `useMutationFlow`. `pending` reflects the
- * in-flight state for the UI; calling the trigger runs the MutationFn
- * (or the fallback, when no MutationFn is provided).
+ * The callable returned by `useMutationFlow` when the MutationFn
+ * parameter is non-nullable. `pending` reflects the in-flight state for
+ * the UI; calling the trigger runs the MutationFn.
  */
 export type Trigger<Payload> = ((payload: Payload) => void) & {
   pending: boolean
 }
 
-// Overloads encode the invariant "fallback is required iff mutationFn
-// may be undefined". When the consumer types the prop as required, the
-// fallback-less options shape applies. When the prop is possibly-
-// undefined, TypeScript forces the shape that requires `fallback`. No
-// dead-weight optional field leaks into the required-handler case.
+/**
+ * The callable returned by `useMutationFlow` when the MutationFn
+ * parameter may be undefined. Calling the trigger returns a chain
+ * object exposing `.orEnd(value)`, which the consumer uses to deliver
+ * the Fallback response at the callsite. When the MutationFn is
+ * actually present at runtime, `.orEnd` is a no-op.
+ */
+export type ChainTrigger<Payload, Response> = ((payload: Payload) => {
+  orEnd: (value: Response) => void
+}) & { pending: boolean }
+
+const NOOP_CHAIN = { orEnd: () => {} }
+
+// Overloads encode the invariant "the Fallback response is reachable
+// iff mutationFn may be undefined". Required handler → submit returns
+// void. Possibly-undefined handler → submit returns a chain object
+// whose `.orEnd(value)` delivers the fallback at the callsite.
 export function useMutationFlow<Response, Payload = void>(
   call: MutationCall<Response>,
-  options: { mutationFn: MutationFn<Response, Payload> },
+  mutationFn: MutationFn<Response, Payload>,
 ): Trigger<Payload>
 export function useMutationFlow<Response, Payload = void>(
   call: MutationCall<Response>,
-  options: {
-    mutationFn: MutationFn<Response, Payload> | undefined
-    fallback: Response
-  },
-): Trigger<Payload>
+  mutationFn: MutationFn<Response, Payload> | undefined,
+): ChainTrigger<Payload, Response>
 export function useMutationFlow<Response, Payload = void>(
   call: MutationCall<Response>,
-  options: {
-    mutationFn: MutationFn<Response, Payload> | undefined
-    fallback?: Response
-  },
-): Trigger<Payload> {
-  const { mutationFn, fallback } = options
+  mutationFn: MutationFn<Response, Payload> | undefined,
+): ChainTrigger<Payload, Response> {
   const [pending, setPending] = useState(false)
   // Synchronous re-entry guard. `pending` state alone can't guard against
   // a second call dispatched programmatically inside the same event-loop
@@ -60,10 +65,9 @@ export function useMutationFlow<Response, Payload = void>(
   const inFlightRef = useRef(false)
 
   const trigger = ((payload: Payload) => {
-    if (inFlightRef.current) return
+    if (inFlightRef.current) return NOOP_CHAIN
     if (!mutationFn) {
-      call.end(fallback as Response)
-      return
+      return { orEnd: (value: Response) => call.end(value) }
     }
     inFlightRef.current = true
     setPending(true)
@@ -73,7 +77,8 @@ export function useMutationFlow<Response, Payload = void>(
         inFlightRef.current = false
         setPending(false)
       })
-  }) as Trigger<Payload>
+    return NOOP_CHAIN
+  }) as ChainTrigger<Payload, Response>
   trigger.pending = pending
 
   return trigger

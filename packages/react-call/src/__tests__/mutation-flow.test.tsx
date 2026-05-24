@@ -6,9 +6,11 @@ import { type MutationFn, useMutationFlow } from '../mutation-flow'
 import type * as ReactCall from '../types.public'
 import { withAct } from './shared/act'
 
-// Component fixtures cover the two consumer patterns: a Required-handler
-// dialog (no fallback) and an Optional-handler dialog (fallback required
-// by the type system because mutationFn may be undefined).
+// Component fixtures cover the three consumer patterns:
+//   - Required handler: submit() runs the mutation; no chain.
+//   - Optional handler with Fallback response: submit().orEnd(value).
+//   - Picker with per-callsite fallbacks: each button chains its own
+//     .orEnd value, aligned with its payload.
 
 type RequiredProps = { mutationFn: MutationFn<boolean> }
 
@@ -18,7 +20,7 @@ const RequiredComponent: ReactCall.UserComponent<
   {}
 > = ({ call, mutationFn }) => {
   const a11yId = useId()
-  const submit = useMutationFlow(call, { mutationFn })
+  const submit = useMutationFlow(call, mutationFn)
   return (
     <div role="dialog" aria-labelledby={a11yId}>
       <p id={a11yId}>Are you sure?</p>
@@ -31,7 +33,11 @@ const RequiredComponent: ReactCall.UserComponent<
       >
         Yes
       </button>
-      <button type="button" onClick={() => call.end(false)}>
+      <button
+        type="button"
+        data-testid="cancel"
+        onClick={() => call.end(false)}
+      >
         No
       </button>
     </div>
@@ -47,14 +53,14 @@ const OptionalComponent: ReactCall.UserComponent<
   boolean,
   {}
 > = ({ call, mutationFn }) => {
-  const submit = useMutationFlow(call, { mutationFn, fallback: true })
+  const submit = useMutationFlow(call, mutationFn)
   return (
     <button
       type="button"
       data-testid="submit"
       data-pending={submit.pending}
       disabled={submit.pending}
-      onClick={() => submit()}
+      onClick={() => submit().orEnd(true)}
     >
       Yes
     </button>
@@ -69,7 +75,7 @@ const PayloadComponent: ReactCall.UserComponent<PayloadProps, string, {}> = ({
   call,
   mutationFn,
 }) => {
-  const submit = useMutationFlow(call, { mutationFn })
+  const submit = useMutationFlow(call, mutationFn)
   return (
     <>
       <button type="button" onClick={() => submit({ choice: 'A' })}>
@@ -83,6 +89,55 @@ const PayloadComponent: ReactCall.UserComponent<PayloadProps, string, {}> = ({
 }
 
 const Payload = createCallable(PayloadComponent)
+
+type PickerProps = {
+  mutationFn?: MutationFn<'A' | 'B', { choice: 'A' | 'B' }>
+}
+
+const PickerComponent: ReactCall.UserComponent<PickerProps, 'A' | 'B', {}> = ({
+  call,
+  mutationFn,
+}) => {
+  const submit = useMutationFlow(call, mutationFn)
+  return (
+    <>
+      <button type="button" onClick={() => submit({ choice: 'A' }).orEnd('A')}>
+        A
+      </button>
+      <button type="button" onClick={() => submit({ choice: 'B' }).orEnd('B')}>
+        B
+      </button>
+    </>
+  )
+}
+
+const Picker = createCallable(PickerComponent)
+
+type ManualCloseProps = { mutationFn?: MutationFn<boolean> }
+
+const ManualCloseComponent: ReactCall.UserComponent<
+  ManualCloseProps,
+  boolean,
+  {}
+> = ({ call, mutationFn }) => {
+  const submit = useMutationFlow(call, mutationFn)
+  return (
+    <div role="dialog">
+      <button type="button" data-testid="submit" onClick={() => submit()}>
+        Yes
+      </button>
+      <button
+        type="button"
+        data-testid="cancel"
+        onClick={() => call.end(false)}
+      >
+        No
+      </button>
+    </div>
+  )
+}
+
+const ManualClose = createCallable(ManualCloseComponent)
 
 describe('useMutationFlow — pending lifecycle', () => {
   test('pending flips true while the mutationFn is in-flight, false when it settles', async () => {
@@ -129,8 +184,8 @@ describe('useMutationFlow — pending lifecycle', () => {
   })
 })
 
-describe('useMutationFlow — fallback', () => {
-  test('submit() without a mutationFn closes the call with the fallback response', async () => {
+describe('useMutationFlow — fallback via .orEnd', () => {
+  test('submit().orEnd(value) closes the call with the fallback when no mutationFn was provided', async () => {
     render(<Optional />)
     const promise = withAct(() => Optional.call({}))
 
@@ -141,7 +196,7 @@ describe('useMutationFlow — fallback', () => {
     await expect(promise).resolves.toBe(true)
   })
 
-  test('submit() with a mutationFn still runs the managed flow, ignoring the fallback', async () => {
+  test('submit().orEnd(value) with a mutationFn runs the managed flow and the orEnd value is ignored', async () => {
     const mutationFn = vi.fn<MutationFn<boolean>>(async (call) => {
       call.end(false)
     })
@@ -155,6 +210,48 @@ describe('useMutationFlow — fallback', () => {
 
     await expect(promise).resolves.toBe(false)
     expect(mutationFn).toHaveBeenCalledTimes(1)
+  })
+})
+
+describe('useMutationFlow — per-callsite fallback', () => {
+  test('the A button chains .orEnd("A")', async () => {
+    render(<Picker />)
+    const promise = withAct(() => Picker.call({}))
+
+    await act(async () => {
+      fireEvent.click(screen.getByText('A'))
+    })
+    await expect(promise).resolves.toBe('A')
+  })
+
+  test('the B button chains .orEnd("B")', async () => {
+    render(<Picker />)
+    const promise = withAct(() => Picker.call({}))
+
+    await act(async () => {
+      fireEvent.click(screen.getByText('B'))
+    })
+    await expect(promise).resolves.toBe('B')
+  })
+})
+
+describe('useMutationFlow — Manual-close path', () => {
+  test('submit() without a chain leaves the call open when no mutationFn was provided', async () => {
+    render(<ManualClose />)
+    const promise = withAct(() => ManualClose.call({}))
+
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('submit'))
+    })
+
+    // The call is still open — submit() was a no-op because no mutationFn
+    // and no .orEnd chain. The dialog waits for the user to close it.
+    expect(screen.getByRole('dialog')).toBeInTheDocument()
+
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('cancel'))
+    })
+    await expect(promise).resolves.toBe(false)
   })
 })
 
