@@ -6,6 +6,7 @@
   },
   "changesets": [
     "breaking-call-context-cleanup",
+    "breaking-flat-type-exports",
     "feat-hmr-and-deprecations",
     "feat-mutation-flow",
     "feat-vite-plugin",
