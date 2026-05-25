@@ -7,7 +7,6 @@
   "changesets": [
     "breaking-call-context-cleanup",
     "feat-hmr-and-deprecations",
-    "feat-mutation-flow",
     "feat-vite-plugin",
     "fix-ssr-server-snapshot"
   ]
