@@ -25,7 +25,6 @@ menus, pickers — any UI that conceptually returns a value to its caller.
   - [1. ⚛️ Declare](#1-️-declare)
   - [2. 📡 Root](#2--root)
   - [3. ▶️ Call \& Await](#3-️-call--await)
-- [Lazy loading](#lazy-loading)
 - [Advanced usage](#advanced-usage)
   - [End from caller](#end-from-caller)
   - [Update](#update)
@@ -43,6 +42,7 @@ menus, pickers — any UI that conceptually returns a value to its caller.
     - [Can I place more than one Root?](#can-i-place-more-than-one-root)
 - [TypeScript types](#typescript-types)
 - [Errors](#errors)
+- [Lazy loading](#lazy-loading)
 - [SSR](#ssr)
   - [Next.js / RSC](#nextjs--rsc)
 - [Migrating from v1](#migrating-from-v1)
@@ -93,40 +93,6 @@ const accepted = await Confirm.call({ message: 'Continue?' })
 ```
 
 Check out [the demo site](https://react-call.desko.dev/) to see some live examples of other React components being called.
-
-# Lazy loading
-
-Use React.lazy to code-split callable components and load them on demand.
-
-```tsx
-import { createCallable } from 'react-call'
-import { lazy, Suspense } from 'react'
-
-// 1) Lazy-load your component
-const Confirm = createCallable(
-  lazy(() => import('./Confirm')), // default export required
-)
-
-// 2) Place the Callable inside a Suspense boundary
-export function App() {
-  return (
-    <>
-      {/* Other app UI */}
-      <Suspense fallback={null}>
-        <Confirm />
-      </Suspense>
-    </>
-  )
-}
-
-// 3) Call it as usual (component is fetched on first call)
-const accepted = await Confirm.call({ message: 'Continue?' })
-```
-
-Notes:
-- Make sure the lazily imported file has a default export (React.lazy requirement).
-- Wrap `<Confirm />` (or an ancestor) in `<Suspense>` to handle the loading state.
-- The lazy component is split into a separate chunk and downloaded only when first called.
 
 # Advanced usage
 
@@ -394,6 +360,27 @@ Error | Solution
 --- | ---
 No \<Root> found! | You forgot to place the Root, check [Rooting section](#2--rooting). If it's already in place but not present by the time you call(), you may want to place it higher in your React tree. If you're getting this error on the server see [SSR section](#ssr).
 Multiple instances of \<Root> found! | You placed more than one Root, check [Rooting section](#2--rooting) as there is a warning about this.
+
+# Lazy loading
+
+If your callable carries a heavy payload (rich-text editor, chart library, big form), wrap it with `React.lazy` so the chunk only ships when the call fires.
+
+```tsx
+import { createCallable } from 'react-call'
+import { lazy, Suspense } from 'react'
+
+const Confirm = createCallable(
+  lazy(() => import('./Confirm')),
+)
+
+<Suspense fallback={<Spinner />}>
+  <Confirm />
+</Suspense>
+```
+
+- The lazy module must default-export the user component (React.lazy requirement).
+- The first call waits for the chunk to download — pick a `fallback` that signals "something's loading"; `null` works but the user sees nothing happen on click.
+- Subsequent calls are instant; the chunk is cached by the browser.
 
 # SSR
 
