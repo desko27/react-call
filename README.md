@@ -375,20 +375,20 @@ No. There can only be one `<Root>` mounted per createCallable(). Avoid placing i
 
 # TypeScript types
 
-You won't need them most likely, but if you want to split the component declaration and such, you may use the types under the `ReactCall` namespace:
+You won't need them most likely, but if you want to split the component declaration and such, the public types are available as named exports:
 
 ```tsx
-import type { ReactCall } from 'react-call'
+import type { UserComponent, CallContext } from 'react-call'
 ```
 
 Type | Description
 --- | ---
-ReactCall.Function<Props?, Response?> | The call() method
-ReactCall.UpsertFunction<Props?, Response?> | The upsert() method
-ReactCall.Context<Props?, Response?, RootProps?> | The call prop in UserComponent
-ReactCall.Props<Props?, Response?, RootProps?> | Your props + the call prop
-ReactCall.UserComponent<Props?, Response?, RootProps?> | What is passed to createCallable
-ReactCall.Callable<Props?, Response?, RootProps?> | What createCallable returns
+CallFunction<Props?, Response?> | The call() method
+UpsertFunction<Props?, Response?> | The upsert() method
+CallContext<Props?, Response?, RootProps?> | The call prop in UserComponent
+PropsWithCall<Props?, Response?, RootProps?> | Your props + the call prop
+UserComponent<Props?, Response?, RootProps?> | What is passed to createCallable
+Callable<Props?, Response?, RootProps?> | What createCallable returns
 
 # Errors
 

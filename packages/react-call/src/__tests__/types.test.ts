@@ -1,5 +1,5 @@
 import { describe, expectTypeOf, test } from 'vitest'
-import type * as ReactCall from '../types.public'
+import type { CallContext } from '../createCallable/types.public'
 
 // Regression guard for the CallContext leak that shipped in 1.8.x:
 // `CallContext` was defined as `Omit<PrivateCallContext, 'props'>`, a
@@ -10,7 +10,7 @@ import type * as ReactCall from '../types.public'
 // pin that contract so a future refactor cannot accidentally re-leak
 // the internals through type widening.
 
-type Ctx = ReactCall.Context<{ message: string }, boolean, { userName: string }>
+type Ctx = CallContext<{ message: string }, boolean, { userName: string }>
 
 // vitest 4 / expect-type requires a runtime value argument; the cast is
 // a placeholder — expectTypeOf only inspects the static type. An empty

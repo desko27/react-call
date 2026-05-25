@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import { describe, expect, test } from 'vitest'
 import { createCallable } from '../createCallable'
-import type * as ReactCall from '../types.public'
+import type { UserComponent } from '../createCallable/types.public'
 import { withAct } from './shared/act'
 
 // Fixture that exposes the three call-context invariants we want to pin
@@ -10,10 +10,7 @@ import { withAct } from './shared/act'
 
 type Props = { id: string }
 
-const ProbeComponent: ReactCall.UserComponent<Props, void, {}> = ({
-  call,
-  id,
-}) => (
+const ProbeComponent: UserComponent<Props, void, {}> = ({ call, id }) => (
   <div
     data-testid={`probe-${id}`}
     data-key={call.key}

@@ -3,7 +3,7 @@ import { useId } from 'react'
 import { describe, expect, test, vi } from 'vitest'
 import { createCallable } from '../createCallable'
 import { type MutationFn, useMutationFlow } from '../mutation-flow'
-import type * as ReactCall from '../types.public'
+import type { UserComponent } from '../createCallable/types.public'
 import { withAct } from './shared/act'
 
 // Component fixtures cover the three consumer patterns:
@@ -14,11 +14,10 @@ import { withAct } from './shared/act'
 
 type RequiredProps = { mutationFn: MutationFn<boolean> }
 
-const RequiredComponent: ReactCall.UserComponent<
-  RequiredProps,
-  boolean,
-  {}
-> = ({ call, mutationFn }) => {
+const RequiredComponent: UserComponent<RequiredProps, boolean, {}> = ({
+  call,
+  mutationFn,
+}) => {
   const a11yId = useId()
   const submit = useMutationFlow(call, mutationFn)
   return (
@@ -48,11 +47,10 @@ const Required = createCallable(RequiredComponent)
 
 type OptionalProps = { mutationFn?: MutationFn<boolean> }
 
-const OptionalComponent: ReactCall.UserComponent<
-  OptionalProps,
-  boolean,
-  {}
-> = ({ call, mutationFn }) => {
+const OptionalComponent: UserComponent<OptionalProps, boolean, {}> = ({
+  call,
+  mutationFn,
+}) => {
   const submit = useMutationFlow(call, mutationFn)
   return (
     <button
@@ -71,7 +69,7 @@ const Optional = createCallable(OptionalComponent)
 
 type PayloadProps = { mutationFn: MutationFn<string, { choice: 'A' | 'B' }> }
 
-const PayloadComponent: ReactCall.UserComponent<PayloadProps, string, {}> = ({
+const PayloadComponent: UserComponent<PayloadProps, string, {}> = ({
   call,
   mutationFn,
 }) => {
@@ -94,7 +92,7 @@ type PickerProps = {
   mutationFn?: MutationFn<'A' | 'B', { choice: 'A' | 'B' }>
 }
 
-const PickerComponent: ReactCall.UserComponent<PickerProps, 'A' | 'B', {}> = ({
+const PickerComponent: UserComponent<PickerProps, 'A' | 'B', {}> = ({
   call,
   mutationFn,
 }) => {
@@ -115,11 +113,10 @@ const Picker = createCallable(PickerComponent)
 
 type ManualCloseProps = { mutationFn?: MutationFn<boolean> }
 
-const ManualCloseComponent: ReactCall.UserComponent<
-  ManualCloseProps,
-  boolean,
-  {}
-> = ({ call, mutationFn }) => {
+const ManualCloseComponent: UserComponent<ManualCloseProps, boolean, {}> = ({
+  call,
+  mutationFn,
+}) => {
   const submit = useMutationFlow(call, mutationFn)
   return (
     <div role="dialog">

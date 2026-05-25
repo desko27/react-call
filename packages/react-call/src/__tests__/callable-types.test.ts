@@ -1,7 +1,7 @@
 import type { FunctionComponent } from 'react'
 import { describe, expectTypeOf, test } from 'vitest'
 import { createCallable } from '../createCallable'
-import type * as ReactCall from '../types.public'
+import type { Callable as CallableType } from '../createCallable/types.public'
 
 // Type-level pins for the shape of what `createCallable()` returns
 // (`Callable<>`) and for the generic-default behaviour of `createCallable`
@@ -17,9 +17,9 @@ describe('Callable<> shape', () => {
     () => null,
   )
 
-  test('exactly matches ReactCall.Callable<P, R, RP>', () => {
+  test('exactly matches Callable<P, R, RP>', () => {
     expectTypeOf(Callable).toEqualTypeOf<
-      ReactCall.Callable<{ x: number }, boolean, { y: string }>
+      CallableType<{ x: number }, boolean, { y: string }>
     >()
   })
 
@@ -95,7 +95,7 @@ describe('createCallable generic defaults', () => {
       () => null,
     )
     expectTypeOf(Explicit).toEqualTypeOf<
-      ReactCall.Callable<{ msg: string }, number, { name: string }>
+      CallableType<{ msg: string }, number, { name: string }>
     >()
   })
 })

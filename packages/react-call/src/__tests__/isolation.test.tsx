@@ -1,7 +1,7 @@
 import { render, screen, waitFor } from '@testing-library/react'
 import { describe, expect, test } from 'vitest'
 import { createCallable } from '../createCallable'
-import type * as ReactCall from '../types.public'
+import type { UserComponent } from '../createCallable/types.public'
 import { withAct } from './shared/act'
 
 // Each createCallable() invocation builds an independent store. This
@@ -18,7 +18,7 @@ import { withAct } from './shared/act'
 type Props = { message: string }
 
 const dialog =
-  (instanceLabel: string): ReactCall.UserComponent<Props, void, {}> =>
+  (instanceLabel: string): UserComponent<Props, void, {}> =>
   ({ call, message }) => (
     <div
       role="dialog"
