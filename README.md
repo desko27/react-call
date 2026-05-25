@@ -11,14 +11,20 @@
 > [!NOTE]
 > These docs cover the upcoming **v2** API, currently published under the `next` tag — install it with `npm install react-call@next`. For the stable 1.x API see the [v1 README](https://github.com/desko27/react-call/blob/react-call%401.8.2/README.md).
 
+`createCallable()` turns a React component into something you can `await`.
+
+Good fits: confirmations, dialogs, form modals, toasts, notifications, context
+menus, pickers — any UI that conceptually returns a value to its caller.
+
+
+![Hero](./docs/assets/hero.png)
+
 ## Contents
 
-- [Call your React Components](#call-your-react-components)
-- [Simple yet flexible](#simple-yet-flexible)
 - [Getting started](#getting-started)
-  - [1. ⚛️ Declaration](#1-️-declaration)
-  - [2. 📡 Rooting](#2--rooting)
-  - [3. 🎉 Enjoy](#3--enjoy)
+  - [1. ⚛️ Declare](#1-️-declare)
+  - [2. 📡 Root](#2--root)
+  - [3. ▶️ Call \& Await](#3-️-call--await)
 - [Lazy loading](#lazy-loading)
 - [Advanced usage](#advanced-usage)
   - [End from caller](#end-from-caller)
@@ -41,48 +47,6 @@
   - [Next.js / RSC](#nextjs--rsc)
 - [Migrating from v1](#migrating-from-v1)
 
-# Call your React Components
-
-As simple as `window.confirm()` but it's React:
-
-<table>
-<tr>
-<td>window.confirm</td>
-<td>react-call</td>
-</tr>
-<tr>
-<td>
-
-```tsx
-const message = 'Sure?'
-const yes = window.confirm(message)
-
-if (yes) thanosSnap() // 🫰
-```
-
-</td>
-<td>
-
-```tsx
-const props = { message: 'Sure?' }
-const yes = await Confirm.call(props)
-
-if (yes) thanosSnap() // 🫰
-```
-
-</td>
-</tr>
-</table>
-
-# Simple yet flexible
-
-Present any piece of UI to the user, wait for the response data:
-
-- 💬 Confirmations, dialogs, form modals
-- 🔔 Notifications, toasts, popups
-- 📋 Context menus
-- 🎉 Or anything!
-
 # Getting started
 
 ```sh
@@ -91,7 +55,7 @@ npm install react-call@next
 
 We'll setup a confirmation dialog, but you can setup any component to be callable.
 
-## 1. ⚛️ Declaration
+## 1. ⚛️ Declare
 
 ```tsx
 import { createCallable } from 'react-call'
@@ -110,7 +74,7 @@ export const Confirm = createCallable<Props, Response>(({ call, message }) => (
 
 Along with your props, there is a special `call` prop containing the `end()` method, which you can use to finish the call and return a response. State, hooks and any other React features are totally fine too.
 
-## 2. 📡 Rooting
+## 2. 📡 Root
 
 The Callable itself is the mounting point — it listens to every call and renders the active ones. Place it anywhere visible when making calls, for instance in `App.tsx`:
 
@@ -119,7 +83,7 @@ The Callable itself is the mounting point — it listens to every call and rende
 //  ^-- it will render active calls
 ```
 
-## 3. 🎉 Enjoy
+## 3. ▶️ Call & Await
 
 You're all done! Now you can do this anywhere in your codebase:
 
