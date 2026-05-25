@@ -1,7 +1,7 @@
 import type { FunctionComponent } from 'react'
 import { describe, expectTypeOf, test } from 'vitest'
 import { createCallable } from '../createCallable'
-import type { Callable as CallableType } from '../createCallable/types.public'
+import type { Callable } from '../createCallable/types.public'
 
 // Type-level pins for the shape of what `createCallable()` returns
 // (`Callable<>`) and for the generic-default behaviour of `createCallable`
@@ -13,31 +13,31 @@ import type { Callable as CallableType } from '../createCallable/types.public'
 // consumer's static surface. These tests block that at compile time.
 
 describe('Callable<> shape', () => {
-  const Callable = createCallable<{ x: number }, boolean, { y: string }>(
+  const Confirm = createCallable<{ x: number }, boolean, { y: string }>(
     () => null,
   )
 
   test('exactly matches Callable<P, R, RP>', () => {
-    expectTypeOf(Callable).toEqualTypeOf<
-      CallableType<{ x: number }, boolean, { y: string }>
+    expectTypeOf(Confirm).toEqualTypeOf<
+      Callable<{ x: number }, boolean, { y: string }>
     >()
   })
 
   test('call: (props: Props) => Promise<Response>', () => {
-    expectTypeOf(Callable.call).toEqualTypeOf<
+    expectTypeOf(Confirm.call).toEqualTypeOf<
       (props: { x: number }) => Promise<boolean>
     >()
   })
 
   test('upsert: (props: Props) => Promise<Response>', () => {
-    expectTypeOf(Callable.upsert).toEqualTypeOf<
+    expectTypeOf(Confirm.upsert).toEqualTypeOf<
       (props: { x: number }) => Promise<boolean>
     >()
   })
 
   test('end accepts both targeted and untargeted forms', () => {
     // Targeted form: end(promise, response)
-    expectTypeOf(Callable.end)
+    expectTypeOf(Confirm.end)
       .parameter(0)
       .toEqualTypeOf<Promise<boolean> | boolean>()
     // The two overloads collapse to either:
@@ -45,14 +45,14 @@ describe('Callable<> shape', () => {
     //   [boolean]                    (untargeted)
     // Each individual call must satisfy ONE of them — type below ensures
     // the function accepts both shapes.
-    Callable.end(true)
-    Callable.end(Promise.resolve(true), false)
+    Confirm.end(true)
+    Confirm.end(Promise.resolve(true), false)
   })
 
   test('update accepts both targeted and untargeted forms', () => {
-    Callable.update({ x: 1 })
-    Callable.update(Promise.resolve(true), { x: 2 })
-    expectTypeOf(Callable.update)
+    Confirm.update({ x: 1 })
+    Confirm.update(Promise.resolve(true), { x: 2 })
+    expectTypeOf(Confirm.update)
       .parameter(0)
       .toEqualTypeOf<Promise<boolean> | Partial<{ x: number }>>()
   })
@@ -62,9 +62,7 @@ describe('Callable<> shape', () => {
     // backwards compatibility. This assertion documents that the
     // deprecated property is still a typed-correctly part of the
     // public API — do not delete thinking it covers dead code.
-    expectTypeOf(Callable.Root).toEqualTypeOf<
-      FunctionComponent<{ y: string }>
-    >()
+    expectTypeOf(Confirm.Root).toEqualTypeOf<FunctionComponent<{ y: string }>>()
   })
 })
 
@@ -95,7 +93,7 @@ describe('createCallable generic defaults', () => {
       () => null,
     )
     expectTypeOf(Explicit).toEqualTypeOf<
-      CallableType<{ msg: string }, number, { name: string }>
+      Callable<{ msg: string }, number, { name: string }>
     >()
   })
 })
