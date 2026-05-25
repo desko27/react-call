@@ -1,13 +1,47 @@
 <div align="center">
   <h2>
     ⚛️ 📡 <a href="https://react-call.desko.dev">react-call</a>
-    <!--<a href="https://www.npmjs.com/package/react-call"><img src="https://img.shields.io/npm/dw/react-call" alt="NPM Downloads"></a>-->
     <a href="https://www.npmjs.com/package/react-call"><img src="https://img.shields.io/npm/dw/react-call?style=flat&label=npm&color=blue" alt="NPM Downloads"></a>
+    <a href="https://bundlephobia.com/package/react-call"><img src="https://img.shields.io/bundlephobia/minzip/react-call?style=flat&label=size&color=blue" alt="Bundle size"></a>
   </h2>
-  ✓ Lightweight ✓ No deps ✓ SSR ✓ React Native
+  ✓ 1 KB ✓ No deps ✓ SSR ✓ React Native
+  <p>— Call your React components —</p>
 </div>
 
-# Call your React components
+> [!NOTE]
+> These docs cover the upcoming **v2** API, currently published under the `next` tag — install it with `npm install react-call@next`. For the stable 1.x API see the [v1 README](https://github.com/desko27/react-call/blob/react-call%401.8.2/README.md).
+
+## Contents
+
+- [Call your React Components](#call-your-react-components)
+- [Simple yet flexible](#simple-yet-flexible)
+- [Getting started](#getting-started)
+  - [1. ⚛️ Declaration](#1-️-declaration)
+  - [2. 📡 Rooting](#2--rooting)
+  - [3. 🎉 Enjoy](#3--enjoy)
+- [Lazy loading](#lazy-loading)
+- [Advanced usage](#advanced-usage)
+  - [End from caller](#end-from-caller)
+  - [Update](#update)
+  - [Upsert](#upsert)
+- [Exit animations](#exit-animations)
+- [Passing Root props](#passing-root-props)
+- [Async submission flow](#async-submission-flow)
+  - [Optional handlers](#optional-handlers)
+  - [Per-button payload and fallback](#per-button-payload-and-fallback)
+  - [Leave the dialog open](#leave-the-dialog-open)
+- [Hot reload (HMR)](#hot-reload-hmr)
+  - [Vite plugin (optional)](#vite-plugin-optional)
+- [FAQ](#faq)
+    - [What if more than one call is active?](#what-if-more-than-one-call-is-active)
+    - [Can I place more than one Root?](#can-i-place-more-than-one-root)
+- [TypeScript types](#typescript-types)
+- [Errors](#errors)
+- [SSR](#ssr)
+  - [Next.js / RSC](#nextjs--rsc)
+- [Migrating from v1](#migrating-from-v1)
+
+# Call your React Components
 
 As simple as `window.confirm()` but it's React:
 
@@ -49,10 +83,10 @@ Present any piece of UI to the user, wait for the response data:
 - 📋 Context menus
 - 🎉 Or anything!
 
-# Quick setup
+# Getting started
 
 ```sh
-npm install react-call
+npm install react-call@next
 ```
 
 We'll setup a confirmation dialog, but you can setup any component to be callable.
@@ -417,3 +451,22 @@ export const Confirm = createCallable(...)
 ```
 
 Then `<Confirm />` mounts cleanly from any Server Component (e.g. `app/layout.tsx`).
+
+# Migrating from v1
+
+If you're upgrading from 1.x, see the [full v2 changelog](packages/react-call/CHANGELOG.md). The breaking changes in short:
+
+- **`<Confirm />` is the canonical Root.** The `<Confirm.Root />` form is still exported as a backwards-compatible alias but is soft-deprecated (ADR-0013).
+- **Public types are flat named exports**, not under the `ReactCall` namespace (ADR-0015). Migration is a mechanical find-and-replace:
+
+  | Before | After |
+  | --- | --- |
+  | `ReactCall.Function` | `CallFunction` |
+  | `ReactCall.UpsertFunction` | `UpsertFunction` |
+  | `ReactCall.Context` | `CallContext` |
+  | `ReactCall.Props` | `PropsWithCall` |
+  | `ReactCall.UserComponent` | `UserComponent` |
+  | `ReactCall.Callable` | `Callable` |
+
+- **`CallContext` no longer leaks `promise`, `resolve`, or `isUpsert`.** Replace `call.resolve(value)` with `call.end(value)`. The other two were internal and had no public-API equivalent.
+- **`"Multiple instances of <Root> found!"` now fires at `call()` time**, not at Root mount time (ADR-0001) — making it compatible with `React.lazy` inside `<Suspense>`, React StrictMode's double-invoke, and HMR re-mounts. Tests of the form `expect(() => render(<><Root /><Root /></>)).toThrow(...)` should now assert at the `call()` site instead.
