@@ -1,2 +1,9 @@
 export { createCallable } from './createCallable'
-export type * as ReactCall from './types.public'
+export type {
+  CallFunction,
+  UpsertFunction,
+  CallContext,
+  PropsWithCall,
+  UserComponent,
+  Callable,
+} from './createCallable/types.public'

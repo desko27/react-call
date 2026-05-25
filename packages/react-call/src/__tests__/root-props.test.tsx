@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import { describe, expect, test } from 'vitest'
 import { createCallable } from '../createCallable'
-import type * as ReactCall from '../types.public'
+import type { UserComponent } from '../createCallable/types.public'
 import { withAct } from './shared/act'
 
 // Fixture purpose-built for the Root-props contract: the third generic
@@ -12,7 +12,7 @@ import { withAct } from './shared/act'
 type Props = { message: string }
 type RootProps = { userName: string }
 
-const GreeterComponent: ReactCall.UserComponent<Props, void, RootProps> = ({
+const GreeterComponent: UserComponent<Props, void, RootProps> = ({
   call,
   message,
 }) => (

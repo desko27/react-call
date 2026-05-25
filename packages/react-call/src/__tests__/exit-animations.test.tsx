@@ -2,7 +2,7 @@ import { render, screen, waitFor } from '@testing-library/react'
 import { userEvent } from '@testing-library/user-event'
 import { describe, expect, test } from 'vitest'
 import { createCallable } from '../createCallable'
-import type * as ReactCall from '../types.public'
+import type { UserComponent } from '../createCallable/types.public'
 import { withAct } from './shared/act'
 
 // The README documents that `unmountingDelay` keeps a finished call in the
@@ -17,7 +17,7 @@ const UNMOUNTING_DELAY = 50
 
 type Props = { message: string }
 
-const SlowConfirmComponent: ReactCall.UserComponent<Props, boolean, {}> = ({
+const SlowConfirmComponent: UserComponent<Props, boolean, {}> = ({
   call,
   message,
 }) => (

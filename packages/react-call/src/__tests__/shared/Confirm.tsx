@@ -1,10 +1,10 @@
 import { useId } from 'react'
 import { createCallable } from '../../createCallable'
-import type * as ReactCall from '../../types.public'
+import type { UserComponent } from '../../createCallable/types.public'
 
 type Props = { message: string }
 
-export const ConfirmComponent: ReactCall.UserComponent<Props, boolean, {}> = ({
+export const ConfirmComponent: UserComponent<Props, boolean, {}> = ({
   call,
   message,
 }) => {
