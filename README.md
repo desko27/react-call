@@ -260,6 +260,76 @@ You may want to use Root props if you need to:
 - Use something that is availble in Root's parent
 - Update your active call components on data changes
 
+# Async submission flow
+
+Use `useMutationFlow` from `react-call/mutation-flow` to wire a confirm button to an async action. The hook manages `pending` for you and **swallows throws so the dialog stays open** — the user can retry without losing their place.
+
+```tsx
+import { createCallable } from 'react-call'
+import { useMutationFlow, type MutationFn } from 'react-call/mutation-flow'
+
+type Props = { mutationFn: MutationFn<boolean> }
+
+export const Confirm = createCallable<Props, boolean>(
+  ({ call, mutationFn }) => {
+    const submit = useMutationFlow(call, mutationFn)
+    return (
+      <div role="dialog">
+        <button disabled={submit.pending} onClick={() => submit()}>Yes</button>
+        <button onClick={() => call.end(false)}>No</button>
+      </div>
+    )
+  },
+)
+
+await Confirm.call({
+  mutationFn: async (call) => {
+    await api.delete(id) // throws → dialog stays open, pending clears
+    call.end(true)
+  },
+})
+```
+
+The `mutationFn` receives a narrow `{ end }` view of the call (no `RootProps` leakage) and decides when — if ever — to close.
+
+## Optional handlers
+
+If a caller may omit `mutationFn`, type the prop as optional and chain `.orEnd(value)` at the callsite. The chain fires only when no `mutationFn` was provided; with one, it's a no-op.
+
+```tsx
+type Props = { mutationFn?: MutationFn<boolean> }
+
+export const Confirm = createCallable<Props, boolean>(({ call, mutationFn }) => {
+  const submit = useMutationFlow(call, mutationFn)
+  return (
+    //                                          ↓ closes with `true` if no mutationFn
+    <button disabled={submit.pending} onClick={() => submit().orEnd(true)}>Yes</button>
+  )
+})
+```
+
+## Per-button payload and fallback
+
+`submit(payload)` forwards a typed payload to `mutationFn`. Because `.orEnd` lives at the callsite, sibling buttons can chain different values — useful in pickers where the response *is* the option picked:
+
+```tsx
+type Props = { mutationFn?: MutationFn<'A' | 'B', { choice: 'A' | 'B' }> }
+
+export const Picker = createCallable<Props, 'A' | 'B'>(({ call, mutationFn }) => {
+  const submit = useMutationFlow(call, mutationFn)
+  return (
+    <>
+      <button onClick={() => submit({ choice: 'A' }).orEnd('A')}>A</button>
+      <button onClick={() => submit({ choice: 'B' }).orEnd('B')}>B</button>
+    </>
+  )
+})
+```
+
+## Leave the dialog open
+
+To let the user dismiss manually when no `mutationFn` was provided — via a "No" button, click-outside, etc. — omit `.orEnd` entirely. `submit()` is a no-op in that case; the dialog stays mounted until something else closes it.
+
 # Hot reload (HMR)
 
 `createCallable` is Fast Refresh friendly — edits to your callable's source hot-update in place without a full page reload.
