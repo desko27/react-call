@@ -153,13 +153,13 @@ console.log(promise1 === promise2) // true
 
 The `upsert()` method behaves as follows:
 
-- **Creates** a new instance if no upsert instance is currently active
-- **Updates** the existing upsert instance if one is already active
-- **Does not affect** normal `call()` instances
-- **Creates** a new instance if the previous upsert instance was ended
+- Creates a new instance if no upsert instance is currently active
+- Updates the existing upsert instance if one is already active
+- Does not affect normal `call()` instances
+- Creates a new instance if the previous upsert instance was ended
 
 ```tsx
-// Example: Progress notification that updates itself
+// Example: progress notification that updates itself
 const showProgress = async () => {
   Toast.upsert({ message: 'Starting download...' })
 
@@ -168,8 +168,7 @@ const showProgress = async () => {
     Toast.upsert({ message: `Progress: ${i}%` })
   }
 
-  // End the notification
-  Toast.end(true)
+  Toast.end()
 }
 ```
 
