@@ -1,63 +1,60 @@
 <div align="center">
   <h2>
     ⚛️ 📡 <a href="https://react-call.desko.dev">react-call</a>
-    <!--<a href="https://www.npmjs.com/package/react-call"><img src="https://img.shields.io/npm/dw/react-call" alt="NPM Downloads"></a>-->
     <a href="https://www.npmjs.com/package/react-call"><img src="https://img.shields.io/npm/dw/react-call?style=flat&label=npm&color=blue" alt="NPM Downloads"></a>
+    <a href="https://bundlephobia.com/package/react-call"><img src="https://img.shields.io/bundlephobia/minzip/react-call?style=flat&label=size&color=blue" alt="Bundle size"></a>
   </h2>
-  ✓ Lightweight ✓ No deps ✓ SSR ✓ React Native
+  ✓ 1 KB ✓ No deps ✓ SSR ✓ React Native
+  <p>— Call your React components —</p>
 </div>
 
-# Call your React components
+> [!NOTE]
+> These docs cover the upcoming **v2** API, currently published under the `next` tag — install it with `npm install react-call@next`. For the stable 1.x API see the [v1 README](https://github.com/desko27/react-call/blob/react-call%401.8.2/README.md).
 
-As simple as `window.confirm()` but it's React:
+`createCallable()` turns a React component into something you can `await`.
 
-<table>
-<tr>
-<td>window.confirm</td>
-<td>react-call</td>
-</tr>
-<tr>
-<td>
+Good fits: confirmations, dialogs, form modals, toasts, notifications, context
+menus, pickers — any UI that conceptually returns a value to its caller.
 
-```tsx
-const message = 'Sure?'
-const yes = window.confirm(message)
 
-if (yes) thanosSnap() // 🫰
-```
+![Hero](./docs/assets/hero.png)
 
-</td>
-<td>
+## Contents
 
-```tsx
-const props = { message: 'Sure?' }
-const yes = await Confirm.call(props)
+- [Getting started](#getting-started)
+  - [1. ⚛️ Declare](#1-️-declare)
+  - [2. 📡 Root](#2--root)
+  - [3. ▶️ Call \& Await](#3-️-call--await)
+- [Advanced usage](#advanced-usage)
+  - [End from caller](#end-from-caller)
+  - [Update](#update)
+  - [Upsert](#upsert)
+- [Exit animations](#exit-animations)
+- [Passing Root props](#passing-root-props)
+- [Mutation flow](#mutation-flow)
+  - [Optional mutationFn](#optional-mutationfn)
+  - [Payload](#payload)
+- [Hot reload (HMR)](#hot-reload-hmr)
+  - [Vite plugin (optional)](#vite-plugin-optional)
+- [FAQ](#faq)
+    - [What if more than one call is active?](#what-if-more-than-one-call-is-active)
+    - [Can I place more than one Root?](#can-i-place-more-than-one-root)
+- [TypeScript types](#typescript-types)
+- [Errors](#errors)
+- [Lazy loading](#lazy-loading)
+- [SSR](#ssr)
+  - [Next.js / RSC](#nextjs--rsc)
+- [Migrating from v1](#migrating-from-v1)
 
-if (yes) thanosSnap() // 🫰
-```
-
-</td>
-</tr>
-</table>
-
-# Simple yet flexible
-
-Present any piece of UI to the user, wait for the response data:
-
-- 💬 Confirmations, dialogs, form modals
-- 🔔 Notifications, toasts, popups
-- 📋 Context menus
-- 🎉 Or anything!
-
-# Quick setup
+# Getting started
 
 ```sh
-npm install react-call
+npm install react-call@next
 ```
 
 We'll setup a confirmation dialog, but you can setup any component to be callable.
 
-## 1. ⚛️ Declaration
+## 1. ⚛️ Declare
 
 ```tsx
 import { createCallable } from 'react-call'
@@ -76,7 +73,7 @@ export const Confirm = createCallable<Props, Response>(({ call, message }) => (
 
 Along with your props, there is a special `call` prop containing the `end()` method, which you can use to finish the call and return a response. State, hooks and any other React features are totally fine too.
 
-## 2. 📡 Rooting
+## 2. 📡 Root
 
 The Callable itself is the mounting point — it listens to every call and renders the active ones. Place it anywhere visible when making calls, for instance in `App.tsx`:
 
@@ -85,7 +82,7 @@ The Callable itself is the mounting point — it listens to every call and rende
 //  ^-- it will render active calls
 ```
 
-## 3. 🎉 Enjoy
+## 3. ▶️ Call & Await
 
 You're all done! Now you can do this anywhere in your codebase:
 
@@ -95,40 +92,6 @@ const accepted = await Confirm.call({ message: 'Continue?' })
 ```
 
 Check out [the demo site](https://react-call.desko.dev/) to see some live examples of other React components being called.
-
-# Lazy loading
-
-Use React.lazy to code-split callable components and load them on demand.
-
-```tsx
-import { createCallable } from 'react-call'
-import { lazy, Suspense } from 'react'
-
-// 1) Lazy-load your component
-const Confirm = createCallable(
-  lazy(() => import('./Confirm')), // default export required
-)
-
-// 2) Place the Callable inside a Suspense boundary
-export function App() {
-  return (
-    <>
-      {/* Other app UI */}
-      <Suspense fallback={null}>
-        <Confirm />
-      </Suspense>
-    </>
-  )
-}
-
-// 3) Call it as usual (component is fetched on first call)
-const accepted = await Confirm.call({ message: 'Continue?' })
-```
-
-Notes:
-- Make sure the lazily imported file has a default export (React.lazy requirement).
-- Wrap `<Confirm />` (or an ancestor) in `<Suspense>` to handle the loading state.
-- The lazy component is split into a separate chunk and downloaded only when first called.
 
 # Advanced usage
 
@@ -189,13 +152,13 @@ console.log(promise1 === promise2) // true
 
 The `upsert()` method behaves as follows:
 
-- **Creates** a new instance if no upsert instance is currently active
-- **Updates** the existing upsert instance if one is already active
-- **Does not affect** normal `call()` instances
-- **Creates** a new instance if the previous upsert instance was ended
+- Creates a new instance if no upsert instance is currently active
+- Updates the existing upsert instance if one is already active
+- Does not affect normal `call()` instances
+- Creates a new instance if the previous upsert instance was ended
 
 ```tsx
-// Example: Progress notification that updates itself
+// Example: progress notification that updates itself
 const showProgress = async () => {
   Toast.upsert({ message: 'Starting download...' })
 
@@ -204,8 +167,7 @@ const showProgress = async () => {
     Toast.upsert({ message: `Progress: ${i}%` })
   }
 
-  // End the notification
-  Toast.end(true)
+  Toast.end()
 }
 ```
 
@@ -260,9 +222,9 @@ You may want to use Root props if you need to:
 - Use something that is availble in Root's parent
 - Update your active call components on data changes
 
-# Async submission flow
+# Mutation flow
 
-Use `useMutationFlow` from `react-call/mutation-flow` to wire a confirm button to an async action. The hook manages `pending` for you and **swallows throws so the dialog stays open** — the user can retry without losing their place.
+Use `useMutationFlow` from `react-call/mutation-flow` to wire the call to an async action. The hook manages `pending` for you, and because closing the call requires an explicit `call.end()`, a `mutationFn` that doesn't reach `end` leaves the dialog open — the user can retry without losing their place.
 
 ```tsx
 import { createCallable } from 'react-call'
@@ -284,15 +246,15 @@ export const Confirm = createCallable<Props, boolean>(
 
 await Confirm.call({
   mutationFn: async (call) => {
-    await api.delete(id) // throws → dialog stays open, pending clears
+    await api.delete(id)
     call.end(true)
   },
 })
 ```
 
-The `mutationFn` receives a narrow `{ end }` view of the call (no `RootProps` leakage) and decides when — if ever — to close.
+The `mutationFn` receives the call context and decides when — if ever — to close.
 
-## Optional handlers
+## Optional mutationFn
 
 If a caller may omit `mutationFn`, type the prop as optional and chain `.orEnd(value)` at the callsite. The chain fires only when no `mutationFn` was provided; with one, it's a no-op.
 
@@ -302,33 +264,41 @@ type Props = { mutationFn?: MutationFn<boolean> }
 export const Confirm = createCallable<Props, boolean>(({ call, mutationFn }) => {
   const submit = useMutationFlow(call, mutationFn)
   return (
-    //                                          ↓ closes with `true` if no mutationFn
+    //                       closes with `true` if no mutationFn ↓
     <button disabled={submit.pending} onClick={() => submit().orEnd(true)}>Yes</button>
   )
 })
 ```
 
-## Per-button payload and fallback
+## Payload
 
-`submit(payload)` forwards a typed payload to `mutationFn`. Because `.orEnd` lives at the callsite, sibling buttons can chain different values — useful in pickers where the response *is* the option picked:
+`MutationFn` is `<Response, Payload>`-shaped. `Payload` is the second generic and defaults to `void`, so `submit()` takes no argument unless you opt in.
 
 ```tsx
-type Props = { mutationFn?: MutationFn<'A' | 'B', { choice: 'A' | 'B' }> }
+type Props = { mutationFn: MutationFn<boolean, { name: string }> }
+//                                             ↑ payload type
 
-export const Picker = createCallable<Props, 'A' | 'B'>(({ call, mutationFn }) => {
+export const Create = createCallable<Props, boolean>(({ call, mutationFn }) => {
+  const [name, setName] = useState('')
   const submit = useMutationFlow(call, mutationFn)
   return (
-    <>
-      <button onClick={() => submit({ choice: 'A' }).orEnd('A')}>A</button>
-      <button onClick={() => submit({ choice: 'B' }).orEnd('B')}>B</button>
-    </>
+    <div role="dialog">
+      <input value={name} onChange={(e) => setName(e.target.value)} />
+      <button onClick={() => submit({ name })}>Create</button>
+    </div>
   )
+})
+
+await Create.call({
+  mutationFn: async (call, payload) => {
+    //                       ↑ typed as { name: string }
+    await api.create(payload.name)
+    call.end(true)
+  },
 })
 ```
 
-## Leave the dialog open
-
-To let the user dismiss manually when no `mutationFn` was provided — via a "No" button, click-outside, etc. — omit `.orEnd` entirely. `submit()` is a no-op in that case; the dialog stays mounted until something else closes it.
+The payload is typed end-to-end — the trigger callsite and the handler share the same `Payload` generic — and it lives at the callsite, so triggers in the same component can forward different payloads (useful for pickers, where each option carries its own data).
 
 # Hot reload (HMR)
 
@@ -397,6 +367,27 @@ Error | Solution
 No \<Root> found! | You forgot to place the Root, check [Rooting section](#2--rooting). If it's already in place but not present by the time you call(), you may want to place it higher in your React tree. If you're getting this error on the server see [SSR section](#ssr).
 Multiple instances of \<Root> found! | You placed more than one Root, check [Rooting section](#2--rooting) as there is a warning about this.
 
+# Lazy loading
+
+If your callable carries a heavy payload (rich-text editor, chart library, big form), wrap it with `React.lazy` so the chunk only ships when the call fires.
+
+```tsx
+import { createCallable } from 'react-call'
+import { lazy, Suspense } from 'react'
+
+const Confirm = createCallable(
+  lazy(() => import('./Confirm')),
+)
+
+<Suspense fallback={<Spinner />}>
+  <Confirm />
+</Suspense>
+```
+
+- The lazy module must default-export the user component (React.lazy requirement).
+- The first call waits for the chunk to download — pick a `fallback` that signals "something's loading"; `null` works but the user sees nothing happen on click.
+- Subsequent calls are instant; the chunk is cached by the browser.
+
 # SSR
 
 ✅ The react-call setup supports [Server Side Rendering](https://nextjs.org/docs/pages/building-your-application/rendering/server-side-rendering). This means both createCallable and Root component are fine if run or rendered on the server.
@@ -417,3 +408,22 @@ export const Confirm = createCallable(...)
 ```
 
 Then `<Confirm />` mounts cleanly from any Server Component (e.g. `app/layout.tsx`).
+
+# Migrating from v1
+
+If you're upgrading from 1.x, see the [full v2 changelog](packages/react-call/CHANGELOG.md). The breaking changes in short:
+
+- **`<Confirm />` is the canonical Root.** The `<Confirm.Root />` form is still exported as a backwards-compatible alias but is soft-deprecated (ADR-0013).
+- **Public types are flat named exports**, not under the `ReactCall` namespace (ADR-0015). Migration is a mechanical find-and-replace:
+
+  | Before | After |
+  | --- | --- |
+  | `ReactCall.Function` | `CallFunction` |
+  | `ReactCall.UpsertFunction` | `UpsertFunction` |
+  | `ReactCall.Context` | `CallContext` |
+  | `ReactCall.Props` | `PropsWithCall` |
+  | `ReactCall.UserComponent` | `UserComponent` |
+  | `ReactCall.Callable` | `Callable` |
+
+- **`CallContext` no longer leaks `promise`, `resolve`, or `isUpsert`.** Replace `call.resolve(value)` with `call.end(value)`. The other two were internal and had no public-API equivalent.
+- **`"Multiple instances of <Root> found!"` now fires at `call()` time**, not at Root mount time (ADR-0001) — making it compatible with `React.lazy` inside `<Suspense>`, React StrictMode's double-invoke, and HMR re-mounts. Tests of the form `expect(() => render(<><Root /><Root /></>)).toThrow(...)` should now assert at the `call()` site instead.

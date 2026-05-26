@@ -12,8 +12,6 @@ export type MutationCall<Response> = {
 /**
  * The async handler the caller provides as a prop of the call. Owns the
  * side effects and decides when to close the call (via `call.end`).
- * Throws are swallowed by the trigger — pending clears, the call stays
- * open, the caller can retry.
  */
 export type MutationFn<Response, Payload = void> = (
   call: MutationCall<Response>,
@@ -71,12 +69,10 @@ export function useMutationFlow<Response, Payload = void>(
     }
     inFlightRef.current = true
     setPending(true)
-    mutationFn(call, payload)
-      .catch(() => {})
-      .finally(() => {
-        inFlightRef.current = false
-        setPending(false)
-      })
+    mutationFn(call, payload).finally(() => {
+      inFlightRef.current = false
+      setPending(false)
+    })
     return NOOP_CHAIN
   }) as ChainTrigger<Payload, Response>
   trigger.pending = pending

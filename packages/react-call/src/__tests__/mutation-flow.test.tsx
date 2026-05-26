@@ -6,6 +6,18 @@ import { type MutationFn, useMutationFlow } from '../mutation-flow'
 import type { UserComponent } from '../createCallable/types.public'
 import { withAct } from './shared/act'
 
+// ADR-0016: useMutationFlow propagates throws from `mutationFn` as
+// unhandled rejections; tests that intentionally throw use this to
+// scope the suppression to their own body so the runner doesn't fail
+// the test (and so unintended rejections elsewhere still do).
+function suppressUnhandledRejection() {
+  const listener = () => {}
+  process.on('unhandledRejection', listener)
+  return () => {
+    process.off('unhandledRejection', listener)
+  }
+}
+
 // Component fixtures cover the three consumer patterns:
 //   - Required handler: submit() runs the mutation; no chain.
 //   - Optional handler with Fallback response: submit().orEnd(value).
@@ -164,20 +176,25 @@ describe('useMutationFlow — pending lifecycle', () => {
   })
 
   test('thrown mutationFn keeps the dialog open and clears pending', async () => {
-    const mutationFn = vi.fn<MutationFn<boolean>>(() =>
-      Promise.reject(new Error('boom')),
-    )
+    const restore = suppressUnhandledRejection()
+    try {
+      const mutationFn = vi.fn<MutationFn<boolean>>(() =>
+        Promise.reject(new Error('boom')),
+      )
 
-    render(<Required />)
-    withAct(() => Required.call({ mutationFn }))
+      render(<Required />)
+      withAct(() => Required.call({ mutationFn }))
 
-    await act(async () => {
-      fireEvent.click(screen.getByTestId('submit'))
-    })
+      await act(async () => {
+        fireEvent.click(screen.getByTestId('submit'))
+      })
 
-    expect(screen.getByRole('dialog')).toBeInTheDocument()
-    expect(screen.getByTestId('submit').dataset.pending).toBe('false')
-    expect(screen.getByTestId('submit')).not.toBeDisabled()
+      expect(screen.getByRole('dialog')).toBeInTheDocument()
+      expect(screen.getByTestId('submit').dataset.pending).toBe('false')
+      expect(screen.getByTestId('submit')).not.toBeDisabled()
+    } finally {
+      restore()
+    }
   })
 })
 
@@ -307,29 +324,34 @@ describe('useMutationFlow — payload', () => {
 
 describe('useMutationFlow — mid-call updates', () => {
   test('Callable.update can swap the mutationFn between submits', async () => {
-    const first = vi.fn<MutationFn<boolean>>(async () => {
-      throw new Error('first fails')
-    })
-    const second = vi.fn<MutationFn<boolean>>(async (call) => {
-      call.end(true)
-    })
+    const restore = suppressUnhandledRejection()
+    try {
+      const first = vi.fn<MutationFn<boolean>>(async () => {
+        throw new Error('first fails')
+      })
+      const second = vi.fn<MutationFn<boolean>>(async (call) => {
+        call.end(true)
+      })
 
-    render(<Required />)
-    const promise = withAct(() => Required.call({ mutationFn: first }))
+      render(<Required />)
+      const promise = withAct(() => Required.call({ mutationFn: first }))
 
-    await act(async () => {
-      fireEvent.click(screen.getByTestId('submit'))
-    })
-    expect(first).toHaveBeenCalledTimes(1)
-    expect(screen.getByRole('dialog')).toBeInTheDocument()
+      await act(async () => {
+        fireEvent.click(screen.getByTestId('submit'))
+      })
+      expect(first).toHaveBeenCalledTimes(1)
+      expect(screen.getByRole('dialog')).toBeInTheDocument()
 
-    withAct(() => Required.update({ mutationFn: second }))
+      withAct(() => Required.update({ mutationFn: second }))
 
-    await act(async () => {
-      fireEvent.click(screen.getByTestId('submit'))
-    })
-    expect(second).toHaveBeenCalledTimes(1)
-    await expect(promise).resolves.toBe(true)
+      await act(async () => {
+        fireEvent.click(screen.getByTestId('submit'))
+      })
+      expect(second).toHaveBeenCalledTimes(1)
+      await expect(promise).resolves.toBe(true)
+    } finally {
+      restore()
+    }
   })
 })
 
