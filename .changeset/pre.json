@@ -10,6 +10,7 @@
     "feat-hmr-and-deprecations",
     "feat-mutation-flow",
     "feat-vite-plugin",
+    "fix-mutation-flow-no-swallow",
     "fix-ssr-server-snapshot"
   ]
 }
