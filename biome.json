@@ -108,6 +108,16 @@
           }
         }
       }
+    },
+    {
+      "includes": ["**/sites/web/src/examples/**/index.tsx"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noDefaultExport": "off"
+          }
+        }
+      }
     }
   ]
 }

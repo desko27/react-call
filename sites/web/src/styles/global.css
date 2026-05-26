@@ -2,6 +2,8 @@
 @import '@fontsource-variable/geist/index.css';
 @import '@fontsource-variable/geist-mono/index.css';
 
+@source '../**/*.{astro,tsx,ts,mdx}';
+
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme {

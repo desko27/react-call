@@ -13,22 +13,9 @@ const reactCallPath = (p: string) =>
 
 export default defineConfig({
   site: 'https://react-call.desko.dev',
-  integrations: [
-    expressiveCode({
-      themes: ['github-light', 'github-dark'],
-      themeCssSelector: (theme) =>
-        theme.name === 'github-dark' ? '.dark' : ':root',
-      defaultProps: { wrap: true },
-      styleOverrides: {
-        codeFontFamily:
-          'var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace)',
-        uiFontFamily: 'var(--font-sans, system-ui, -apple-system, sans-serif)',
-        borderRadius: '0.5rem',
-      },
-    }),
-    mdx(),
-    react(),
-  ],
+  // Expressive Code options live in ec.config.mjs (required when using
+  // non-serializable values like the themeCssSelector function).
+  integrations: [expressiveCode(), mdx(), react()],
   vite: {
     plugins: [tailwindcss()],
     resolve: {

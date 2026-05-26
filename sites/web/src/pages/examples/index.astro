@@ -1,0 +1,11 @@
+---
+import Base from '~/layouts/Base.astro'
+import { Gallery } from '~/components/gallery/Gallery'
+import { getAllExamples } from '~/lib/examples'
+
+const entries = getAllExamples().map(({ slug, meta }) => ({ slug, meta }))
+---
+
+<Base title="Examples — react-call">
+  <Gallery entries={entries} client:load />
+</Base>
