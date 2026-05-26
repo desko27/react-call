@@ -1,0 +1,124 @@
+---
+import Base from './Base.astro'
+
+interface Props {
+  title: string
+  intro: string
+}
+
+const { title, intro } = Astro.props
+
+const sections = [
+  { href: '/concepts/root-and-stack', label: 'Root & Stack' },
+  { href: '/concepts/upsert', label: 'Upsert' },
+  { href: '/concepts/mutation-flow', label: 'Mutation flow' },
+]
+
+const current = Astro.url.pathname
+---
+
+<Base title={`${title} — react-call`} description={intro}>
+  <div class="mx-auto max-w-5xl px-6 py-12 md:py-16">
+    <nav
+      class="mb-8 font-mono text-xs text-[var(--color-fg-subtle)]"
+      aria-label="Breadcrumb"
+    >
+      <a
+        href="/"
+        class="transition-colors hover:text-[var(--color-fg-muted)]"
+      >
+        Home
+      </a>
+      <span class="px-2">/</span>
+      <span class="text-[var(--color-fg-muted)]">Concepts</span>
+    </nav>
+
+    <header class="mb-10">
+      <h1
+        class="text-3xl font-medium tracking-tight text-[var(--color-fg)] md:text-5xl"
+      >
+        {title}
+      </h1>
+      <p class="mt-3 max-w-2xl text-base text-[var(--color-fg-muted)]">
+        {intro}
+      </p>
+    </header>
+
+    <div class="grid gap-12 md:grid-cols-[200px,1fr]">
+      <aside class="hidden md:block">
+        <p
+          class="mb-3 font-mono text-xs uppercase tracking-wider text-[var(--color-fg-subtle)]"
+        >
+          Concepts
+        </p>
+        <ul class="space-y-1">
+          {
+            sections.map((s) => (
+              <li>
+                <a
+                  href={s.href}
+                  class={
+                    current === s.href
+                      ? 'block rounded px-2 py-1 text-sm text-[var(--color-accent)]'
+                      : 'block rounded px-2 py-1 text-sm text-[var(--color-fg-muted)] transition-colors hover:text-[var(--color-fg)]'
+                  }
+                >
+                  {s.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </aside>
+
+      <article class="prose-react-call space-y-6 text-[var(--color-fg-muted)]">
+        <slot />
+      </article>
+    </div>
+  </div>
+</Base>
+
+<style is:global>
+  .prose-react-call h2 {
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+    color: var(--color-fg);
+    font-size: 1.5rem;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+  .prose-react-call h3 {
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--color-fg);
+    font-size: 1.125rem;
+    font-weight: 500;
+  }
+  .prose-react-call p {
+    line-height: 1.7;
+  }
+  .prose-react-call p code,
+  .prose-react-call li code {
+    font-family: var(--font-mono);
+    font-size: 0.875em;
+    background: var(--color-bg-muted);
+    padding: 0.1em 0.35em;
+    border-radius: 0.25rem;
+    color: var(--color-fg);
+  }
+  .prose-react-call ul {
+    list-style: disc;
+    padding-left: 1.25rem;
+    line-height: 1.7;
+  }
+  .prose-react-call ul li {
+    margin: 0.25rem 0;
+  }
+  .prose-react-call .demo {
+    margin: 1.5rem 0;
+  }
+  .prose-react-call strong {
+    color: var(--color-fg);
+    font-weight: 500;
+  }
+</style>

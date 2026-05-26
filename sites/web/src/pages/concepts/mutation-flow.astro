@@ -1,0 +1,55 @@
+---
+import Concept from '~/layouts/Concept.astro'
+import { MutationFlowDemo } from '~/components/concepts/MutationFlowDemo'
+---
+
+<Concept
+  title="Mutation flow"
+  intro="A composition hook that wires a Callable to an async action. Pending is tracked for you, and on failure the call stays open — the user retries without losing their input."
+>
+  <h2>The pattern</h2>
+  <p>
+    A form dialog runs an async save. While the save is in flight, the submit
+    button shows pending. On success, the dialog closes with the response. On
+    failure, the dialog stays open so the user can retry without losing what
+    they typed.
+  </p>
+  <p>
+    That is the entire shape of <code>useMutationFlow</code>. It lives in a
+    subpath import (<code>react-call/mutation-flow</code>) so consumers who
+    don't need it pay zero bytes.
+  </p>
+
+  <div class="demo">
+    <MutationFlowDemo client:load />
+  </div>
+
+  <h2>Where each piece lives</h2>
+  <ul>
+    <li>
+      <strong>MutationFn</strong> is a prop on the Call. It runs the side
+      effect and decides — by calling <code>call.end(…)</code> or not —
+      whether the Call closes. It lives in caller scope, alongside your domain
+      logic.
+    </li>
+    <li>
+      <strong>useMutationFlow</strong> lives in the Callable body. It wraps the
+      MutationFn, tracks pending, and returns a Trigger you wire to your submit
+      button.
+    </li>
+    <li>
+      <strong>Pending</strong> is local component state inside the Callable.
+      Disable inputs against <code>trigger.pending</code> the same way you'd
+      disable against any other piece of state.
+    </li>
+  </ul>
+
+  <h2>Failure semantics</h2>
+  <p>
+    When the MutationFn throws, useMutationFlow swallows the throw, clears
+    pending, and re-throws to the Trigger callsite (so you can opt in to
+    catch it at the call site if you want). The Call <em>itself</em> stays
+    open — that is the whole point. The user sees the dialog return to its
+    idle state and can try again.
+  </p>
+</Concept>

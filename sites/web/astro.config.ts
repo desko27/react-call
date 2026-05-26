@@ -23,7 +23,7 @@ export default defineConfig({
         { find: /^react-call$/, replacement: reactCallPath('src/main.ts') },
         {
           find: /^react-call\/mutation-flow$/,
-          replacement: reactCallPath('src/mutation-flow.ts'),
+          replacement: reactCallPath('src/mutation-flow/index.ts'),
         },
         {
           find: /^react-call\/package\.json$/,

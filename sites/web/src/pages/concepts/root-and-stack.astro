@@ -1,0 +1,44 @@
+---
+import Concept from '~/layouts/Concept.astro'
+import { StackDemo } from '~/components/concepts/StackDemo'
+---
+
+<Concept
+  title="Root & Stack"
+  intro="One Root mounts the Callable in your React tree. Many calls can be active at once — the Root renders all of them as a stack."
+>
+  <h2>Two roles, one component</h2>
+  <p>
+    A <strong>Callable</strong> (the value returned by <code>createCallable</code>)
+    is two things at once. It is a React component you mount — that mount is the
+    <strong>Root</strong>. And it is a namespace of imperative methods —
+    <code>call</code>, <code>upsert</code>, <code>end</code>, <code>update</code>.
+    The Root listens; the methods speak.
+  </p>
+
+  <h2>The Stack</h2>
+  <p>
+    Every <code>.call(…)</code> adds an active <strong>Call</strong> to the
+    Stack. The Root renders all of them, in insertion order. There is no
+    cancellation, no replace-by-default — newer calls coexist with older ones
+    until each is explicitly ended.
+  </p>
+
+  <div class="demo">
+    <StackDemo client:load />
+  </div>
+
+  <p>
+    Each call carries its own <code>CallContext</code>. Closing one does not
+    affect the others. This is what makes nested or recursive interactions
+    natural to model — a confirm-inside-a-form is just two calls on the same
+    Stack.
+  </p>
+
+  <h2>One Root per Callable</h2>
+  <p>
+    Mount the bare component (<code>{`<Confirm />`}</code>) once, anywhere
+    visible. Two mounts of the same Callable will throw at <code>.call()</code>
+    time — it is a programmer error, not a runtime fallback.
+  </p>
+</Concept>
