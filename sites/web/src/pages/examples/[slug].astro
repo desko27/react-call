@@ -1,7 +1,8 @@
 ---
 import { Code } from 'astro-expressive-code/components'
-import Base from '~/layouts/Base.astro'
 import { ExampleHost } from '~/components/gallery/ExampleHost'
+import { PlaygroundButton } from '~/components/gallery/PlaygroundButton'
+import Base from '~/layouts/Base.astro'
 import {
   BEHAVIOR_LABELS,
   CATEGORY_LABELS,
@@ -61,10 +62,20 @@ const related = getAllExamples()
     </header>
 
     <section
-      class="mb-12 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-subtle)] p-10 flex flex-col items-center justify-center min-h-[280px]"
+      class="relative mb-12 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-subtle)] p-10 flex flex-col items-center justify-center min-h-[280px]"
       aria-label="Live demo"
     >
       <ExampleHost slug={slug} client:load />
+      <div class="absolute right-4 top-4">
+        <PlaygroundButton
+          client:idle
+          title={example.meta.title}
+          callableFilename={example.meta.files.callable}
+          callableSource={example.callableSource}
+          callerFilename={example.meta.files.caller}
+          callerSource={example.callerSource}
+        />
+      </div>
     </section>
 
     <section class="space-y-6">
