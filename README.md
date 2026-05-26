@@ -225,7 +225,7 @@ You may want to use Root props if you need to:
 
 # Async submission flow
 
-Use `useMutationFlow` from `react-call/mutation-flow` to wire a confirm button to an async action. The hook manages `pending` for you and **swallows throws so the dialog stays open** — the user can retry without losing their place.
+Use `useMutationFlow` from `react-call/mutation-flow` to wire a confirm button to an async action. The hook manages `pending` for you, and because closing the Call requires an explicit `call.end()`, a `mutationFn` that doesn't reach `end` leaves the dialog open — the user can retry without losing their place.
 
 ```tsx
 import { createCallable } from 'react-call'
@@ -247,7 +247,7 @@ export const Confirm = createCallable<Props, boolean>(
 
 await Confirm.call({
   mutationFn: async (call) => {
-    await api.delete(id) // throws → dialog stays open, pending clears
+    await api.delete(id)
     call.end(true)
   },
 })
