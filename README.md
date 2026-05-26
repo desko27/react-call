@@ -32,9 +32,8 @@ menus, pickers — any UI that conceptually returns a value to its caller.
 - [Exit animations](#exit-animations)
 - [Passing Root props](#passing-root-props)
 - [Mutation flow](#mutation-flow)
-  - [Optional handlers](#optional-handlers)
-  - [Per-button payload and fallback](#per-button-payload-and-fallback)
-  - [Leave the dialog open](#leave-the-dialog-open)
+  - [Optional mutationFn](#optional-mutationfn)
+  - [Payload](#payload)
 - [Hot reload (HMR)](#hot-reload-hmr)
   - [Vite plugin (optional)](#vite-plugin-optional)
 - [FAQ](#faq)
@@ -255,7 +254,7 @@ await Confirm.call({
 
 The `mutationFn` receives the call context and decides when — if ever — to close.
 
-## Optional handlers
+## Optional mutationFn
 
 If a caller may omit `mutationFn`, type the prop as optional and chain `.orEnd(value)` at the callsite. The chain fires only when no `mutationFn` was provided; with one, it's a no-op.
 
@@ -271,27 +270,35 @@ export const Confirm = createCallable<Props, boolean>(({ call, mutationFn }) => 
 })
 ```
 
-## Per-button payload and fallback
+## Payload
 
-`submit(payload)` forwards a typed payload to `mutationFn`. Because `.orEnd` lives at the callsite, sibling buttons can chain different values — useful in pickers where the response *is* the option picked:
+`MutationFn` is `<Response, Payload>`-shaped. `Payload` is the second generic and defaults to `void`, so `submit()` takes no argument unless you opt in.
 
 ```tsx
-type Props = { mutationFn?: MutationFn<'A' | 'B', { choice: 'A' | 'B' }> }
+type Props = { mutationFn: MutationFn<boolean, { name: string }> }
+//                                             ↑ payload type
 
-export const Picker = createCallable<Props, 'A' | 'B'>(({ call, mutationFn }) => {
+export const Create = createCallable<Props, boolean>(({ call, mutationFn }) => {
+  const [name, setName] = useState('')
   const submit = useMutationFlow(call, mutationFn)
   return (
-    <>
-      <button onClick={() => submit({ choice: 'A' }).orEnd('A')}>A</button>
-      <button onClick={() => submit({ choice: 'B' }).orEnd('B')}>B</button>
-    </>
+    <div role="dialog">
+      <input value={name} onChange={(e) => setName(e.target.value)} />
+      <button onClick={() => submit({ name })}>Create</button>
+    </div>
   )
+})
+
+await Create.call({
+  mutationFn: async (call, payload) => {
+    //                       ↑ typed as { name: string }
+    await api.create(payload.name)
+    call.end(true)
+  },
 })
 ```
 
-## Leave the dialog open
-
-To let the user dismiss manually when no `mutationFn` was provided — via a "No" button, click-outside, etc. — omit `.orEnd` entirely. `submit()` is a no-op in that case; the dialog stays mounted until something else closes it.
+The payload is typed end-to-end — the trigger callsite and the handler share the same `Payload` generic — and it lives at the callsite, so triggers in the same component can forward different payloads (useful for pickers, where each option carries its own data).
 
 # Hot reload (HMR)
 
