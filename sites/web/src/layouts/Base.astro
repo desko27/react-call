@@ -1,0 +1,44 @@
+---
+import '~/styles/global.css'
+import Header from '~/components/Header.astro'
+
+interface Props {
+  title?: string
+  description?: string
+}
+
+const {
+  title = 'react-call — your component can await',
+  description = 'createCallable turns any React component into something you can await. Dialogs, toasts, pickers, menus — any UI that conceptually returns a value to its caller.',
+} = Astro.props
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <script is:inline>
+      // Apply theme before paint to avoid FOUC.
+      try {
+        const stored = localStorage.getItem('theme')
+        const prefersDark = window.matchMedia(
+          '(prefers-color-scheme: dark)',
+        ).matches
+        if (stored === 'dark' || (!stored && prefersDark)) {
+          document.documentElement.classList.add('dark')
+        }
+      } catch {}
+    </script>
+  </head>
+  <body>
+    <Header />
+    <main>
+      <slot />
+    </main>
+  </body>
+</html>

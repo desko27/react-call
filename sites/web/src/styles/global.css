@@ -1,0 +1,79 @@
+@import 'tailwindcss';
+@import '@fontsource-variable/geist/index.css';
+@import '@fontsource-variable/geist-mono/index.css';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --font-sans:
+    'Geist Variable', ui-sans-serif, system-ui, -apple-system,
+    BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono:
+    'Geist Mono Variable', ui-monospace, SFMono-Regular, Menlo, Monaco,
+    Consolas, monospace;
+
+  --color-accent: #e11d74;
+  --color-accent-hover: #c4146a;
+  --color-accent-fg: #ffffff;
+
+  --color-bg: #ffffff;
+  --color-bg-subtle: #fafafa;
+  --color-bg-muted: #f4f4f5;
+  --color-fg: #0a0a0a;
+  --color-fg-muted: #525252;
+  --color-fg-subtle: #737373;
+  --color-border: #e5e5e5;
+  --color-border-strong: #d4d4d4;
+}
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  :root.dark {
+    color-scheme: dark;
+
+    --color-accent: #ff3a8e;
+    --color-accent-hover: #ff5fa3;
+    --color-accent-fg: #0a0a0a;
+
+    --color-bg: #0a0a0a;
+    --color-bg-subtle: #141414;
+    --color-bg-muted: #1f1f1f;
+    --color-fg: #fafafa;
+    --color-fg-muted: #a3a3a3;
+    --color-fg-subtle: #737373;
+    --color-border: #262626;
+    --color-border-strong: #404040;
+  }
+
+  html {
+    background-color: var(--color-bg);
+    color: var(--color-fg);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    min-height: 100vh;
+  }
+
+  ::selection {
+    background-color: var(--color-accent);
+    color: var(--color-accent-fg);
+  }
+
+  *:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  code,
+  pre,
+  kbd {
+    font-family: var(--font-mono);
+  }
+}

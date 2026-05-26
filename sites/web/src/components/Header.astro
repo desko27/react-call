@@ -1,0 +1,57 @@
+---
+import { ThemeToggle } from './ThemeToggle'
+
+const navItems = [
+  { href: '/examples', label: 'Examples' },
+  { href: '/concepts/root-and-stack', label: 'Concepts' },
+  {
+    href: 'https://github.com/desko27/react-call',
+    label: 'GitHub',
+    external: true,
+  },
+]
+---
+
+<header
+  class="
+    sticky top-0 z-40
+    border-b border-[var(--color-border)]
+    bg-[color-mix(in_srgb,var(--color-bg)_85%,transparent)]
+    backdrop-blur
+  "
+>
+  <div
+    class="mx-auto flex max-w-6xl items-center justify-between px-6 py-4"
+  >
+    <a
+      href="/"
+      class="
+        flex items-center gap-2 font-mono text-sm font-medium
+        text-[var(--color-fg)]
+      "
+    >
+      <span
+        class="text-[var(--color-accent)]"
+        aria-hidden="true">●</span
+      >
+      react-call
+    </a>
+
+    <nav class="flex items-center gap-6">
+      {
+        navItems.map((item) => (
+          <a
+            href={item.href}
+            class="text-sm text-[var(--color-fg-muted)] transition-colors hover:text-[var(--color-fg)]"
+            {...(item.external
+              ? { target: '_blank', rel: 'noopener noreferrer' }
+              : {})}
+          >
+            {item.label}
+          </a>
+        ))
+      }
+      <ThemeToggle client:load />
+    </nav>
+  </div>
+</header>

@@ -82,6 +82,22 @@
       }
     },
     {
+      "includes": ["**/*.d.ts"],
+      "linter": {
+        "rules": {
+          "style": {
+            "noDefaultExport": "off"
+          },
+          "suspicious": {
+            "noExplicitAny": "off"
+          },
+          "complexity": {
+            "noBannedTypes": "off"
+          }
+        }
+      }
+    },
+    {
       "includes": [
         "**/apps/nextjs/app/**/{page,layout,template,loading,error,not-found,default,route}.{ts,tsx}"
       ],

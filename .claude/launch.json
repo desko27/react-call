@@ -12,6 +12,12 @@
       "runtimeExecutable": "pnpm",
       "runtimeArgs": ["--filter", "nextjs-playground", "run", "dev"],
       "port": 3001
+    },
+    {
+      "name": "web",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["--filter", "web", "run", "dev"],
+      "port": 4321
     }
   ]
 }

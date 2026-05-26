@@ -1,0 +1,16 @@
+{
+  "extends": "astro/tsconfigs/strict",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "jsxImportSource": "react",
+    "paths": {
+      "react-call": ["../../packages/react-call/src/main.ts"],
+      "react-call/mutation-flow": [
+        "../../packages/react-call/src/mutation-flow.ts"
+      ],
+      "~/*": ["./src/*"]
+    }
+  },
+  "include": [".astro/types.d.ts", "**/*"],
+  "exclude": ["dist"]
+}
