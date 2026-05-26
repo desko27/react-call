@@ -16,7 +16,7 @@ import dts from 'vite-plugin-dts'
 // think consumers need `require(...).default`, but at runtime the
 // function is the module itself. For entries with only named exports
 // (like the main runtime), the .d.ts is copy-safe as-is.
-const ENTRY_NAMES = ['main', 'vite', 'mutation-flow'] as const
+const ENTRY_NAMES = ['main', 'vite', 'mutation-flow', 'host'] as const
 const DEFAULT_EXPORT_RE = /^export default (\w+);?\s*$/m
 const TRAILING_EMPTY_EXPORT_RE = /^export\s*\{\s*\};?\s*$/m
 
@@ -60,12 +60,13 @@ export default defineConfig({
           import.meta.dirname,
           'src/mutation-flow/index.ts',
         ),
+        host: resolve(import.meta.dirname, 'src/host/index.tsx'),
       },
       formats: ['es', 'cjs'],
       fileName: (format, name) => `${name}.${format === 'cjs' ? 'cjs' : 'js'}`,
     },
     rollupOptions: {
-      external: ['react', 'react/jsx-runtime', 'vite'],
+      external: ['react', 'react/jsx-runtime', 'react-dom/client', 'vite'],
     },
   },
 })

@@ -333,6 +333,78 @@ export default {
 
 With the plugin enabled, every top-level `(export) const X = createCallable(...)` gets `X.displayName = 'X'` appended at dev time only — no source change, no production overhead.
 
+# Multi-preview hosts (Storybook, Ladle, …)
+
+If you preview your Callables in a tool that renders multiple stories side-by-side (Storybook's autodocs page, Ladle, Histoire, react-cosmos), mounting `<Confirm />` per-story via a decorator triggers `Multiple instances of <Root> found!` at call-time — every preview registers its own listener.
+
+`react-call/host` exposes a `mount()` helper that puts a single Root in a body-level `<div>` outside the previews. Call it once from your host's preview-annotations module (e.g. `.storybook/preview.tsx`); your story decorators don't need to render Callables at all.
+
+```tsx
+// .storybook/preview.tsx
+import { mount } from 'react-call/host'
+import { Confirm } from '../src/Confirm'
+
+mount(<Confirm />)
+
+const preview = { /* normal Storybook config */ }
+export default preview
+```
+
+That's it for the simple case. The helper is idempotent under HMR — saving your `preview.tsx` doesn't double-mount, and an open `Confirm.call()` survives the edit.
+
+## With static providers
+
+If `Confirm` needs context providers (theme, i18n, router), pass them via `wrapper`. The wrapper renders inside the Confirm's own React tree:
+
+```tsx
+import { mount } from 'react-call/host'
+import { ThemeProvider } from '@mui/material/styles'
+import { lightTheme } from '../src/themes'
+import { Confirm } from '../src/Confirm'
+
+mount(<Confirm />, {
+  wrapper: ({ children }) => (
+    <ThemeProvider theme={lightTheme}>{children}</ThemeProvider>
+  ),
+})
+```
+
+## With reactive providers
+
+The Confirm renders in its own React tree, separate from each story's tree. **React Context from a story decorator does not reach the Confirm.** If your providers depend on Storybook globals (toolbar toggles, args, parameters), subscribe to them inside the wrapper via `useGlobals` from `@storybook/preview-api`:
+
+```tsx
+import { mount } from 'react-call/host'
+import { useGlobals } from '@storybook/preview-api'
+import { ThemeProvider } from '@mui/material/styles'
+import { lightTheme, darkTheme } from '../src/themes'
+import { Confirm } from '../src/Confirm'
+
+function ReactiveTheme({ children }: { children: React.ReactNode }) {
+  const [{ theme = 'light' }] = useGlobals()
+  return (
+    <ThemeProvider theme={theme === 'dark' ? darkTheme : lightTheme}>
+      {children}
+    </ThemeProvider>
+  )
+}
+
+mount(<Confirm />, { wrapper: ReactiveTheme })
+```
+
+External stores (Zustand, Jotai, Redux, anything backed by `useSyncExternalStore`) work the same way — both trees subscribe to the same source of truth.
+
+## Options
+
+```tsx
+mount(element, {
+  wrapper?: ComponentType<{ children: ReactNode }>,
+  container?: HTMLElement, // default: <div data-react-call-host> in document.body
+})
+```
+
+The same helper works in Ladle, Histoire, react-cosmos, or any environment that runs JavaScript in the browser with React DOM — wherever your host loads first.
+
 # FAQ
 
 ### What if more than one call is active?

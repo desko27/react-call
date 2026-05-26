@@ -51,6 +51,16 @@ component or a domain handler. The async logic and the response handling
 live here.
 _Avoid_: Parent, container.
 
+**Host**:
+An environment that renders multiple isolated React subtrees in
+parallel for previewing — typically a tool like Storybook (autodocs
+page), Ladle, Histoire, or react-cosmos. Each subtree applies its own
+decorators; a Callable mounted naively per-subtree violates the
+single-Root invariant. The Host is where a single shared Root lives,
+above or beside the previewed subtrees.
+_Avoid_: Sandbox, container, environment, playground (overloaded with
+browser/test concepts).
+
 ### Mutation flow
 
 **MutationFlow**:
@@ -111,6 +121,9 @@ _Avoid_: Stuck call, dangling call, no-op path.
 - When the **MutationFn** is absent at runtime and the **Trigger**
   callsite omits the **Fallback response**, the **Call** is on the
   **Manual-close path**.
+- A **Host** scopes the single-Root invariant: in a multi-preview
+  environment, all previews share one Root mounted above or beside
+  them, not one Root per preview.
 
 ## Example dialogue
 
