@@ -31,7 +31,7 @@ menus, pickers — any UI that conceptually returns a value to its caller.
   - [Upsert](#upsert)
 - [Exit animations](#exit-animations)
 - [Passing Root props](#passing-root-props)
-- [Async submission flow](#async-submission-flow)
+- [Mutation flow](#mutation-flow)
   - [Optional handlers](#optional-handlers)
   - [Per-button payload and fallback](#per-button-payload-and-fallback)
   - [Leave the dialog open](#leave-the-dialog-open)
@@ -223,9 +223,9 @@ You may want to use Root props if you need to:
 - Use something that is availble in Root's parent
 - Update your active call components on data changes
 
-# Async submission flow
+# Mutation flow
 
-Use `useMutationFlow` from `react-call/mutation-flow` to wire a confirm button to an async action. The hook manages `pending` for you, and because closing the Call requires an explicit `call.end()`, a `mutationFn` that doesn't reach `end` leaves the dialog open — the user can retry without losing their place.
+Use `useMutationFlow` from `react-call/mutation-flow` to wire the call to an async action. The hook manages `pending` for you, and because closing the call requires an explicit `call.end()`, a `mutationFn` that doesn't reach `end` leaves the dialog open — the user can retry without losing their place.
 
 ```tsx
 import { createCallable } from 'react-call'
@@ -253,7 +253,7 @@ await Confirm.call({
 })
 ```
 
-The `mutationFn` receives a narrow `{ end }` view of the call (no `RootProps` leakage) and decides when — if ever — to close.
+The `mutationFn` receives the call context and decides when — if ever — to close.
 
 ## Optional handlers
 
@@ -265,7 +265,7 @@ type Props = { mutationFn?: MutationFn<boolean> }
 export const Confirm = createCallable<Props, boolean>(({ call, mutationFn }) => {
   const submit = useMutationFlow(call, mutationFn)
   return (
-    //                                          ↓ closes with `true` if no mutationFn
+    //                       closes with `true` if no mutationFn ↓
     <button disabled={submit.pending} onClick={() => submit().orEnd(true)}>Yes</button>
   )
 })
