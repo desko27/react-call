@@ -335,26 +335,28 @@ With the plugin enabled, every top-level `(export) const X = createCallable(...)
 
 # Multi-preview hosts (Storybook, Ladle, …)
 
-If you preview your Callables in a tool that renders multiple stories side-by-side (Storybook's autodocs page, Ladle, Histoire, react-cosmos), mounting `<Confirm />` per-story via a decorator triggers `Multiple instances of <Root> found!` at call-time — every preview registers its own listener.
+Tools like Storybook (autodocs page), Ladle, Histoire, and react-cosmos render multiple stories side-by-side. If each story's decorator mounts `<Confirm />`, every preview registers its own listener — and `Confirm.call()` throws `Multiple instances of <Root> found!` the moment any preview's button is clicked.
 
-`react-call/host` exposes a `mount()` helper that puts a single Root in a body-level `<div>` outside the previews. Call it once from your host's preview-annotations module (e.g. `.storybook/preview.tsx`); your story decorators don't need to render Callables at all.
+`react-call/host` exposes a `mount()` helper that puts a single Root in a body-level `<div>` outside the previews. Call it once from your host's preview entry file (e.g. `.storybook/preview.tsx`); your story decorators don't need to render Callables at all.
 
-```tsx
+```diff
 // .storybook/preview.tsx
-import { mount } from 'react-call/host'
-import { Confirm } from '../src/Confirm'
++ import { mount } from 'react-call/host'
++ import { Confirm } from '../src/Confirm'
 
-mount(<Confirm />)
++ mount(<Confirm />)
 
-const preview = { /* normal Storybook config */ }
-export default preview
+  const preview = {
+-   decorators: [(Story) => <><Story /><Confirm /></>],
+  }
+  export default preview
 ```
 
-That's it for the simple case. The helper is idempotent under HMR — saving your `preview.tsx` doesn't double-mount, and an open `Confirm.call()` survives the edit.
+That's it for the simple case. Your app's own `<Confirm />` mount stays where it is — this helper only handles the preview environment. The mount is idempotent under HMR — saving your `preview.tsx` doesn't double-mount, and an open `Confirm.call()` survives the edit.
 
 ## With static providers
 
-If `Confirm` needs context providers (theme, i18n, router), pass them via `wrapper`. The wrapper renders inside the Confirm's own React tree:
+The Confirm renders in its own React tree, separate from every story preview. It does not inherit context from your story decorators — if it needs a theme, locale, or router, pass them via `wrapper`:
 
 ```tsx
 import { mount } from 'react-call/host'
@@ -371,16 +373,17 @@ mount(<Confirm />, {
 
 ## With reactive providers
 
-The Confirm renders in its own React tree, separate from each story's tree. **React Context from a story decorator does not reach the Confirm.** If your providers depend on Storybook globals (toolbar toggles, args, parameters), subscribe to them inside the wrapper via `useGlobals` from `@storybook/preview-api`:
+A static wrapper captures its props once. If your providers depend on Storybook globals — toolbar toggles, args, parameters — subscribe to them inside the wrapper via `useGlobals` from `@storybook/preview-api`:
 
 ```tsx
+import type { ReactNode } from 'react'
 import { mount } from 'react-call/host'
 import { useGlobals } from '@storybook/preview-api'
 import { ThemeProvider } from '@mui/material/styles'
 import { lightTheme, darkTheme } from '../src/themes'
 import { Confirm } from '../src/Confirm'
 
-function ReactiveTheme({ children }: { children: React.ReactNode }) {
+function ReactiveTheme({ children }: { children: ReactNode }) {
   const [{ theme = 'light' }] = useGlobals()
   return (
     <ThemeProvider theme={theme === 'dark' ? darkTheme : lightTheme}>
@@ -403,7 +406,7 @@ mount(element, {
 })
 ```
 
-The same helper works in Ladle, Histoire, react-cosmos, or any environment that runs JavaScript in the browser with React DOM — wherever your host loads first.
+Works wherever React DOM does.
 
 # FAQ
 
@@ -414,6 +417,8 @@ The same helper works in Ladle, Histoire, react-cosmos, or any environment that 
 ### Can I place more than one Root?
 
 No. There can only be one `<Root>` mounted per createCallable(). Avoid placing it in multiple locations of the React Tree loaded at once, an error will be thrown if so.
+
+If you specifically need this in a sandbox host (Storybook autodocs, Ladle, …), see [Multi-preview hosts](#multi-preview-hosts-storybook-ladle-) for the supported pattern.
 
 # TypeScript types
 
@@ -437,7 +442,7 @@ Callable<Props?, Response?, RootProps?> | What createCallable returns
 Error | Solution
 --- | ---
 No \<Root> found! | You forgot to place the Root, check [Rooting section](#2--rooting). If it's already in place but not present by the time you call(), you may want to place it higher in your React tree. If you're getting this error on the server see [SSR section](#ssr).
-Multiple instances of \<Root> found! | You placed more than one Root, check [Rooting section](#2--rooting) as there is a warning about this.
+Multiple instances of \<Root> found! | You placed more than one Root, check [Rooting section](#2--rooting) as there is a warning about this. If you're hitting this in Storybook autodocs or another multi-preview tool, see [Multi-preview hosts](#multi-preview-hosts-storybook-ladle-).
 
 # Lazy loading
 
