@@ -12,17 +12,32 @@ interface Props {
 const Save = createCallable<Props, 'ok'>(({ call, mutationFn }) => {
   const submit = useMutationFlow(call, mutationFn)
   return (
-    <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] p-4 shadow-2xl">
-      <p className="text-sm text-[var(--color-fg)]">Save changes?</p>
-      <div className="mt-4 flex items-center justify-end gap-2">
-        <button
-          type="button"
-          disabled={submit.pending}
-          onClick={() => submit()}
-          className="rounded-md bg-[var(--color-accent)] px-3 py-1.5 text-xs font-medium text-[var(--color-accent-fg)] transition-colors hover:bg-[var(--color-accent-hover)] disabled:opacity-50"
-        >
-          {submit.pending ? 'Saving…' : 'Save'}
-        </button>
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label="Save changes"
+      className="absolute inset-0 z-10 flex items-center justify-center bg-[var(--color-bg)]/70 backdrop-blur-sm"
+    >
+      <div className="w-[80%] max-w-[300px] rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] p-4 shadow-2xl">
+        <p className="text-sm text-[var(--color-fg)]">Save changes?</p>
+        <div className="mt-4 flex items-center justify-end gap-2">
+          <button
+            type="button"
+            disabled={submit.pending}
+            onClick={() => call.end('ok')}
+            className="text-xs text-[var(--color-fg-subtle)] hover:text-[var(--color-fg-muted)] disabled:opacity-50"
+          >
+            Discard
+          </button>
+          <button
+            type="button"
+            disabled={submit.pending}
+            onClick={() => submit()}
+            className="rounded-md bg-[var(--color-accent)] px-3 py-1.5 text-xs font-medium text-[var(--color-accent-fg)] transition-colors hover:bg-[var(--color-accent-hover)] disabled:opacity-50"
+          >
+            {submit.pending ? 'Saving…' : 'Save'}
+          </button>
+        </div>
       </div>
     </div>
   )
@@ -32,10 +47,13 @@ Save.displayName = 'MutationFlowSave'
 export const MutationFlowDemo = () => {
   const [shouldFail, setShouldFail] = useState(false)
   const [log, setLog] = useState<string[]>([])
+  const [busy, setBusy] = useState(false)
 
   const append = (line: string) => setLog((prev) => [...prev.slice(-3), line])
 
   const openSave = () => {
+    if (busy) return
+    setBusy(true)
     setLog([])
     Save.call({
       mutationFn: async (call) => {
@@ -48,7 +66,9 @@ export const MutationFlowDemo = () => {
         append('• success → call.end()')
         call.end('ok')
       },
-    }).catch(() => {})
+    })
+      .catch(() => {})
+      .finally(() => setBusy(false))
   }
 
   return (
@@ -59,7 +79,8 @@ export const MutationFlowDemo = () => {
           <button
             type="button"
             onClick={openSave}
-            className="rounded-md border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2 text-sm text-[var(--color-fg)] transition-colors hover:bg-[var(--color-bg-muted)]"
+            disabled={busy}
+            className="rounded-md border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-2 text-sm text-[var(--color-fg)] transition-colors hover:bg-[var(--color-bg-muted)] disabled:opacity-50"
           >
             Open Save dialog
           </button>
