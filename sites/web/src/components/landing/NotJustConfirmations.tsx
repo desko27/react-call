@@ -1,12 +1,14 @@
-import { Confirm } from '~/examples/confirm-dialog/callable'
+import { type MouseEvent, useState } from 'react'
 import { ColorPicker } from '~/examples/color-picker/callable'
 import {
-  CommandPalette,
   type Command,
+  CommandPalette,
 } from '~/examples/command-palette/callable'
+import { Confirm } from '~/examples/confirm-dialog/callable'
 import { ContextMenu } from '~/examples/context-menu/callable'
 import { Lightbox } from '~/examples/image-lightbox/callable'
 import { Toast } from '~/examples/progress-toast/callable'
+import { type Result, ResultBadge } from './ResultBadge'
 
 const SWATCHES = [
   '#ef4444',
@@ -27,39 +29,78 @@ const COMMANDS: readonly Command[] = [
 const sleep = (ms: number) =>
   new Promise<void>((resolve) => setTimeout(resolve, ms))
 
+const formatString = (v: string | null): Result => ({
+  value: v ?? 'null',
+  highlighted: v !== null,
+  ts: Date.now(),
+})
+
+const formatBool = (v: boolean): Result => ({
+  value: String(v),
+  highlighted: v,
+  ts: Date.now(),
+})
+
+const formatVoid = (label: string): Result => ({
+  value: label,
+  highlighted: true,
+  ts: Date.now(),
+})
+
 interface CardProps {
   category: string
   title: string
   description: string
-  onTry: () => void
+  buttonLabel?: string
+  onTry: (e?: MouseEvent) => Promise<Result>
 }
 
-const Card = ({ category, title, description, onTry }: CardProps) => (
-  <div className="flex flex-col rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-subtle)] p-5">
-    <p className="font-mono text-xs uppercase tracking-wider text-[var(--color-fg-subtle)]">
-      {category}
-    </p>
-    <h3 className="mt-1 text-base font-medium text-[var(--color-fg)]">
-      {title}
-    </h3>
-    <p className="mt-2 flex-1 text-sm text-[var(--color-fg-muted)]">
-      {description}
-    </p>
-    <button
-      type="button"
-      onClick={onTry}
-      className="mt-4 self-start rounded-md border border-[var(--color-border-strong)] bg-[var(--color-bg)] px-3 py-1.5 text-xs text-[var(--color-fg)] transition-colors hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
-    >
-      Try it →
-    </button>
-  </div>
-)
+const Card = ({
+  category,
+  title,
+  description,
+  buttonLabel = 'Try it →',
+  onTry,
+}: CardProps) => {
+  const [result, setResult] = useState<Result | null>(null)
+
+  const handleClick = async (e: MouseEvent) => {
+    const next = await onTry(e)
+    setResult(next)
+  }
+
+  return (
+    <div className="flex flex-col rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-subtle)] p-5">
+      <p className="font-mono text-xs uppercase tracking-wider text-[var(--color-fg-subtle)]">
+        {category}
+      </p>
+      <h3 className="mt-1 text-base font-medium text-[var(--color-fg)]">
+        {title}
+      </h3>
+      <p className="mt-2 flex-1 text-sm text-[var(--color-fg-muted)]">
+        {description}
+      </p>
+      <button
+        type="button"
+        onClick={handleClick}
+        className="mt-4 self-start rounded-md border border-[var(--color-border-strong)] bg-[var(--color-bg)] px-3 py-1.5 text-xs text-[var(--color-fg)] transition-colors hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
+      >
+        {buttonLabel}
+      </button>
+      <div className="mt-3 h-5">
+        <ResultBadge result={result} />
+      </div>
+    </div>
+  )
+}
 
 export const NotJustConfirmations = () => {
-  const fireConfirm = () =>
-    Confirm.call({ message: 'A real .call() — same as yours.' })
+  const fireConfirm = async (): Promise<Result> => {
+    const v = await Confirm.call({ message: 'A real .call() — same as yours.' })
+    return formatBool(v)
+  }
 
-  const fireToast = async () => {
+  const fireToast = async (): Promise<Result> => {
     Toast.upsert({ message: 'Starting…', percent: 0 })
     for (let p = 20; p <= 100; p += 20) {
       await sleep(180)
@@ -67,26 +108,41 @@ export const NotJustConfirmations = () => {
     }
     await sleep(500)
     Toast.end()
+    return formatVoid('done')
   }
 
-  const firePicker = () => ColorPicker.call({ swatches: SWATCHES })
-  const fireCommand = () => CommandPalette.call({ commands: COMMANDS })
-  const fireLightbox = () =>
-    Lightbox.call({
+  const firePicker = async (): Promise<Result> => {
+    const v = await ColorPicker.call({ swatches: SWATCHES })
+    return formatString(v)
+  }
+
+  const fireCommand = async (): Promise<Result> => {
+    const v = await CommandPalette.call({ commands: COMMANDS })
+    return formatString(v)
+  }
+
+  const fireLightbox = async (): Promise<Result> => {
+    await Lightbox.call({
       src: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=1400',
       alt: 'Circuit board',
     })
+    return formatVoid('closed')
+  }
 
-  const fireContextMenu = (e: React.MouseEvent) => {
-    ContextMenu.call({
-      x: e.clientX,
-      y: e.clientY,
+  const fireContextMenu = async (e?: MouseEvent): Promise<Result> => {
+    e?.preventDefault()
+    const x = e?.clientX ?? window.innerWidth / 2
+    const y = e?.clientY ?? window.innerHeight / 2
+    const v = await ContextMenu.call({
+      x,
+      y,
       actions: [
         { id: 'edit', label: 'Edit' },
         { id: 'duplicate', label: 'Duplicate' },
         { id: 'delete', label: 'Delete', destructive: true },
       ],
     })
+    return formatString(v)
   }
 
   return (
@@ -109,7 +165,8 @@ export const NotJustConfirmations = () => {
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-base text-[var(--color-fg-muted)]">
             Each card below is a real Callable. Click any "Try it" to see the
-            actual <code className="font-mono text-sm">.call()</code> happen.
+            actual <code className="font-mono text-sm">.call()</code> happen —
+            the badge below the button shows what the promise resolved with.
           </p>
         </div>
 
@@ -138,28 +195,13 @@ export const NotJustConfirmations = () => {
             description="⌘K-style search. Arrow keys to navigate, Enter to run."
             onTry={fireCommand}
           />
-          <div className="flex flex-col rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-subtle)] p-5">
-            <p className="font-mono text-xs uppercase tracking-wider text-[var(--color-fg-subtle)]">
-              Menu
-            </p>
-            <h3 className="mt-1 text-base font-medium text-[var(--color-fg)]">
-              Context menu
-            </h3>
-            <p className="mt-2 flex-1 text-sm text-[var(--color-fg-muted)]">
-              Forwards the cursor position to a positioned Callable.
-            </p>
-            <button
-              type="button"
-              onContextMenu={(e) => {
-                e.preventDefault()
-                fireContextMenu(e)
-              }}
-              onClick={(e) => fireContextMenu(e)}
-              className="mt-4 self-start rounded-md border border-[var(--color-border-strong)] bg-[var(--color-bg)] px-3 py-1.5 text-xs text-[var(--color-fg)] transition-colors hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
-            >
-              Right-click or tap →
-            </button>
-          </div>
+          <Card
+            category="Menu"
+            title="Context menu"
+            description="Forwards the cursor position to a positioned Callable."
+            buttonLabel="Right-click or tap →"
+            onTry={fireContextMenu}
+          />
           <Card
             category="Overlay"
             title="Image lightbox"

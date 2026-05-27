@@ -1,50 +1,27 @@
 import { useState } from 'react'
 import { HeroConfirm } from './HeroConfirm'
-
-type Result = { value: 'true' | 'false'; ts: number } | null
-
-const ResultBadge = ({ result }: { result: Result }) => {
-  if (!result) {
-    return (
-      <span className="text-[var(--color-fg-subtle)] font-mono text-xs">
-        →&nbsp;awaiting click…
-      </span>
-    )
-  }
-  return (
-    <span
-      key={result.ts}
-      className="
-        inline-flex items-center gap-2 font-mono text-xs
-        animate-in fade-in slide-in-from-bottom-1 duration-300
-      "
-    >
-      <span className="text-[var(--color-fg-subtle)]">→</span>
-      <span
-        className={
-          result.value === 'true'
-            ? 'text-[var(--color-accent)]'
-            : 'text-[var(--color-fg-muted)]'
-        }
-      >
-        {result.value}
-      </span>
-    </span>
-  )
-}
+import { type Result, ResultBadge } from './ResultBadge'
 
 export const Hero = () => {
-  const [nativeResult, setNativeResult] = useState<Result>(null)
-  const [callResult, setCallResult] = useState<Result>(null)
+  const [nativeResult, setNativeResult] = useState<Result | null>(null)
+  const [callResult, setCallResult] = useState<Result | null>(null)
 
   const runNative = () => {
     const accepted = window.confirm('Continue?')
-    setNativeResult({ value: accepted ? 'true' : 'false', ts: Date.now() })
+    setNativeResult({
+      value: accepted ? 'true' : 'false',
+      highlighted: accepted,
+      ts: Date.now(),
+    })
   }
 
   const runCall = async () => {
     const accepted = await HeroConfirm.call({ message: 'Continue?' })
-    setCallResult({ value: accepted ? 'true' : 'false', ts: Date.now() })
+    setCallResult({
+      value: accepted ? 'true' : 'false',
+      highlighted: accepted,
+      ts: Date.now(),
+    })
   }
 
   return (
