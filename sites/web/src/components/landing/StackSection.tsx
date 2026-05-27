@@ -42,26 +42,32 @@ const LABELS = [
   'Cap reached. Close one, open another. Or close all at once.',
 ]
 
+const MAX = 5
+
 export const StackSection = () => {
-  const [count, setCount] = useState(0)
+  const [active, setActive] = useState(0)
 
   const open = () => {
-    if (count >= 5) return
+    if (active >= MAX) return
+    const depth = active
+    setActive((n) => n + 1)
     StackedDialog.call({
-      depth: count,
-      label: LABELS[count] ?? 'Another call.',
-    })
-    setCount((c) => c + 1)
+      depth,
+      label: LABELS[depth] ?? 'Another call.',
+    }).then(() => setActive((n) => n - 1))
   }
 
+  // No manual setActive(0) here — end() resolves each active call's
+  // promise, and the .then in `open` decrements active once per resolved
+  // call. The same path handles the × button on individual dialogs, so
+  // the badge stays in sync however the user closes.
   const closeAll = () => {
     StackedDialog.end()
-    setCount(0)
   }
 
   return (
     <section className="mx-auto max-w-6xl px-6 py-24">
-      <div className="grid gap-12 lg:grid-cols-[1fr,1.2fr] lg:items-center">
+      <div className="grid gap-12 lg:grid-cols-[1fr_1.2fr] lg:items-center">
         <div>
           <p className="font-mono text-xs uppercase tracking-wider text-[var(--color-fg-subtle)]">
             The Stack
@@ -83,7 +89,7 @@ export const StackSection = () => {
             <button
               type="button"
               onClick={open}
-              disabled={count >= 5}
+              disabled={active >= MAX}
               className="rounded-md bg-[var(--color-accent)] px-4 py-2 text-sm font-medium text-[var(--color-accent-fg)] transition-colors hover:bg-[var(--color-accent-hover)] disabled:opacity-50"
             >
               Open another
@@ -96,14 +102,14 @@ export const StackSection = () => {
               Close all
             </button>
             <span className="font-mono text-xs text-[var(--color-fg-subtle)]">
-              {count} active
+              {active} / {MAX} active
             </span>
           </div>
         </div>
 
         <div className="relative h-[360px] overflow-hidden rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-subtle)]">
           <StackedDialog />
-          {count === 0 && (
+          {active === 0 && (
             <div className="flex h-full items-center justify-center font-mono text-xs text-[var(--color-fg-subtle)]">
               click "Open another" to start a call
             </div>

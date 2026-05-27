@@ -45,20 +45,22 @@ const StackDialog = createCallable<Props, void>(({ call, depth, label }) => (
 StackDialog.displayName = 'ConceptStackDialog'
 
 export const StackDemo = () => {
-  const [opened, setOpened] = useState(0)
+  const [active, setActive] = useState(0)
 
   const open = () => {
-    if (opened >= MAX) return
+    if (active >= MAX) return
+    const depth = active
+    setActive((n) => n + 1)
     StackDialog.call({
-      depth: opened,
-      label: LABELS[opened] ?? 'Another call on the stack.',
-    })
-    setOpened((n) => n + 1)
+      depth,
+      label: LABELS[depth] ?? 'Another call on the stack.',
+    }).then(() => setActive((n) => n - 1))
   }
 
+  // Each call's promise resolves on end() — individual × or Close all
+  // both walk through the same .then below, so active stays correct.
   const closeAll = () => {
     StackDialog.end()
-    setOpened(0)
   }
 
   return (
@@ -68,7 +70,7 @@ export const StackDemo = () => {
         <button
           type="button"
           onClick={open}
-          disabled={opened >= MAX}
+          disabled={active >= MAX}
           className="rounded-md bg-[var(--color-accent)] px-3 py-1.5 text-xs font-medium text-[var(--color-accent-fg)] transition-colors hover:bg-[var(--color-accent-hover)] disabled:opacity-50"
         >
           Open another
@@ -76,16 +78,16 @@ export const StackDemo = () => {
         <button
           type="button"
           onClick={closeAll}
-          disabled={opened === 0}
+          disabled={active === 0}
           className="rounded-md border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-1.5 text-xs text-[var(--color-fg-muted)] transition-colors hover:text-[var(--color-fg)] disabled:opacity-50"
         >
           Close all
         </button>
         <span className="font-mono text-[10px] text-[var(--color-fg-subtle)]">
-          {opened} / {MAX}
+          {active} / {MAX}
         </span>
       </div>
-      {opened === 0 && (
+      {active === 0 && (
         <div className="flex h-full items-center justify-center font-mono text-xs text-[var(--color-fg-subtle)]">
           click "Open another" to start a call
         </div>
