@@ -30,19 +30,20 @@ export const HowItLives = () => {
   useEffect(() => {
     if (!autoplay) return
     let cancelled = false
+    const PHASE_MS = 2000
     const run = async () => {
       while (!cancelled) {
         setPhase('idle')
-        await sleep(900)
+        await sleep(PHASE_MS)
         if (cancelled) return
         setPhase('calling')
-        await sleep(900)
+        await sleep(PHASE_MS)
         if (cancelled) return
         setPhase('rendering')
-        await sleep(1400)
+        await sleep(PHASE_MS)
         if (cancelled) return
         setPhase('resolving')
-        await sleep(1000)
+        await sleep(PHASE_MS)
       }
     }
     run()
