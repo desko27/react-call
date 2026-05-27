@@ -6,40 +6,45 @@ const sleep = (ms: number) =>
   new Promise<void>((resolve) => setTimeout(resolve, ms))
 
 interface Props {
-  mutationFn: MutationFn<'saved'>
+  mutationFn: MutationFn<'saved', { shouldFail: boolean }>
+}
+interface RootProps {
+  shouldFail: boolean
 }
 
-const SaveDialog = createCallable<Props, 'saved'>(({ call, mutationFn }) => {
-  const submit = useMutationFlow(call, mutationFn)
-  return (
-    <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] p-5 shadow-2xl">
-      <p className="text-sm font-medium text-[var(--color-fg)]">
-        Save changes?
-      </p>
-      <p className="mt-1 text-xs text-[var(--color-fg-muted)]">
-        Your unsaved work will be persisted.
-      </p>
-      <div className="mt-5 flex items-center justify-end gap-2">
-        <button
-          type="button"
-          disabled={submit.pending}
-          onClick={() => call.end('saved')}
-          className="text-xs text-[var(--color-fg-subtle)] hover:text-[var(--color-fg-muted)] disabled:opacity-50"
-        >
-          Discard
-        </button>
-        <button
-          type="button"
-          disabled={submit.pending}
-          onClick={() => submit()}
-          className="rounded-md bg-[var(--color-accent)] px-3 py-1.5 text-xs font-medium text-[var(--color-accent-fg)] transition-colors hover:bg-[var(--color-accent-hover)] disabled:opacity-50"
-        >
-          {submit.pending ? 'Saving…' : 'Save'}
-        </button>
+const SaveDialog = createCallable<Props, 'saved', RootProps>(
+  ({ call, mutationFn }) => {
+    const submit = useMutationFlow(call, mutationFn)
+    return (
+      <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] p-5 shadow-2xl">
+        <p className="text-sm font-medium text-[var(--color-fg)]">
+          Save changes?
+        </p>
+        <p className="mt-1 text-xs text-[var(--color-fg-muted)]">
+          Your unsaved work will be persisted.
+        </p>
+        <div className="mt-5 flex items-center justify-end gap-2">
+          <button
+            type="button"
+            disabled={submit.pending}
+            onClick={() => call.end('saved')}
+            className="text-xs text-[var(--color-fg-subtle)] hover:text-[var(--color-fg-muted)] disabled:opacity-50"
+          >
+            Discard
+          </button>
+          <button
+            type="button"
+            disabled={submit.pending}
+            onClick={() => submit({ shouldFail: call.root.shouldFail })}
+            className="rounded-md bg-[var(--color-accent)] px-3 py-1.5 text-xs font-medium text-[var(--color-accent-fg)] transition-colors hover:bg-[var(--color-accent-hover)] disabled:opacity-50"
+          >
+            {submit.pending ? 'Saving…' : 'Save'}
+          </button>
+        </div>
       </div>
-    </div>
-  )
-})
+    )
+  },
+)
 SaveDialog.displayName = 'LandingSaveDialog'
 
 type LogEntry = { ts: number; line: string; tone: 'info' | 'good' | 'bad' }
@@ -57,10 +62,13 @@ export const MutationFlowSection = () => {
     setBusy(true)
     setLog([])
     SaveDialog.call({
-      mutationFn: async (call) => {
+      // shouldFail comes through payload (fed from call.root.shouldFail at
+      // submit time) so toggling "Make it fail" while the dialog is open
+      // takes effect on the next retry instead of being captured stale.
+      mutationFn: async (call, payload) => {
         append('trigger fires • pending = true', 'info')
         await sleep(900)
-        if (shouldFail) {
+        if (payload.shouldFail) {
           append('throw → pending clears, call stays open', 'bad')
           throw new Error('Network error')
         }
@@ -121,7 +129,7 @@ export const MutationFlowSection = () => {
           </div>
 
           <div className="relative">
-            <SaveDialog />
+            <SaveDialog shouldFail={shouldFail} />
             <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] p-5">
               <p className="font-mono text-xs uppercase tracking-wider text-[var(--color-fg-subtle)]">
                 Lifecycle log
