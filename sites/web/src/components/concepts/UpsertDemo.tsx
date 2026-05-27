@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { createCallable } from 'react-call'
 
 interface Props {
@@ -32,23 +32,35 @@ const Notice = createCallable<Props, void>(({ call, message, count }) => (
 Notice.displayName = 'Notice'
 
 export const UpsertDemo = () => {
+  // Refs hold the source of truth — synchronous, immune to React's
+  // batching. State mirrors them only for rendering.
+  const callsRef = useRef(0)
+  const activeRef = useRef(false)
   const [calls, setCalls] = useState(0)
+  const [active, setActive] = useState(false)
 
   const send = () => {
-    const next = calls + 1
-    setCalls(next)
+    const wasActive = activeRef.current
+    activeRef.current = true
+    callsRef.current += 1
+    setActive(true)
+    setCalls(callsRef.current)
+
     Notice.upsert({
-      message:
-        next === 1
-          ? 'First call → new instance'
-          : `Update ${next - 1} → same instance, new props`,
-      count: next,
+      message: wasActive
+        ? 'Update → same instance, new props'
+        : 'First call → new instance',
+      count: callsRef.current,
+    }).then(() => {
+      activeRef.current = false
+      setActive(false)
     })
   }
 
   const reset = () => {
     Notice.end()
-    setCalls(0)
+    // The .then in `send` clears `active`. `calls` stays as the
+    // cumulative count of upserts fired — that's the point of the demo.
   }
 
   return (
@@ -65,12 +77,15 @@ export const UpsertDemo = () => {
         <button
           type="button"
           onClick={reset}
-          className="rounded-md border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-1.5 text-xs text-[var(--color-fg-muted)] transition-colors hover:text-[var(--color-fg)]"
+          disabled={!active}
+          className="rounded-md border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-1.5 text-xs text-[var(--color-fg-muted)] transition-colors hover:text-[var(--color-fg)] disabled:opacity-50"
         >
           end()
         </button>
         <p className="mt-2 font-mono text-xs text-[var(--color-fg-subtle)]">
-          calls fired: {calls}
+          upserts fired: {calls}
+          <br />
+          active: {active ? 'yes' : 'no'}
         </p>
       </div>
     </div>

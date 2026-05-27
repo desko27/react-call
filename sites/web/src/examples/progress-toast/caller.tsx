@@ -9,9 +9,22 @@ export const DownloadButton = () => {
 
   const handleClick = async () => {
     setRunning(true)
-    Toast.upsert({ message: 'Starting download…', percent: 0 })
+    // Capture the singleton promise so the loop can abort if the user
+    // dismisses the toast via the × button mid-progress. Without this,
+    // each upsert after a dismiss would create a brand-new instance and
+    // the button would stay disabled until the loop finishes.
+    let cancelled = false
+    const session = Toast.upsert({ message: 'Starting download…', percent: 0 })
+    session.then(() => {
+      cancelled = true
+    })
+
     for (let i = 10; i <= 100; i += 10) {
       await sleep(150)
+      if (cancelled) {
+        setRunning(false)
+        return
+      }
       Toast.upsert({ message: `Downloading… ${i}%`, percent: i })
     }
     Toast.upsert({ message: 'Done!', percent: 100 })
