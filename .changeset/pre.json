@@ -9,6 +9,7 @@
     "breaking-flat-type-exports",
     "feat-hmr-and-deprecations",
     "feat-mutation-flow",
+    "feat-react-call-host",
     "feat-vite-plugin",
     "fix-mutation-flow-no-swallow",
     "fix-ssr-server-snapshot"
