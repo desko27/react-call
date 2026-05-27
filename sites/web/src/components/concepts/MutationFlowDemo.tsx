@@ -52,7 +52,7 @@ export const MutationFlowDemo = () => {
   }
 
   return (
-    <div className="grid gap-4 md:grid-cols-[1fr,1fr]">
+    <div className="grid gap-4 md:grid-cols-[1fr_1fr]">
       <div className="relative h-[240px] overflow-hidden rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-subtle)]">
         <Save />
         <div className="absolute inset-0 flex items-center justify-center">

@@ -79,7 +79,7 @@ export const MutationFlowSection = () => {
   return (
     <section className="border-y border-[var(--color-border)] bg-[var(--color-bg-subtle)]">
       <div className="mx-auto max-w-6xl px-6 py-24">
-        <div className="grid gap-12 lg:grid-cols-[1.1fr,1fr] lg:items-center">
+        <div className="grid gap-12 lg:grid-cols-[1.1fr_1fr] lg:items-center">
           <div>
             <p className="font-mono text-xs uppercase tracking-wider text-[var(--color-fg-subtle)]">
               Mutation flow

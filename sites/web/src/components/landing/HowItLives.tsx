@@ -51,7 +51,7 @@ export const HowItLives = () => {
           </p>
         </div>
 
-        <div className="mt-14 grid gap-6 lg:grid-cols-[1fr,auto,1fr]">
+        <div className="mt-14 grid gap-6 lg:grid-cols-[1fr_auto_1fr]">
           {/* Left: the React tree */}
           <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] p-6">
             <p className="mb-4 font-mono text-xs uppercase tracking-wider text-[var(--color-fg-subtle)]">
