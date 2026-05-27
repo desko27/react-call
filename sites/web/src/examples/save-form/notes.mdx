@@ -1,0 +1,25 @@
+## What changes with `useMutationFlow`
+
+Without it, you'd own pending state, the try/catch, and the close decision
+yourself. The hook owns pending so you don't disable inputs by hand. The
+**handler** owns whether to close — by calling `call.end(value)` on success
+or not calling it on failure.
+
+If the handler throws, the hook clears pending and the dialog stays open.
+Type "**fail**" in the demo above to see it: pending goes back to false,
+the input keeps its value, the user can retry.
+
+## When to reach for it
+
+- A submit button that should disable itself while the request is in flight.
+- "Stay open on failure" semantics — the user shouldn't lose what they typed.
+- The handler is provided **at the call site**, not declared in the Callable.
+  This lets two different callers run different mutations against the same
+  form.
+
+## When _not_ to
+
+If the dialog's purpose is just to read a value (color picker, item picker),
+the mutation lives outside the dialog. The caller does
+`const id = await Picker.call(…); await api.delete(id)` — keeps the picker
+pure and reusable.

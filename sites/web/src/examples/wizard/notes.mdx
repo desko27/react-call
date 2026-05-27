@@ -1,0 +1,30 @@
+## Why a single Callable, not three
+
+You _could_ chain three separate `.call()`s — one per step — and the
+flow would even read clean as imperative code:
+
+```tsx
+const name = await NameStep.call({})
+if (!name) return
+const email = await EmailStep.call({ name })
+if (!email) return
+const plan = await PlanStep.call({ name, email })
+```
+
+It works. But the **back button** doesn't. Cancelling a child step from
+inside it can't re-open the previous step — the previous promise has
+already resolved. You'd own a state machine in caller scope to drive the
+back navigation.
+
+A single Callable with internal step state keeps the state machine where
+it belongs (inside the wizard) and exposes a clean single-promise
+interface to the caller. The price is that the Callable is bigger; the
+gain is that the caller doesn't think about steps at all.
+
+## When to reach for this shape
+
+- Multi-step forms with linear back/forward navigation.
+- Onboarding flows where the user can abandon at any point with `null`.
+- Anything you'd reach for a "form wizard" library for — the Callable
+  pattern handles it natively, no extra state synchronization library
+  required.

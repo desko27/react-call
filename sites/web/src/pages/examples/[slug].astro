@@ -1,5 +1,6 @@
 ---
 import { Code } from 'astro-expressive-code/components'
+import type { MarkdownInstance } from 'astro'
 import { ExampleHost } from '~/components/gallery/ExampleHost'
 import { PlaygroundButton } from '~/components/gallery/PlaygroundButton'
 import Base from '~/layouts/Base.astro'
@@ -9,6 +10,12 @@ import {
   getAllExamples,
   getExample,
 } from '~/lib/examples'
+
+type NotesModule = Pick<MarkdownInstance<unknown>, 'Content'>
+
+const noteModules = import.meta.glob<NotesModule>(
+  '../../examples/*/notes.mdx',
+)
 
 export const getStaticPaths = () =>
   getAllExamples().map(({ slug }) => ({ params: { slug } }))
@@ -21,6 +28,9 @@ if (!example) throw new Error(`Example not found: ${slug}`)
 const related = getAllExamples()
   .filter((e) => e.slug !== slug && e.meta.category === example.meta.category)
   .slice(0, 3)
+
+const noteImporter = noteModules[`../../examples/${slug}/notes.mdx`]
+const Notes = noteImporter ? (await noteImporter()).Content : null
 ---
 
 <Base title={`${example.meta.title} — react-call`}>
@@ -119,6 +129,14 @@ const related = getAllExamples()
         />
       </div>
     </section>
+
+    {
+      Notes && (
+        <section class="prose-react-call mt-16 space-y-4 text-[var(--color-fg-muted)]">
+          <Notes />
+        </section>
+      )
+    }
 
     {
       related.length > 0 && (
