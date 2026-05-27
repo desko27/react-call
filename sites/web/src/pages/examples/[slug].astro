@@ -33,7 +33,10 @@ const noteImporter = noteModules[`../../examples/${slug}/notes.mdx`]
 const Notes = noteImporter ? (await noteImporter()).Content : null
 ---
 
-<Base title={`${example.meta.title} — react-call`}>
+<Base
+  title={`${example.meta.title} — react-call`}
+  description={example.meta.description}
+>
   <article class="mx-auto max-w-4xl px-6 py-12 md:py-16">
     <nav
       class="mb-6 font-mono text-xs text-[var(--color-fg-subtle)]"

@@ -6,12 +6,22 @@ import Header from '~/components/Header.astro'
 interface Props {
   title?: string
   description?: string
+  image?: string
+  type?: 'website' | 'article'
+  noindex?: boolean
 }
 
 const {
   title = 'react-call — your component can await',
   description = 'createCallable turns any React component into something you can await. Dialogs, toasts, pickers, menus — any UI that conceptually returns a value to its caller.',
+  image = '/og.svg',
+  type = 'website',
+  noindex = false,
 } = Astro.props
+
+const site = Astro.site ?? new URL('https://react-call.desko.dev')
+const canonical = new URL(Astro.url.pathname, site).href
+const imageUrl = new URL(image, site).href
 ---
 
 <!doctype html>
@@ -19,10 +29,45 @@ const {
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
     <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex,nofollow" />}
+
+    <!-- Icons -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- Theme color (respected by Safari iOS, Chrome Android) -->
+    <meta
+      name="theme-color"
+      content="#ffffff"
+      media="(prefers-color-scheme: light)"
+    />
+    <meta
+      name="theme-color"
+      content="#0a0a0a"
+      media="(prefers-color-scheme: dark)"
+    />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content={type} />
+    <meta property="og:site_name" content="react-call" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={imageUrl} />
+    <meta property="og:locale" content="en_US" />
+
+    <!-- Twitter / X -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={imageUrl} />
+
+    <!-- Sitemap -->
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
     <script is:inline>
       // Apply theme before paint to avoid FOUC.
       try {

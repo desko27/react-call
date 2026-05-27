@@ -1,6 +1,7 @@
 import { fileURLToPath } from 'node:url'
 import mdx from '@astrojs/mdx'
 import react from '@astrojs/react'
+import sitemap from '@astrojs/sitemap'
 import tailwindcss from '@tailwindcss/vite'
 import { defineConfig } from 'astro/config'
 import expressiveCode from 'astro-expressive-code'
@@ -15,7 +16,7 @@ export default defineConfig({
   site: 'https://react-call.desko.dev',
   // Expressive Code options live in ec.config.mjs (required when using
   // non-serializable values like the themeCssSelector function).
-  integrations: [expressiveCode(), mdx(), react()],
+  integrations: [expressiveCode(), mdx(), react(), sitemap()],
   vite: {
     plugins: [tailwindcss()],
     resolve: {

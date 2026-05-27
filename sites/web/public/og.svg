@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0a0a0a"/>
+      <stop offset="100%" stop-color="#1a1a1a"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="40%" r="40%">
+      <stop offset="0%" stop-color="#e11d74" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#e11d74" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+
+  <!-- Top-left brand -->
+  <g transform="translate(80, 80)">
+    <circle cx="10" cy="10" r="10" fill="#e11d74"/>
+    <text x="32" y="17" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="22" fill="#fafafa">react-call</text>
+  </g>
+
+  <!-- Main copy: anchored to left edge with the same x as the brand mark (80) -->
+  <g transform="translate(80, 290)">
+    <text font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif" font-size="86" font-weight="500" fill="#fafafa" letter-spacing="-2">
+      <tspan x="0" dy="0">Your component</tspan>
+      <tspan x="0" dy="100">can <tspan font-family="ui-monospace, SFMono-Regular, Menlo, monospace" fill="#ff3a8e">await</tspan>.</tspan>
+    </text>
+  </g>
+
+  <!-- Bottom-left tagline -->
+  <text x="80" y="560" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="22" fill="#a3a3a3">
+    createCallable() · 1 KB · no deps · SSR · React Native
+  </text>
+
+  <!-- Bottom-right URL -->
+  <text x="1120" y="560" text-anchor="end" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="22" fill="#737373">
+    react-call.desko.dev
+  </text>
+</svg>
