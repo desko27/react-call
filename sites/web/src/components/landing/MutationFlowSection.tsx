@@ -135,8 +135,16 @@ export const MutationFlowSection = () => {
             </div>
           </div>
 
-          <div className="relative">
-            <SaveDialog shouldFail={shouldFail} />
+          <div className="flex flex-col gap-3">
+            <div className="relative h-[180px] overflow-hidden rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-subtle)]">
+              <SaveDialog shouldFail={shouldFail} />
+              {!busy && (
+                <div className="flex h-full items-center justify-center font-mono text-xs text-[var(--color-fg-subtle)]">
+                  the Save dialog will appear here
+                </div>
+              )}
+            </div>
+
             <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] p-5">
               <p className="font-mono text-xs uppercase tracking-wider text-[var(--color-fg-subtle)]">
                 Lifecycle log
