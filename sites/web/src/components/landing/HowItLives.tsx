@@ -5,6 +5,24 @@ const sleep = (ms: number) =>
 
 type Phase = 'idle' | 'calling' | 'rendering' | 'resolving'
 
+const FLOW_ROWS = [
+  {
+    phase: 'calling' as const,
+    label: '.call()',
+    direction: 'forward' as const,
+  },
+  {
+    phase: 'rendering' as const,
+    label: 'Render',
+    direction: 'backward' as const,
+  },
+  {
+    phase: 'resolving' as const,
+    label: 'Response',
+    direction: 'forward' as const,
+  },
+]
+
 export const HowItLives = () => {
   const [phase, setPhase] = useState<Phase>('idle')
   const [autoplay, setAutoplay] = useState(true)
@@ -15,10 +33,10 @@ export const HowItLives = () => {
     const run = async () => {
       while (!cancelled) {
         setPhase('idle')
-        await sleep(1200)
+        await sleep(900)
         if (cancelled) return
         setPhase('calling')
-        await sleep(800)
+        await sleep(900)
         if (cancelled) return
         setPhase('rendering')
         await sleep(1400)
@@ -51,7 +69,7 @@ export const HowItLives = () => {
           </p>
         </div>
 
-        <div className="mt-14 grid gap-6 lg:grid-cols-[1fr_auto_1fr]">
+        <div className="mt-14 grid gap-6 lg:grid-cols-[1fr_auto_1fr] lg:items-center">
           {/* Left: the React tree */}
           <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] p-6">
             <p className="mb-4 font-mono text-xs uppercase tracking-wider text-[var(--color-fg-subtle)]">
@@ -85,12 +103,16 @@ export const HowItLives = () => {
             </p>
           </div>
 
-          {/* Middle: arrow + promise */}
-          <div className="flex flex-col items-center justify-center gap-2 px-2">
-            <Arrow phase={phase} />
-            <span className="font-mono text-xs text-[var(--color-fg-subtle)]">
-              Promise{`<`}Response{`>`}
-            </span>
+          {/* Middle: 3-step flow */}
+          <div className="flex flex-col items-stretch justify-center gap-5 lg:min-w-[160px]">
+            {FLOW_ROWS.map((row) => (
+              <FlowRow
+                key={row.phase}
+                label={row.label}
+                direction={row.direction}
+                active={phase === row.phase}
+              />
+            ))}
           </div>
 
           {/* Right: the caller site */}
@@ -102,24 +124,16 @@ export const HowItLives = () => {
               <div>
                 <span className="text-[var(--color-fg-subtle)]">{`// inside any handler, hook, or domain action`}</span>
               </div>
-              <div className={phase === 'calling' ? 'animate-pulse-bg' : ''}>
-                <span>{`const accepted = `}</span>
-                <span className="text-[var(--color-fg)]">await </span>
-                <span
-                  className={
-                    phase !== 'idle'
-                      ? 'rounded bg-[color-mix(in_srgb,var(--color-accent)_18%,transparent)] px-1 text-[var(--color-accent)]'
-                      : 'text-[var(--color-fg)]'
-                  }
-                >
-                  Confirm.call({`{ message }`})
-                </span>
+              <div>
+                <CodeSpan active={phase === 'resolving'}>
+                  const accepted
+                </CodeSpan>
+                <span className="text-[var(--color-fg-muted)]">{' = '}</span>
+                <CodeSpan active={phase === 'calling'}>
+                  await Confirm.call({`{ message }`})
+                </CodeSpan>
               </div>
-              <div
-                className={
-                  phase === 'resolving' ? 'text-[var(--color-accent)]' : ''
-                }
-              >
+              <div className="text-[var(--color-fg-muted)]">
                 {`if (accepted) await api.delete(id)`}
               </div>
             </div>
@@ -170,86 +184,88 @@ const TreeLine = ({ indent, children, highlight }: TreeLineProps) => (
     style={{ paddingLeft: `${indent * 1.5}rem` }}
     className={
       highlight
-        ? 'rounded bg-[color-mix(in_srgb,var(--color-accent)_18%,transparent)] text-[var(--color-fg)]'
-        : ''
+        ? 'rounded bg-[color-mix(in_srgb,var(--color-accent)_18%,transparent)] text-[var(--color-fg)] transition-colors duration-200'
+        : 'transition-colors duration-200'
     }
   >
     {children}
   </div>
 )
 
-const Arrow = ({ phase }: { phase: Phase }) => {
-  const isCalling = phase === 'calling'
-  const isResolving = phase === 'resolving'
+interface CodeSpanProps {
+  active: boolean
+  children: React.ReactNode
+}
+
+const CodeSpan = ({ active, children }: CodeSpanProps) => (
+  <span
+    className={
+      active
+        ? 'rounded bg-[color-mix(in_srgb,var(--color-accent)_18%,transparent)] px-1 text-[var(--color-accent)] transition-colors duration-200'
+        : 'text-[var(--color-fg)] transition-colors duration-200'
+    }
+  >
+    {children}
+  </span>
+)
+
+interface FlowRowProps {
+  label: string
+  direction: 'forward' | 'backward'
+  active: boolean
+}
+
+const FlowRow = ({ label, direction, active }: FlowRowProps) => {
+  const stroke = active ? 'var(--color-accent)' : 'var(--color-border-strong)'
+  const textColor = active
+    ? 'text-[var(--color-accent)]'
+    : 'text-[var(--color-fg-subtle)]'
+
   return (
-    <svg
-      width="120"
-      height="60"
-      viewBox="0 0 120 60"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-      className="lg:rotate-0"
-    >
-      <defs>
-        <marker
-          id="arrowhead"
-          markerWidth="10"
-          markerHeight="10"
-          refX="8"
-          refY="3"
-          orient="auto"
-        >
-          <path d="M0,0 L0,6 L8,3 z" fill="var(--color-accent)" />
-        </marker>
-        <marker
-          id="arrowhead-back"
-          markerWidth="10"
-          markerHeight="10"
-          refX="8"
-          refY="3"
-          orient="auto"
-        >
-          <path d="M0,0 L0,6 L8,3 z" fill="var(--color-fg-muted)" />
-        </marker>
-      </defs>
-      <path
-        d="M 5 22 L 110 22"
-        stroke={
-          isCalling ? 'var(--color-accent)' : 'var(--color-border-strong)'
-        }
-        strokeWidth="2"
-        markerEnd="url(#arrowhead)"
-        className={isCalling ? 'animate-pulse' : ''}
-      />
-      <path
-        d="M 110 42 L 5 42"
-        stroke={isResolving ? 'var(--color-fg)' : 'var(--color-border-strong)'}
-        strokeWidth="2"
-        markerEnd="url(#arrowhead-back)"
-        className={isResolving ? 'animate-pulse' : ''}
-        strokeDasharray="4 4"
-      />
-      <text
-        x="60"
-        y="16"
-        textAnchor="middle"
-        fontSize="10"
-        fontFamily="var(--font-mono)"
-        fill="var(--color-fg-subtle)"
+    <div className="flex flex-col items-center gap-1">
+      <span
+        className={`font-mono text-[11px] uppercase tracking-wider transition-colors duration-200 ${textColor}`}
       >
-        .call(…)
-      </text>
-      <text
-        x="60"
-        y="55"
-        textAnchor="middle"
-        fontSize="10"
-        fontFamily="var(--font-mono)"
-        fill="var(--color-fg-subtle)"
+        {label}
+      </span>
+      <svg
+        width="140"
+        height="14"
+        viewBox="0 0 140 14"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        aria-hidden="true"
       >
-        Response
-      </text>
-    </svg>
+        <defs>
+          <marker
+            id={`head-${direction}-${active ? 'on' : 'off'}`}
+            markerWidth="10"
+            markerHeight="10"
+            refX="8"
+            refY="3"
+            orient="auto"
+          >
+            <path d="M0,0 L0,6 L8,3 z" fill={stroke} />
+          </marker>
+        </defs>
+        {direction === 'forward' ? (
+          <path
+            d="M 5 7 L 132 7"
+            stroke={stroke}
+            strokeWidth="2"
+            markerEnd={`url(#head-forward-${active ? 'on' : 'off'})`}
+            className={active ? 'animate-pulse' : ''}
+          />
+        ) : (
+          <path
+            d="M 135 7 L 8 7"
+            stroke={stroke}
+            strokeWidth="2"
+            markerEnd={`url(#head-backward-${active ? 'on' : 'off'})`}
+            className={active ? 'animate-pulse' : ''}
+          />
+        )}
+      </svg>
+    </div>
   )
 }
