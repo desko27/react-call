@@ -1,0 +1,13 @@
+---
+import { NotFoundCall } from '~/components/NotFoundCall'
+import Base from '~/layouts/Base.astro'
+
+const pathname = Astro.url.pathname
+---
+
+<Base
+  title="404 — react-call"
+  description="This page doesn't exist. But the dialog telling you so does."
+>
+  <NotFoundCall client:load pathname={pathname} />
+</Base>

@@ -44,6 +44,28 @@ const current = Astro.url.pathname
       </p>
     </header>
 
+    <nav
+      class="-mx-6 mb-8 flex overflow-x-auto border-y border-[var(--color-border)] bg-[var(--color-bg-subtle)] md:hidden"
+      aria-label="Concept sections"
+    >
+      <div class="flex gap-1 px-6 py-2">
+        {
+          sections.map((s) => (
+            <a
+              href={s.href}
+              class={
+                current === s.href
+                  ? 'shrink-0 rounded-full border border-[var(--color-accent)] bg-[var(--color-bg)] px-3 py-1 text-xs font-medium text-[var(--color-accent)]'
+                  : 'shrink-0 rounded-full border border-[var(--color-border)] bg-[var(--color-bg)] px-3 py-1 text-xs text-[var(--color-fg-muted)]'
+              }
+            >
+              {s.label}
+            </a>
+          ))
+        }
+      </div>
+    </nav>
+
     <div class="grid gap-12 md:grid-cols-[200px,1fr]">
       <aside class="hidden md:block">
         <p
