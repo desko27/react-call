@@ -350,24 +350,7 @@ const preview = { /* normal Storybook config */ }
 export default preview
 ```
 
-That's it for the simple case. Your app's own `<Confirm />` mount stays where it is — this helper only handles the preview environment. The mount is idempotent under HMR — saving your `preview.tsx` doesn't double-mount, and an open `Confirm.call()` survives the edit.
-
-## Migrating from a per-story decorator
-
-If your `preview.tsx` already has a decorator that mounts `<Confirm />` per story (the pattern that triggers the error above), drop it from the decorator and add the `mount()` call:
-
-```diff
-// .storybook/preview.tsx
-+ import { mount } from 'react-call/host'
-+ import { Confirm } from '../src/Confirm'
-
-+ mount(<Confirm />)
-
-  const preview = {
--   decorators: [(Story) => <><Story /><Confirm /></>],
-  }
-  export default preview
-```
+That's it for the simple case. Your app's own `<Confirm />` mount stays where it is — this helper only handles the preview environment. If you were previously rendering `<Confirm />` from inside a story decorator, drop it from the decorator. The mount is idempotent under HMR — saving your `preview.tsx` doesn't double-mount, and an open `Confirm.call()` survives the edit.
 
 ## With static providers
 
@@ -433,7 +416,7 @@ Works wherever React DOM does.
 
 No. There can only be one `<Root>` mounted per createCallable(). Avoid placing it in multiple locations of the React Tree loaded at once, an error will be thrown if so.
 
-If you specifically need this in a sandbox host (Storybook autodocs, Ladle, …), see [Multi-preview hosts](#multi-preview-hosts-storybook-ladle-) — the [migration recipe](#migrating-from-a-per-story-decorator) covers the common case where you're hitting this error after wiring a per-story decorator.
+If you specifically need this in a sandbox host (Storybook autodocs, Ladle, …), see [Multi-preview hosts](#multi-preview-hosts-storybook-ladle-) for the supported pattern.
 
 # TypeScript types
 
@@ -457,7 +440,7 @@ Callable<Props?, Response?, RootProps?> | What createCallable returns
 Error | Solution
 --- | ---
 No \<Root> found! | You forgot to place the Root, check [Rooting section](#2--rooting). If it's already in place but not present by the time you call(), you may want to place it higher in your React tree. If you're getting this error on the server see [SSR section](#ssr).
-Multiple instances of \<Root> found! | You placed more than one Root, check [Rooting section](#2--rooting) as there is a warning about this. If you're hitting this in Storybook autodocs or another multi-preview tool, follow the [migration recipe](#migrating-from-a-per-story-decorator).
+Multiple instances of \<Root> found! | You placed more than one Root, check [Rooting section](#2--rooting) as there is a warning about this. If you're hitting this in Storybook autodocs or another multi-preview tool, see [Multi-preview hosts](#multi-preview-hosts-storybook-ladle-).
 
 # Lazy loading
 
