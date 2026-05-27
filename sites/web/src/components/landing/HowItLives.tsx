@@ -131,7 +131,7 @@ export const HowItLives = () => {
                 </CodeSpan>
                 <span className="text-[var(--color-fg-muted)]">{' = '}</span>
                 <CodeSpan active={phase === 'calling'}>
-                  await Confirm.call({`{ message }`})
+                  await Confirm.call()
                 </CodeSpan>
               </div>
               <div className="text-[var(--color-fg-muted)]">
