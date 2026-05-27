@@ -16,30 +16,37 @@ const SaveDialog = createCallable<Props, 'saved', RootProps>(
   ({ call, mutationFn }) => {
     const submit = useMutationFlow(call, mutationFn)
     return (
-      <div className="rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] p-5 shadow-2xl">
-        <p className="text-sm font-medium text-[var(--color-fg)]">
-          Save changes?
-        </p>
-        <p className="mt-1 text-xs text-[var(--color-fg-muted)]">
-          Your unsaved work will be persisted.
-        </p>
-        <div className="mt-5 flex items-center justify-end gap-2">
-          <button
-            type="button"
-            disabled={submit.pending}
-            onClick={() => call.end('saved')}
-            className="text-xs text-[var(--color-fg-subtle)] hover:text-[var(--color-fg-muted)] disabled:opacity-50"
-          >
-            Discard
-          </button>
-          <button
-            type="button"
-            disabled={submit.pending}
-            onClick={() => submit({ shouldFail: call.root.shouldFail })}
-            className="rounded-md bg-[var(--color-accent)] px-3 py-1.5 text-xs font-medium text-[var(--color-accent-fg)] transition-colors hover:bg-[var(--color-accent-hover)] disabled:opacity-50"
-          >
-            {submit.pending ? 'Saving…' : 'Save'}
-          </button>
+      <div
+        role="dialog"
+        aria-modal="true"
+        aria-label="Save changes"
+        className="absolute inset-0 z-10 flex items-center justify-center bg-[var(--color-bg)]/70 p-4 backdrop-blur-sm"
+      >
+        <div className="w-full max-w-sm rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] p-5 shadow-2xl">
+          <p className="text-sm font-medium text-[var(--color-fg)]">
+            Save changes?
+          </p>
+          <p className="mt-1 text-xs text-[var(--color-fg-muted)]">
+            Your unsaved work will be persisted.
+          </p>
+          <div className="mt-5 flex items-center justify-end gap-2">
+            <button
+              type="button"
+              disabled={submit.pending}
+              onClick={() => call.end('saved')}
+              className="text-xs text-[var(--color-fg-subtle)] hover:text-[var(--color-fg-muted)] disabled:opacity-50"
+            >
+              Discard
+            </button>
+            <button
+              type="button"
+              disabled={submit.pending}
+              onClick={() => submit({ shouldFail: call.root.shouldFail })}
+              className="rounded-md bg-[var(--color-accent)] px-3 py-1.5 text-xs font-medium text-[var(--color-accent-fg)] transition-colors hover:bg-[var(--color-accent-hover)] disabled:opacity-50"
+            >
+              {submit.pending ? 'Saving…' : 'Save'}
+            </button>
+          </div>
         </div>
       </div>
     )
