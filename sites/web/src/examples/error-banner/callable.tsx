@@ -3,13 +3,13 @@ import { createCallable } from 'react-call'
 
 interface Props {
   message: string
-  durationMs?: number
+  durationMs: number
 }
 
 const ROW_HEIGHT = 52 // px per stacked banner, including gap
 
 export const ErrorBanner = createCallable<Props, void>(
-  ({ call, message, durationMs = 2000 }) => {
+  ({ call, message, durationMs }) => {
     useEffect(() => {
       const t = setTimeout(() => call.end(), durationMs)
       return () => clearTimeout(t)

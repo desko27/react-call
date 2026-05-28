@@ -8,6 +8,7 @@ export const TriggerErrorButton = () => {
     setCount((c) => c + 1)
     ErrorBanner.call({
       message: `Network request failed (#${count + 1})`,
+      durationMs: 1500,
     })
   }
 
