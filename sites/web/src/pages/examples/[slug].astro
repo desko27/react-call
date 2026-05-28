@@ -5,6 +5,13 @@ import { ExampleHost } from '~/components/gallery/ExampleHost'
 import { PlaygroundButton } from '~/components/gallery/PlaygroundButton'
 import Base from '~/layouts/Base.astro'
 import {
+  appRootMeta,
+  buildAppSource,
+  highlightedLines,
+  rewriteCallableImport,
+  stemOf,
+} from '~/lib/code-marks'
+import {
   BEHAVIOR_LABELS,
   CATEGORY_LABELS,
   getAllExamples,
@@ -32,247 +39,24 @@ const related = getAllExamples()
 const noteImporter = noteModules[`../../examples/${slug}/notes.mdx`]
 const Notes = noteImporter ? (await noteImporter()).Content : null
 
-// Mark the lines that carry the model:
-//   - createCallable               → single line (the declaration)
-//   - call.end(...)                → from inside the Callable body
-//   - <Callable>.{call|upsert|end|update}(...) → from caller scope
-// Each multi-line invocation expands from the `(` to the matching `)`.
-const EXPANDING_PATTERNS: RegExp[] = [
-  /call\.end\(/g,
-  /\b[A-Z]\w*\.(call|upsert|end|update)\(/g,
-]
-
-const lineOfIndex = (lineStarts: number[], idx: number): number => {
-  // lineStarts[i] is the absolute index of line (i+1)'s first char
-  let lo = 0
-  let hi = lineStarts.length - 1
-  while (lo < hi) {
-    const mid = (lo + hi + 1) >> 1
-    if (lineStarts[mid] <= idx) lo = mid
-    else hi = mid - 1
-  }
-  return lo + 1
-}
-
-// Replace every char inside line/block comments with a space and every
-// newline with a newline so the resulting string keeps the same length
-// and line layout as the original — but patterns matching the cleaned
-// version cannot fire on comment content. String literals are left
-// intact so a `//` inside a quoted URL doesn't read as a comment.
-const stripComments = (source: string): string => {
-  let out = ''
-  let inString: '"' | "'" | '`' | null = null
-  let escape = false
-  let inLine = false
-  let inBlock = false
-  for (let i = 0; i < source.length; i++) {
-    const ch = source[i]
-    if (inLine) {
-      if (ch === '\n') {
-        inLine = false
-        out += '\n'
-      } else {
-        out += ' '
-      }
-      continue
-    }
-    if (inBlock) {
-      if (ch === '*' && source[i + 1] === '/') {
-        inBlock = false
-        out += '  '
-        i++
-      } else if (ch === '\n') {
-        out += '\n'
-      } else {
-        out += ' '
-      }
-      continue
-    }
-    if (escape) {
-      escape = false
-      out += ch
-      continue
-    }
-    if (ch === '\\') {
-      escape = true
-      out += ch
-      continue
-    }
-    if (inString) {
-      if (ch === inString) inString = null
-      out += ch
-      continue
-    }
-    if (ch === '"' || ch === "'" || ch === '`') {
-      inString = ch
-      out += ch
-      continue
-    }
-    if (ch === '/' && source[i + 1] === '/') {
-      inLine = true
-      out += '  '
-      i++
-      continue
-    }
-    if (ch === '/' && source[i + 1] === '*') {
-      inBlock = true
-      out += '  '
-      i++
-      continue
-    }
-    out += ch
-  }
-  return out
-}
-
-const findMatchingClose = (source: string, openIdx: number): number => {
-  // Returns the index of the `)` matching the `(` at `openIdx`, walking
-  // forward and skipping over string literals so a `)` inside a string
-  // doesn't close the call prematurely.
-  let depth = 1
-  let inString: '"' | "'" | '`' | null = null
-  let escape = false
-  for (let i = openIdx + 1; i < source.length; i++) {
-    const ch = source[i]
-    if (escape) {
-      escape = false
-      continue
-    }
-    if (ch === '\\') {
-      escape = true
-      continue
-    }
-    if (inString) {
-      if (ch === inString) inString = null
-      continue
-    }
-    if (ch === '"' || ch === "'" || ch === '`') {
-      inString = ch
-      continue
-    }
-    if (ch === '(') depth++
-    else if (ch === ')') {
-      depth--
-      if (depth === 0) return i
-    }
-  }
-  return source.length - 1
-}
-
-const highlightedLines = (source: string): string => {
-  const marked = new Set<number>()
-  // Strip comments from the haystack so patterns can't fire on text
-  // that lives inside `// …` or `/* … */`. Offsets and line numbers
-  // are preserved, so closing-paren matching still aligns with the
-  // original source we hand back to <Code>.
-  const cleanSource = stripComments(source)
-  const lineStarts: number[] = [0]
-  for (let i = 0; i < cleanSource.length; i++) {
-    if (cleanSource[i] === '\n') lineStarts.push(i + 1)
-  }
-
-  // Detect `const submit = useMutationFlow(...)` so we can mark every
-  // line that references the returned trigger (submit.pending,
-  // submit(payload), …). Falls back to `submit` if no destructure was
-  // captured, but every example currently uses an explicit const.
-  const triggerNameMatch = cleanSource.match(
-    /const\s+(\w+)\s*=\s*useMutationFlow\s*\(/,
-  )
-  const triggerName = triggerNameMatch ? triggerNameMatch[1] : null
-
-  const expandingPatterns: RegExp[] = [...EXPANDING_PATTERNS]
-  if (triggerName) {
-    // Mark multi-line trigger invocations the same way as Callable
-    // namespace methods — e.g. submit({ name: name.trim() }).
-    expandingPatterns.push(new RegExp(`\\b${triggerName}\\(`, 'g'))
-  }
-
-  for (const pattern of expandingPatterns) {
-    pattern.lastIndex = 0
-    let m: RegExpExecArray | null
-    while ((m = pattern.exec(cleanSource)) !== null) {
-      // m[0] ends in `(` — find the matching `)` and mark every line in
-      // the range so a multi-line argument list reads as one block.
-      const openParenIdx = m.index + m[0].length - 1
-      const closeIdx = findMatchingClose(cleanSource, openParenIdx)
-      const startLine = lineOfIndex(lineStarts, m.index)
-      const endLine = lineOfIndex(lineStarts, closeIdx)
-      for (let l = startLine; l <= endLine; l++) marked.add(l)
-    }
-  }
-
-  // Single-line markers:
-  //   - createCallable declaration site
-  //   - relative-path imports that pull a sibling file in (the Callable;
-  //     package imports like react / react-call resolve from packages)
-  //   - useMutationFlow (import line + hook call site)
-  //   - bare references to the trigger name (submit.pending, etc.)
-  //   - CallContext field reads inside the Callable body (call.index,
-  //     call.stackSize, call.key, call.root, call.ended) — call.end is
-  //     already covered by the expanding pattern above.
-  const triggerWordRe = triggerName
-    ? new RegExp(`\\b${triggerName}\\b`)
-    : null
-  const callContextFieldRe = /\bcall\.(ended|index|key|root|stackSize)\b/
-  cleanSource.split('\n').forEach((line, i) => {
-    if (
-      line.includes('createCallable') ||
-      /from\s+['"]\.\/\w+['"]/.test(line) ||
-      line.includes('useMutationFlow') ||
-      callContextFieldRe.test(line) ||
-      (triggerWordRe !== null && triggerWordRe.test(line))
-    ) {
-      marked.add(i + 1)
-    }
-  })
-
-  if (marked.size === 0) return ''
-  const sorted = [...marked].sort((a, b) => a - b)
-  return `{${sorted.join(',')}}`
-}
-// On-disk caller imports `./callable` (folder convention), but the code
-// blocks show the Callable's display filename (e.g. Confirm.tsx) in the
-// tab. Rewrite the import for display so the path matches what the
-// reader sees — same trick Sandpack uses when it spins up a sandbox.
-const stemOf = (filename: string) => filename.replace(/\.tsx?$/, '')
+// The on-disk caller imports `./callable`, but the code block shows the
+// Callable's display filename (e.g. Confirm.tsx). Rewrite the import for
+// display so the path matches what the reader sees.
 const callableExport = stemOf(example.meta.files.callable)
 const callerExport = stemOf(example.meta.files.caller)
-const displayCallerSource = example.callerSource.replace(
-  /from\s+['"]\.\/callable['"]/g,
-  `from './${callableExport}'`,
+const displayCallerSource = rewriteCallableImport(
+  example.callerSource,
+  callableExport,
 )
 
 const callableMeta = highlightedLines(example.callableSource)
 const callerMeta = highlightedLines(displayCallerSource)
 
-// Build a minimal App.tsx that mounts the Callable Root next to the
-// caller component. The two lines that carry the Root contract — the
-// import of the Callable and the <Callable /> mount inside the tree —
-// are both highlighted so the visitor sees the whole wiring at once.
-const appSource = `import { ${callableExport} } from './${callableExport}'
-import { ${callerExport} } from './${callerExport}'
-
-export default function App() {
-  return (
-    <>
-      <${callableExport} />
-      <${callerExport} />
-    </>
-  )
-}
-`
-const appLines = appSource.split('\n')
-const appMarkedLines: number[] = []
-appLines.forEach((line, i) => {
-  if (
-    line.includes(`from './${callableExport}'`) ||
-    line.includes(`<${callableExport} />`)
-  ) {
-    appMarkedLines.push(i + 1)
-  }
-})
-const appMeta =
-  appMarkedLines.length > 0 ? `{${appMarkedLines.join(',')}}` : ''
+// A minimal App.tsx mounting the Root next to the caller. The Callable
+// import and the <Callable /> mount are both marked so the visitor sees
+// the whole wiring at once.
+const appSource = buildAppSource(callableExport, callerExport)
+const appMeta = appRootMeta(appSource, callableExport)
 ---
 
 <Base
