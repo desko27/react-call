@@ -80,5 +80,12 @@
   pre,
   kbd {
     font-family: var(--font-mono);
+    /* Geist Mono ships programming ligatures (===, !==, =>, ->) and the
+       glyphs render visibly distorted in some browsers. Disabling the
+       ligature features keeps each character its own glyph. */
+    font-variant-ligatures: none;
+    font-feature-settings:
+      'liga' 0,
+      'calt' 0;
   }
 }
