@@ -34,6 +34,7 @@ const PUBLIC_INDEX_HTML = `<!DOCTYPE html>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
       :root {
+        color-scheme: light dark;
         --color-bg: #ffffff;
         --color-bg-subtle: #fafafa;
         --color-bg-muted: #f4f4f5;
@@ -45,6 +46,21 @@ const PUBLIC_INDEX_HTML = `<!DOCTYPE html>
         --color-accent: #e11d74;
         --color-accent-hover: #c4146a;
         --color-accent-fg: #ffffff;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --color-bg: #0a0a0a;
+          --color-bg-subtle: #141414;
+          --color-bg-muted: #1f1f1f;
+          --color-fg: #fafafa;
+          --color-fg-muted: #a3a3a3;
+          --color-fg-subtle: #737373;
+          --color-border: #262626;
+          --color-border-strong: #404040;
+          --color-accent: #ff3a8e;
+          --color-accent-hover: #ff5fa3;
+          --color-accent-fg: #0a0a0a;
+        }
       }
       body {
         font-family: system-ui, -apple-system, sans-serif;
