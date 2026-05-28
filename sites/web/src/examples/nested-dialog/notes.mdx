@@ -42,16 +42,3 @@ if (call.index < call.stackSize - DOM_LIMIT) return null
 Older instances stay in the Stack — so closing the top falls back to
 them — but they skip rendering until they're within the topmost N. With
 `DOM_LIMIT = 10`, depth-100 nesting still renders only 10 dialogs.
-
-## Gotchas
-
-- **Each call has its own end.** Closing the parent doesn't close its
-  children — they're peers in the Stack, not children of a React tree.
-  Use `Callable.end()` for "close all", or iterate if you need to
-  filter.
-- **Render the backdrop only on the topmost call.** Every open instance
-  renders the same JSX. Without `call.index + 1 === call.stackSize`,
-  every backdrop stacks and the screen goes opaque by depth 4.
-- **Cap your visual offset.** A pure `call.index * 18` cascade marches
-  off-screen at depth 10+. The demo loops it with `% 6` so the cards
-  stay centred no matter how deep you go.
