@@ -19,20 +19,31 @@ const exportNameFromSource = (source: string, fallback: string): string => {
 const rewriteCallerImports = (source: string, callableModule: string) =>
   source.replace(/from\s+['"]\.\/callable['"]/g, `from './${callableModule}'`)
 
-const INDEX_HTML = `<!DOCTYPE html>
+// CodeSandbox's `create-react-app-typescript` template handles entry
+// injection (no `<script src>` needed) and bundles src/index.tsx itself.
+// We just supply public/index.html, an entry, App, and the two files.
+const PUBLIC_INDEX_HTML = `<!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>react-call playground</title>
-  <style>
-    body { font-family: system-ui, -apple-system, sans-serif; margin: 0; padding: 2rem; display: flex; flex-direction: column; align-items: center; gap: 1rem; min-height: 100vh; }
-  </style>
-</head>
-<body>
-  <div id="root"></div>
-  <script type="module" src="/src/index.tsx"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>react-call playground</title>
+    <style>
+      body {
+        font-family: system-ui, -apple-system, sans-serif;
+        margin: 0;
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+        min-height: 100vh;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+  </body>
 </html>
 `
 
@@ -40,7 +51,8 @@ const INDEX_TSX = `import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App'
 
-createRoot(document.getElementById('root')!).render(
+const root = createRoot(document.getElementById('root') as HTMLElement)
+root.render(
   <StrictMode>
     <App />
   </StrictMode>,
@@ -61,50 +73,45 @@ export default function App() {
 }
 `
 
+// react-call v2 (the @next tag) works with React 18+. Pinning to 18 in the
+// sandbox is the safest pairing with CodeSandbox's classic React bundler,
+// which doesn't always keep up with brand-new React releases.
 const PKG = JSON.stringify(
   {
     name: 'react-call-playground',
     version: '1.0.0',
     main: 'src/index.tsx',
     dependencies: {
-      react: '^19.0.0',
-      'react-dom': '^19.0.0',
+      react: '^18.3.1',
+      'react-dom': '^18.3.1',
       'react-call': 'next',
     },
     devDependencies: {
-      '@types/react': '^19.0.0',
-      '@types/react-dom': '^19.0.0',
-      '@vitejs/plugin-react': '^4.0.0',
-      typescript: '^5.0.0',
-      vite: '^5.0.0',
-    },
-    scripts: {
-      dev: 'vite',
-      build: 'vite build',
-      preview: 'vite preview',
+      '@types/react': '^18.3.0',
+      '@types/react-dom': '^18.3.0',
+      typescript: '^5.4.0',
     },
   },
   null,
   2,
 )
 
-const VITE_CONFIG = `import react from '@vitejs/plugin-react'
-import { defineConfig } from 'vite'
-
-export default defineConfig({ plugins: [react()] })
-`
-
 const TSCONFIG = JSON.stringify(
   {
     compilerOptions: {
       target: 'ESNext',
+      lib: ['DOM', 'DOM.Iterable', 'ESNext'],
       module: 'ESNext',
-      moduleResolution: 'bundler',
+      moduleResolution: 'node',
       jsx: 'react-jsx',
       strict: true,
       esModuleInterop: true,
       skipLibCheck: true,
+      allowSyntheticDefaultImports: true,
+      forceConsistentCasingInFileNames: true,
       isolatedModules: true,
+      resolveJsonModule: true,
+      noEmit: true,
     },
     include: ['src'],
   },
@@ -112,8 +119,8 @@ const TSCONFIG = JSON.stringify(
   2,
 )
 
-const getParameters = (files: Record<string, { content: string }>): string =>
-  LZString.compressToBase64(JSON.stringify({ files }))
+const getParameters = (payload: object): string =>
+  LZString.compressToBase64(JSON.stringify(payload))
     .replace(/\+/g, '-')
     .replace(/\//g, '_')
     .replace(/=+$/, '')
@@ -135,9 +142,8 @@ export const PlaygroundButton = ({
 
       const files: Record<string, { content: string }> = {
         'package.json': { content: PKG },
-        'vite.config.ts': { content: VITE_CONFIG },
         'tsconfig.json': { content: TSCONFIG },
-        'index.html': { content: INDEX_HTML },
+        'public/index.html': { content: PUBLIC_INDEX_HTML },
         'src/index.tsx': { content: INDEX_TSX },
         'src/App.tsx': { content: buildApp(callableExport, callerExport) },
         'src/Callable.tsx': { content: callableSource },
@@ -146,9 +152,14 @@ export const PlaygroundButton = ({
         },
       }
 
-      const parameters = getParameters(files)
+      const parameters = getParameters({
+        files,
+        // Force the classic React-TS template so CodeSandbox auto-injects
+        // the entry script and serves the preview from the embedded
+        // bundler instead of trying to boot a Vite devbox.
+        template: 'create-react-app-typescript',
+      })
 
-      // POST to CodeSandbox "define" endpoint; opens a new tab.
       const form = document.createElement('form')
       form.method = 'POST'
       form.action = 'https://codesandbox.io/api/v1/sandboxes/define'
