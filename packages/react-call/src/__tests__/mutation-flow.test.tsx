@@ -148,6 +148,32 @@ const ManualCloseComponent: UserComponent<ManualCloseProps, boolean, {}> = ({
 
 const ManualClose = createCallable(ManualCloseComponent)
 
+type SyncReentryProps = { mutationFn: MutationFn<boolean> }
+
+const SyncReentryComponent: UserComponent<SyncReentryProps, boolean, {}> = ({
+  call,
+  mutationFn,
+}) => {
+  const submit = useMutationFlow(call, mutationFn)
+  // Fire twice in one handler — the second call lands in the same
+  // event-loop turn, before `pending` flushes, so only the inFlightRef
+  // can guard it. (The button is intentionally never disabled.)
+  return (
+    <button
+      type="button"
+      data-testid="double"
+      onClick={() => {
+        submit()
+        submit()
+      }}
+    >
+      Go
+    </button>
+  )
+}
+
+const SyncReentry = createCallable(SyncReentryComponent)
+
 describe('useMutationFlow — pending lifecycle', () => {
   test('pending flips true while the mutationFn is in-flight, false when it settles', async () => {
     let resolveMutation!: () => void
@@ -291,6 +317,34 @@ describe('useMutationFlow — re-entry guard', () => {
     // happy-dom dispatches it regardless of `disabled`.
     fireEvent.click(screen.getByTestId('submit'))
 
+    expect(mutationFn).toHaveBeenCalledTimes(1)
+
+    await act(async () => {
+      resolveMutation()
+    })
+  })
+
+  test('a synchronous second submit() in the same turn is dropped by the ref guard', async () => {
+    let resolveMutation!: () => void
+    const mutationFn = vi.fn<MutationFn<boolean>>(
+      (call) =>
+        new Promise<void>((resolve) => {
+          resolveMutation = () => {
+            call.end(true)
+            resolve()
+          }
+        }),
+    )
+
+    render(<SyncReentry />)
+    withAct(() => SyncReentry.call({ mutationFn }))
+
+    await act(async () => {
+      fireEvent.click(screen.getByTestId('double'))
+    })
+
+    // The first submit() set inFlightRef synchronously; the second hit
+    // the guard and returned the no-op chain without re-running the flow.
     expect(mutationFn).toHaveBeenCalledTimes(1)
 
     await act(async () => {
