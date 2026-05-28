@@ -109,6 +109,7 @@ const Notes = noteImporter ? (await noteImporter()).Content : null
           code={example.callableSource}
           lang="tsx"
           title={example.meta.files.callable}
+          mark={['createCallable', 'call.end', /\b[A-Z]\w*\.call\(/g]}
         />
       </div>
 
@@ -129,6 +130,7 @@ const Notes = noteImporter ? (await noteImporter()).Content : null
           code={example.callerSource}
           lang="tsx"
           title={example.meta.files.caller}
+          mark={['createCallable', 'call.end', /\b[A-Z]\w*\.call\(/g]}
         />
       </div>
     </section>
