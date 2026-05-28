@@ -21,12 +21,13 @@ const navItems = [
   "
 >
   <div
-    class="mx-auto flex max-w-6xl items-center justify-between px-6 py-4"
+    class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4 sm:px-6"
   >
     <a
       href="/"
       class="
-        flex items-center gap-2 font-mono text-sm font-medium
+        flex shrink-0 items-center gap-2
+        font-mono text-sm font-medium whitespace-nowrap
         text-[var(--color-fg)]
       "
     >
@@ -37,12 +38,15 @@ const navItems = [
       react-call
     </a>
 
-    <nav class="flex items-center gap-6">
+    <nav class="flex items-center gap-3 sm:gap-6">
       {
         navItems.map((item) => (
           <a
             href={item.href}
-            class="text-sm text-[var(--color-fg-muted)] transition-colors hover:text-[var(--color-fg)]"
+            class:list={[
+              'text-sm text-[var(--color-fg-muted)] transition-colors hover:text-[var(--color-fg)]',
+              item.external && 'hidden min-[400px]:inline',
+            ]}
             {...(item.external
               ? { target: '_blank', rel: 'noopener noreferrer' }
               : {})}

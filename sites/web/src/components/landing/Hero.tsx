@@ -62,7 +62,7 @@ export const Hero = () => {
           {/* Native side */}
           <div
             className="
-              rounded-xl border border-[var(--color-border)]
+              min-w-0 rounded-xl border border-[var(--color-border)]
               bg-[var(--color-bg-subtle)] p-6
               md:p-8
             "
@@ -98,7 +98,7 @@ export const Hero = () => {
           {/* Callable side */}
           <div
             className="
-              rounded-xl border-2 border-[var(--color-accent)]
+              min-w-0 rounded-xl border-2 border-[var(--color-accent)]
               bg-[var(--color-bg-subtle)] p-6
               md:p-8
             "
