@@ -5,7 +5,7 @@ export const SignupButton = () => {
   const [result, setResult] = useState<WizardResult | null>(null)
 
   const handleClick = async () => {
-    const data = await Wizard.call({})
+    const data = await Wizard.call()
     if (data) setResult(data)
   }
 
