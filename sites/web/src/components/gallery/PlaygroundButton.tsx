@@ -69,6 +69,7 @@ const PUBLIC_INDEX_HTML = `<!DOCTYPE html>
         display: flex;
         flex-direction: column;
         align-items: center;
+        justify-content: center;
         gap: 1rem;
         min-height: 100vh;
         background-color: var(--color-bg);
