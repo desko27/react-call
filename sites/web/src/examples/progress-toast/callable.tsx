@@ -19,7 +19,7 @@ export const Toast = createCallable<Props, void>(
             type="button"
             onClick={() => call.end()}
             aria-label="Dismiss"
-            className="text-[var(--color-fg-subtle)] hover:text-[var(--color-fg)]"
+            className="-mr-1 inline-flex h-7 w-7 items-center justify-center rounded-md text-base leading-none text-[var(--color-fg-subtle)] transition-colors hover:bg-[var(--color-bg-subtle)] hover:text-[var(--color-fg)]"
           >
             ×
           </button>
