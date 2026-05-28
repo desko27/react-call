@@ -1,6 +1,6 @@
 @import 'tailwindcss';
 @import '@fontsource-variable/geist/index.css';
-@import '@fontsource-variable/jetbrains-mono/index.css';
+@import '@fontsource-variable/fira-code/index.css';
 
 @source '../**/*.astro';
 @source '../**/*.tsx';
@@ -14,7 +14,7 @@
     'Geist Variable', ui-sans-serif, system-ui, -apple-system,
     BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono:
-    'JetBrains Mono Variable', ui-monospace, SFMono-Regular, Menlo, Monaco,
+    'Fira Code Variable', ui-monospace, SFMono-Regular, Menlo, Monaco,
     Consolas, monospace;
 
   --color-accent: #e11d74;
@@ -80,8 +80,8 @@
   pre,
   kbd {
     font-family: var(--font-mono);
-    /* JetBrains Mono ships clean programming ligatures (===, !==, =>,
-       ->, &&, ||, …). Force-enable the relevant OpenType features so
+    /* Fira Code ships clean programming ligatures (===, !==, =>, ->,
+       &&, ||, …). Force-enable the relevant OpenType features so
        browsers honour them regardless of the user-agent default. */
     font-variant-ligatures: common-ligatures contextual;
     font-feature-settings:
