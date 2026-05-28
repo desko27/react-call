@@ -131,14 +131,19 @@ const highlightedLines = (source: string): string => {
   //     package imports like react / react-call resolve from packages)
   //   - useMutationFlow (import line + hook call site)
   //   - bare references to the trigger name (submit.pending, etc.)
+  //   - CallContext field reads inside the Callable body (call.index,
+  //     call.stackSize, call.key, call.root, call.ended) — call.end is
+  //     already covered by the expanding pattern above.
   const triggerWordRe = triggerName
     ? new RegExp(`\\b${triggerName}\\b`)
     : null
+  const callContextFieldRe = /\bcall\.(ended|index|key|root|stackSize)\b/
   source.split('\n').forEach((line, i) => {
     if (
       line.includes('createCallable') ||
       /from\s+['"]\.\/\w+['"]/.test(line) ||
       line.includes('useMutationFlow') ||
+      callContextFieldRe.test(line) ||
       (triggerWordRe !== null && triggerWordRe.test(line))
     ) {
       marked.add(i + 1)
