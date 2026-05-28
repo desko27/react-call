@@ -61,7 +61,7 @@ const Card = ({
   category,
   title,
   description,
-  buttonLabel = 'Try it →',
+  buttonLabel = 'Run it',
   onTry,
 }: CardProps) => {
   const [result, setResult] = useState<Result | null>(null)
@@ -214,7 +214,6 @@ export const NotJustConfirmations = () => {
             category="Menu"
             title="Context menu"
             description="Forwards the cursor position to a positioned Callable."
-            buttonLabel="Right-click or tap →"
             onTry={fireContextMenu}
           />
           <Card
