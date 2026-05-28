@@ -76,6 +76,14 @@
     border-radius: 2px;
   }
 
+  /* Tailwind v4 dropped the v3 preflight rule that set `cursor: pointer`
+     on buttons. Restore it so interactive controls feel clickable. */
+  button:not(:disabled),
+  [role='button']:not(:disabled),
+  summary {
+    cursor: pointer;
+  }
+
   code,
   pre,
   kbd {
