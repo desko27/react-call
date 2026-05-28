@@ -1,0 +1,19 @@
+## Value in, value out
+
+The picker has to highlight the colour you already have — but it doesn't
+own that colour. Your component does. The current value goes _in_ as the
+`current` prop, the chosen one comes _back_ as the Response, and the
+Callable keeps no selection state of its own. It's a pure async function,
+`(current) => Promise<next | null>`, so the whole read-modify-write loop
+collapses to a single `await`.
+
+The `| null` is the "changed my mind" branch: dismissing (backdrop or
+Esc) resolves `null`, the caller skips the write, and the value is left
+exactly as it was. You commit only on a real choice — which is why the
+caller guards with `if (next)` before it stores the result.
+
+## When to reach for it
+
+Any "edit one value from a known set" interaction — colour, icon, tag,
+status, assignee. Show the current value, let the user swap it, and write
+back only when they actually picked something.
