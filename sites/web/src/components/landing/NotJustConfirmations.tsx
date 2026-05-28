@@ -61,7 +61,7 @@ const Card = ({
   category,
   title,
   description,
-  buttonLabel = 'Try it',
+  buttonLabel = 'Try it →',
   onTry,
 }: CardProps) => {
   const [result, setResult] = useState<Result | null>(null)
