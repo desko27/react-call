@@ -95,7 +95,23 @@ const highlightedLines = (source: string): string => {
     if (source[i] === '\n') lineStarts.push(i + 1)
   }
 
-  for (const pattern of EXPANDING_PATTERNS) {
+  // Detect `const submit = useMutationFlow(...)` so we can mark every
+  // line that references the returned trigger (submit.pending,
+  // submit(payload), …). Falls back to `submit` if no destructure was
+  // captured, but every example currently uses an explicit const.
+  const triggerNameMatch = source.match(
+    /const\s+(\w+)\s*=\s*useMutationFlow\s*\(/,
+  )
+  const triggerName = triggerNameMatch ? triggerNameMatch[1] : null
+
+  const expandingPatterns: RegExp[] = [...EXPANDING_PATTERNS]
+  if (triggerName) {
+    // Mark multi-line trigger invocations the same way as Callable
+    // namespace methods — e.g. submit({ name: name.trim() }).
+    expandingPatterns.push(new RegExp(`\\b${triggerName}\\(`, 'g'))
+  }
+
+  for (const pattern of expandingPatterns) {
     pattern.lastIndex = 0
     let m: RegExpExecArray | null
     while ((m = pattern.exec(source)) !== null) {
@@ -109,15 +125,21 @@ const highlightedLines = (source: string): string => {
     }
   }
 
-  // Single-line markers: the createCallable declaration site (in the
-  // Callable file) and the relative-path import that pulls the Callable
-  // into the caller file. In caller files the only relative import we
-  // render is the Callable (everything else resolves from packages —
-  // react, react-call) so matching `from './...'` is safe.
+  // Single-line markers:
+  //   - createCallable declaration site
+  //   - relative-path imports that pull a sibling file in (the Callable;
+  //     package imports like react / react-call resolve from packages)
+  //   - useMutationFlow (import line + hook call site)
+  //   - bare references to the trigger name (submit.pending, etc.)
+  const triggerWordRe = triggerName
+    ? new RegExp(`\\b${triggerName}\\b`)
+    : null
   source.split('\n').forEach((line, i) => {
     if (
       line.includes('createCallable') ||
-      /from\s+['"]\.\/\w+['"]/.test(line)
+      /from\s+['"]\.\/\w+['"]/.test(line) ||
+      line.includes('useMutationFlow') ||
+      (triggerWordRe !== null && triggerWordRe.test(line))
     ) {
       marked.add(i + 1)
     }
