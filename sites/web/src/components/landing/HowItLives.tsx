@@ -146,7 +146,6 @@ export const HowItLives = () => {
         </div>
 
         <div className="mt-8 flex items-center justify-center gap-3 text-xs text-[var(--color-fg-subtle)]">
-          <span className="font-mono">phase:</span>
           {(['idle', 'calling', 'rendering', 'resolving'] as Phase[]).map(
             (p) => (
               <span

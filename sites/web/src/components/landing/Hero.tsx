@@ -80,7 +80,7 @@ export const Hero = () => {
               <span>The browser</span>
             </div>
             <pre className="mt-4 overflow-x-auto font-mono text-sm leading-relaxed text-[var(--color-fg-muted)]">
-              {`const accepted = `}
+              {`const yes = `}
               <span className="text-[var(--color-fg)]">
                 {`window.confirm('Continue?')`}
               </span>
@@ -116,9 +116,9 @@ export const Hero = () => {
               <span>Your component</span>
             </div>
             <pre className="mt-4 overflow-x-auto font-mono text-sm leading-relaxed text-[var(--color-fg-muted)]">
-              {`const accepted = await `}
+              {`const yes = `}
               <span className="text-[var(--color-fg)]">
-                {`Confirm.call({ message: 'Continue?' })`}
+                {`await Confirm.call(props)`}
               </span>
             </pre>
             <button
