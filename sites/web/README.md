@@ -27,12 +27,46 @@ src/examples/<slug>/
 ├── caller.tsx     # the trigger UI: await Confirm.call(…)
 ├── index.tsx      # composition for the live demo (default export)
 ├── meta.ts        # typed metadata: title, category, behaviors, files…
-└── notes.mdx      # optional prose: when to use, gotchas
+└── notes.mdx      # optional prose — see "Writing notes.mdx" below
 ```
 
 The `files` field in `meta.ts` carries the display filenames for the
 code blocks (e.g. `Confirm.tsx`) — these don't need to match the
 on-disk filenames.
+
+## Writing notes.mdx
+
+The detail page already shows the title, one-line description, live
+demo, and both source files. `notes.mdx` exists to add what those can't.
+
+**Its job** — pick the ones that apply, in this order:
+
+1. **The insight** (required). The single non-obvious idea this example
+   exists to teach: a library concept, an API choice (the `Props` /
+   `Response` shape), or a footgun it avoids. One example, one main
+   lesson. This section gets a free, punchy heading (e.g. _"Recursion is
+   free"_, _"Plain-data props, not JSX"_).
+2. **When to reach for it.** Concrete real-world scenarios, so the reader
+   maps the example onto their own problem.
+3. **When not to** / trade-offs. Where the pattern breaks down or a
+   different tool fits better.
+4. **Gotchas.** Implementation traps the code alone won't warn you about
+   — cleanup, stale closures, z-index, unhandled rejections, etc.
+
+Sections 2–4 use those fixed headings. Only the insight is mandatory;
+add the rest as the example warrants.
+
+**Don't** restate the code line-by-line (the highlighted source already
+does that), re-describe the demo, or repeat the `meta` description.
+
+**Which examples get notes.** Only ones that teach something:
+
+- **Behavior-tagged** examples (`upsert`, `update`, `mutation-flow`,
+  `stacking`, `nested`) — always; they're the concept carriers.
+- Examples with a genuine insight or footgun (e.g. forwarding the cursor
+  position as props, a tagged `Response` instead of a boolean).
+- Self-explanatory primitives (a one-button alert, a basic picker) get
+  **no** notes — forcing prose there is just noise.
 
 ## Deploy (Vercel)
 
