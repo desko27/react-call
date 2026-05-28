@@ -132,6 +132,12 @@ export const MutationFlowSection = () => {
               >
                 Open Save dialog
               </button>
+              <a
+                href="/examples/save-form"
+                className="font-mono text-xs text-[var(--color-fg-subtle)] transition-colors hover:text-[var(--color-fg-muted)]"
+              >
+                See code ↗
+              </a>
             </div>
           </div>
 
