@@ -1,7 +1,7 @@
 # sites/web
 
-The public docs site at `react-call.desko.dev` (post-switch) — Astro,
-React islands, Tailwind v4, Expressive Code. See
+The public site at `react-call.desko.dev` — Astro, React islands,
+Tailwind v4, Expressive Code. See
 [ADR-0017](../../docs/adr/0017-public-site-on-plain-astro-not-starlight.md)
 and [ADR-0018](../../docs/adr/0018-examples-gallery-islands-with-on-demand-sandpack.md)
 for the why.
@@ -36,28 +36,27 @@ on-disk filenames.
 
 ## Deploy (Vercel)
 
-Per decision 17 ([grilling notes](#)), the site ships as a **second
-Vercel project** alongside the existing one, so the legacy demo stays
-live during development.
+The existing Vercel project that serves `react-call.desko.dev` is
+reconfigured in place to deploy this site instead of `sites/demo`.
+There is no second project and no separate demo subdomain — the new
+site replaces the old at the same URL.
 
-### One-time setup
+### Switchover
 
-1. Create a new Vercel project pointed at this repo.
-2. **Root Directory** → `sites/web`. Vercel detects Astro and uses the
-   `vercel.json` here (framework: astro, output: `dist`, corepack
-   enabled so pnpm 11 is available).
-3. **Install Command** → leave Vercel's default
-   (`pnpm install --frozen-lockfile`). It runs from `sites/web/` but
+In the Vercel dashboard, on the existing `react-call` project:
+
+1. **Settings → General → Root Directory** → change from the repo
+   root to `sites/web`. Vercel will pick up `sites/web/vercel.json`
+   (framework: astro, corepack enabled so pnpm 11 is available).
+2. **Settings → General → Install Command** → leave at default
+   (`pnpm install --frozen-lockfile`). Runs from `sites/web/` but
    pnpm walks up to the workspace root and installs every package.
-4. **Build Command** → leave default (`pnpm run build`).
-5. Assign a preview domain — recommended `next.react-call.desko.dev`
-   (aligns with the `@next` npm tag of the library).
+3. **Settings → General → Build Command** → leave at default
+   (`pnpm run build`).
+4. **Output Directory** → leave at default — Astro writes to `dist`.
+5. Trigger a redeploy.
 
-### Switchover (when ready to make it public)
-
-1. Move `react-call.desko.dev` from the old demo project to this one.
-2. Move the old demo to `demo.react-call.desko.dev`.
-3. Both moves in the same minute → zero downtime.
-
-`sites/demo` stays in the repo as an archive (decision 11). The old
-Vercel project keeps deploying it from the same root as before.
+`sites/demo` stays in the repo as an archive (decision 11) but is no
+longer deployed. The repo-root `vercel.json` becomes irrelevant once
+the project's Root Directory moves into `sites/web/` — it can be
+deleted in the same PR or whenever convenient.
