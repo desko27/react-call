@@ -108,9 +108,13 @@ const highlightedLines = (source: string): string => {
     }
   }
 
-  // Single-line marker for the declaration site.
+  // Single-line markers: the createCallable declaration site (in the
+  // Callable file) and the import line that pulls the Callable into the
+  // caller file (`from './callable'` — every caller uses that path).
   source.split('\n').forEach((line, i) => {
-    if (line.includes('createCallable')) marked.add(i + 1)
+    if (line.includes('createCallable') || line.includes("from './callable'")) {
+      marked.add(i + 1)
+    }
   })
 
   if (marked.size === 0) return ''
