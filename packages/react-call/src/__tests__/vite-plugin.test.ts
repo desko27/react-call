@@ -147,6 +147,77 @@ describe('react-call/vite — transformInjectDisplayNames', () => {
     // displayName for the second pass — so the second pass skips.
     expect(twice).toBeNull()
   })
+
+  // The walker only treats a very specific shape as "a Callable to name".
+  // These assert it leaves every neighbouring shape untouched, which is
+  // also what exercises the guard branches in the AST walk.
+
+  test('ignores a named import from react-call that is not createCallable', () => {
+    const code = [
+      `import { useId } from 'react-call'`,
+      `export const Confirm = useId((p) => null)`,
+    ].join('\n')
+    expect(transformInjectDisplayNames(code, TSX)).toBeNull()
+  })
+
+  test('skips non-const declarations (let / var)', () => {
+    const code = [
+      `import { createCallable } from 'react-call'`,
+      `let Confirm = createCallable((p) => null)`,
+    ].join('\n')
+    expect(transformInjectDisplayNames(code, TSX)).toBeNull()
+  })
+
+  test('skips a const whose initializer is not a call', () => {
+    const code = [
+      `import { createCallable } from 'react-call'`,
+      `export const NotACallable = 42`,
+    ].join('\n')
+    expect(transformInjectDisplayNames(code, TSX)).toBeNull()
+  })
+
+  test('skips a const calling some other function', () => {
+    const code = [
+      `import { createCallable } from 'react-call'`,
+      `export const X = useMemo(() => null)`,
+    ].join('\n')
+    expect(transformInjectDisplayNames(code, TSX)).toBeNull()
+  })
+
+  test('skips a const whose callee is a member expression', () => {
+    const code = [
+      `import { createCallable } from 'react-call'`,
+      `export const X = obj.createCallable((p) => null)`,
+    ].join('\n')
+    expect(transformInjectDisplayNames(code, TSX)).toBeNull()
+  })
+
+  test('skips a destructured declaration (no single name to inject)', () => {
+    const code = [
+      `import { createCallable } from 'react-call'`,
+      `const { Confirm } = createCallable((p) => null)`,
+    ].join('\n')
+    expect(transformInjectDisplayNames(code, TSX)).toBeNull()
+  })
+
+  test('injects despite assignments that are not a displayName marker', () => {
+    // Each trailing statement trips a different guard in the manual-
+    // displayName scan, yet none of them is `Confirm.displayName = ...`,
+    // so Confirm still gets named.
+    const code = [
+      `import { createCallable } from 'react-call'`,
+      `export const Confirm = createCallable((p) => null)`,
+      `let counter = 0`,
+      `counter += 1`, // operator is not '='
+      `counter = 5`, // left side is not a member expression
+      `Confirm.foo = 1`, // member, but property is not 'displayName'
+      `Confirm['displayName'] = 1`, // computed member access
+      `window.location.displayName = 1`, // object is not a plain identifier
+      `doSideEffect()`, // expression statement that is not an assignment
+    ].join('\n')
+    const out = transformInjectDisplayNames(code, TSX)
+    expect(out).toContain(`Confirm.displayName = "Confirm";`)
+  })
 })
 
 type TransformFn = (
