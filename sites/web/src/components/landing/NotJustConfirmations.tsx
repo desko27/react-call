@@ -104,7 +104,11 @@ const Card = ({
   )
 }
 
-export const NotJustConfirmations = () => {
+interface Props {
+  exampleCount: number
+}
+
+export const NotJustConfirmations = ({ exampleCount }: Props) => {
   const fireConfirm = async (): Promise<Result> => {
     const v = await Confirm.call({ message: 'A real .call() — same as yours.' })
     return formatBool(v)
@@ -230,7 +234,7 @@ export const NotJustConfirmations = () => {
             href="/examples"
             className="inline-flex items-center gap-2 font-mono text-sm text-[var(--color-accent)] transition-colors hover:underline"
           >
-            See all 15 examples
+            See all {exampleCount} examples
             <span aria-hidden="true">→</span>
           </a>
         </div>

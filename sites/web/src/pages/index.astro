@@ -6,11 +6,14 @@ import { MutationFlowSection } from '~/components/landing/MutationFlowSection'
 import { NotJustConfirmations } from '~/components/landing/NotJustConfirmations'
 import { StackSection } from '~/components/landing/StackSection'
 import Base from '~/layouts/Base.astro'
+import { getAllExamples } from '~/lib/examples'
+
+const exampleCount = getAllExamples().length
 ---
 
 <Base>
   <Hero client:load />
-  <NotJustConfirmations client:idle />
+  <NotJustConfirmations exampleCount={exampleCount} client:idle />
   <HowItLives client:idle />
   <StackSection client:idle />
   <MutationFlowSection client:idle />
