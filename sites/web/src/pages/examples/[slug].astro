@@ -33,12 +33,13 @@ const noteImporter = noteModules[`../../examples/${slug}/notes.mdx`]
 const Notes = noteImporter ? (await noteImporter()).Content : null
 
 // Mark the lines that carry the model:
-//   - createCallable        → single line (the declaration)
-//   - call.end(...)         → the full call expression, opening to closing )
-//   - <Callable>.call(...)  → the full call expression, opening to closing )
+//   - createCallable               → single line (the declaration)
+//   - call.end(...)                → from inside the Callable body
+//   - <Callable>.{call|upsert|end|update}(...) → from caller scope
+// Each multi-line invocation expands from the `(` to the matching `)`.
 const EXPANDING_PATTERNS: RegExp[] = [
   /call\.end\(/g,
-  /\b[A-Z]\w*\.call\(/g,
+  /\b[A-Z]\w*\.(call|upsert|end|update)\(/g,
 ]
 
 const lineOfIndex = (lineStarts: number[], idx: number): number => {
