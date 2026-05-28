@@ -123,6 +123,30 @@ const highlightedLines = (source: string): string => {
 }
 const callableMeta = highlightedLines(example.callableSource)
 const callerMeta = highlightedLines(example.callerSource)
+
+// Build a minimal App.tsx that mounts the Callable Root next to the
+// caller component. Derives the export names from the meta filenames
+// (e.g. 'Confirm.tsx' → 'Confirm'). The Root mount line is highlighted
+// so the visitor sees exactly where the Callable plugs into the tree.
+const stemOf = (filename: string) => filename.replace(/\.tsx?$/, '')
+const callableExport = stemOf(example.meta.files.callable)
+const callerExport = stemOf(example.meta.files.caller)
+const appSource = `import { ${callableExport} } from './${callableExport}'
+import { ${callerExport} } from './${callerExport}'
+
+export default function App() {
+  return (
+    <>
+      <${callableExport} />
+      <${callerExport} />
+    </>
+  )
+}
+`
+const appRootLine =
+  appSource.split('\n').findIndex((l) => l.includes(`<${callableExport} />`)) +
+  1
+const appMeta = appRootLine > 0 ? `{${appRootLine}}` : ''
 ---
 
 <Base
@@ -203,6 +227,22 @@ const callerMeta = highlightedLines(example.callerSource)
           title={example.meta.files.callable}
           meta={callableMeta}
         />
+      </div>
+
+      <div>
+        <div
+          class="mb-2 flex items-baseline justify-between"
+        >
+          <h2
+            class="font-mono text-xs uppercase tracking-wider text-[var(--color-accent)]"
+          >
+            The Root
+          </h2>
+          <span class="font-mono text-xs text-[var(--color-fg-subtle)]">
+            mounted in your app tree, once
+          </span>
+        </div>
+        <Code code={appSource} lang="tsx" title="App.tsx" meta={appMeta} />
       </div>
 
       <div>
