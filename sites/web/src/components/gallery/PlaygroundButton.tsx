@@ -21,14 +21,31 @@ const rewriteCallerImports = (source: string, callableModule: string) =>
 
 // CodeSandbox's `create-react-app-typescript` template handles entry
 // injection (no `<script src>` needed) and bundles src/index.tsx itself.
-// We just supply public/index.html, an entry, App, and the two files.
+// The HTML loads Tailwind via the Play CDN and re-declares the site's
+// design tokens (the magenta accent, light/dark surfaces) so the
+// rendered demo looks the same as it does on the docs site without
+// having to ship a build-time CSS pipeline in the sandbox.
 const PUBLIC_INDEX_HTML = `<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>react-call playground</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
+      :root {
+        --color-bg: #ffffff;
+        --color-bg-subtle: #fafafa;
+        --color-bg-muted: #f4f4f5;
+        --color-fg: #0a0a0a;
+        --color-fg-muted: #525252;
+        --color-fg-subtle: #737373;
+        --color-border: #e5e5e5;
+        --color-border-strong: #d4d4d4;
+        --color-accent: #e11d74;
+        --color-accent-hover: #c4146a;
+        --color-accent-fg: #ffffff;
+      }
       body {
         font-family: system-ui, -apple-system, sans-serif;
         margin: 0;
@@ -38,6 +55,8 @@ const PUBLIC_INDEX_HTML = `<!DOCTYPE html>
         align-items: center;
         gap: 1rem;
         min-height: 100vh;
+        background-color: var(--color-bg);
+        color: var(--color-fg);
       }
     </style>
   </head>
