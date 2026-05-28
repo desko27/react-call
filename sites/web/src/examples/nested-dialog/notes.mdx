@@ -1,0 +1,57 @@
+## Recursion is free
+
+A Callable component is just a React component. From inside its JSX, you
+can call `Callable.call(props)` exactly like any other consumer — that
+spawns another instance of the same Callable, with its own props and its
+own promise.
+
+The library's Root walks its Stack and renders each open call. They live
+side-by-side; closing one doesn't touch the others.
+
+## What `call.index` and `call.stackSize` give you
+
+The header reads "Level N · #i of M":
+
+- `level` is a plain prop the caller passes — it survives nesting because
+  each child opens with `level + 1`.
+- `call.index` is the position of *this* call in the Stack, from the
+  CallContext. It's zero-based.
+- `call.stackSize` is the total open count. It updates live as siblings
+  open and close.
+
+These let you build position-aware UI (cascade offset, "press Esc to
+close all", "1 of 3 unsaved" etc.) without threading state through every
+intermediate render.
+
+## Closing them all at once
+
+`Callable.end(response)` with no promise broadcasts to every open call.
+Here the Response is `void`, so `NestedDialog.end()` ends every level in
+one shot — the "Close all" button uses exactly that. The targeted form
+`call.end()` from CallContext still closes only the call it belongs to.
+
+## Virtualizing the DOM
+
+Each open call mounts the same JSX, which gets expensive once the stack
+grows. The demo virtualizes:
+
+```tsx
+if (call.index < call.stackSize - DOM_LIMIT) return null
+```
+
+Older instances stay in the Stack — so closing the top falls back to
+them — but they skip rendering until they're within the topmost N. With
+`DOM_LIMIT = 10`, depth-100 nesting still renders only 10 dialogs.
+
+## Gotchas
+
+- **Each call has its own end.** Closing the parent doesn't close its
+  children — they're peers in the Stack, not children of a React tree.
+  Use `Callable.end()` for "close all", or iterate if you need to
+  filter.
+- **Render the backdrop only on the topmost call.** Every open instance
+  renders the same JSX. Without `call.index + 1 === call.stackSize`,
+  every backdrop stacks and the screen goes opaque by depth 4.
+- **Cap your visual offset.** A pure `call.index * 18` cascade marches
+  off-screen at depth 10+. The demo loops it with `% 6` so the cards
+  stay centred no matter how deep you go.
