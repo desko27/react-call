@@ -48,6 +48,7 @@ const formatVoid = (label: string): Result => ({
 })
 
 interface CardProps {
+  slug: string
   category: string
   title: string
   description: string
@@ -56,6 +57,7 @@ interface CardProps {
 }
 
 const Card = ({
+  slug,
   category,
   title,
   description,
@@ -80,13 +82,21 @@ const Card = ({
       <p className="mt-2 flex-1 text-sm text-[var(--color-fg-muted)]">
         {description}
       </p>
-      <button
-        type="button"
-        onClick={handleClick}
-        className="mt-4 self-start rounded-md border border-[var(--color-border-strong)] bg-[var(--color-bg)] px-3 py-1.5 text-xs text-[var(--color-fg)] transition-colors hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
-      >
-        {buttonLabel}
-      </button>
+      <div className="mt-4 flex items-center gap-3">
+        <button
+          type="button"
+          onClick={handleClick}
+          className="rounded-md border border-[var(--color-border-strong)] bg-[var(--color-bg)] px-3 py-1.5 text-xs text-[var(--color-fg)] transition-colors hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
+        >
+          {buttonLabel}
+        </button>
+        <a
+          href={`/examples/${slug}`}
+          className="font-mono text-xs text-[var(--color-fg-subtle)] transition-colors hover:text-[var(--color-fg-muted)]"
+        >
+          See code ↗
+        </a>
+      </div>
       <div className="mt-3 h-5">
         <ResultBadge result={result} />
       </div>
@@ -172,30 +182,35 @@ export const NotJustConfirmations = () => {
 
         <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <Card
+            slug="confirm-dialog"
             category="Dialog"
             title="Confirm"
             description="The simplest case. Returns a boolean to the caller."
             onTry={fireConfirm}
           />
           <Card
+            slug="progress-toast"
             category="Notification"
             title="Progress toast"
             description="A singleton that updates itself via upsert() as work progresses."
             onTry={fireToast}
           />
           <Card
+            slug="color-picker"
             category="Picker"
             title="Color picker"
             description="Click a swatch — resolves with the hex value."
             onTry={firePicker}
           />
           <Card
+            slug="command-palette"
             category="Menu"
             title="Command palette"
             description="⌘K-style search. Arrow keys to navigate, Enter to run."
             onTry={fireCommand}
           />
           <Card
+            slug="context-menu"
             category="Menu"
             title="Context menu"
             description="Forwards the cursor position to a positioned Callable."
@@ -203,6 +218,7 @@ export const NotJustConfirmations = () => {
             onTry={fireContextMenu}
           />
           <Card
+            slug="image-lightbox"
             category="Overlay"
             title="Image lightbox"
             description="Open a fullscreen overlay. Backdrop or Esc closes."
