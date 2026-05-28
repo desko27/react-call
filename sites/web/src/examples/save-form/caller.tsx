@@ -4,21 +4,22 @@ import { SaveForm } from './callable'
 const sleep = (ms: number) =>
   new Promise<void>((resolve) => setTimeout(resolve, ms))
 
-// Simulates an API that fails once for every "bad" input.
-let attempts = 0
-
 export const NewItemButton = () => {
   const [saved, setSaved] = useState<string | null>(null)
 
   const handleClick = async () => {
     const result = await SaveForm.call({
-      mutationFn: async (call, { name }) => {
+      mutationFn: async (call, { name, shouldFail }) => {
         await sleep(900)
-        attempts++
-        if (name.toLowerCase() === 'fail' && attempts % 2 === 1) {
-          throw new Error('Saving failed — try again.')
+        // Handle your own errors inside the mutationFn — the lib lets a
+        // throw propagate untouched. Not calling call.end() leaves the
+        // dialog open, so the user can fix things and retry.
+        try {
+          if (shouldFail) throw new Error('Saving failed — try again.')
+          call.end(name)
+        } catch {
+          // surface this however your UI needs; here we just stay open
         }
-        call.end(name)
       },
     })
     if (result) setSaved(result)
@@ -37,7 +38,7 @@ export const NewItemButton = () => {
         {saved ? (
           <span className="text-[var(--color-accent)]">→ saved "{saved}"</span>
         ) : (
-          '→ try typing "fail" to see the dialog stay open'
+          '→ tick "simulate a failed save" to see it stay open'
         )}
       </span>
     </div>

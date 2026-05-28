@@ -1,13 +1,15 @@
 ## What changes with `useMutationFlow`
 
-Without it, you'd own pending state, the try/catch, and the close decision
-yourself. The hook owns pending so you don't disable inputs by hand. The
-**handler** owns whether to close — by calling `call.end(value)` on success
-or not calling it on failure.
+Without it, you'd track pending state and the close decision by hand. The
+hook owns **pending** — true when the trigger fires, cleared when your
+handler settles — so you disable inputs against `submit.pending` instead of
+juggling a boolean. Everything else stays yours: the handler decides
+whether to close (call `call.end(value)` or don't) and handles its own
+errors; the hook never touches the throw.
 
-If the handler throws, the hook clears pending and the dialog stays open.
-Type "**fail**" in the demo above to see it: pending goes back to false,
-the input keeps its value, the user can retry.
+Tick "**simulate a failed save**" and submit to see it: the handler skips
+`call.end()`, the hook clears pending, the input keeps its value, and the
+dialog stays open for a retry.
 
 ## When to reach for it
 

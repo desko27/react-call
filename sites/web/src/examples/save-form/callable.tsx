@@ -4,12 +4,13 @@ import { type MutationFn, useMutationFlow } from 'react-call/mutation-flow'
 
 interface Props {
   initialName?: string
-  mutationFn: MutationFn<string, { name: string }>
+  mutationFn: MutationFn<string, { name: string; shouldFail: boolean }>
 }
 
 export const SaveForm = createCallable<Props, string>(
   ({ call, initialName = '', mutationFn }) => {
     const [name, setName] = useState(initialName)
+    const [shouldFail, setShouldFail] = useState(false)
     const submit = useMutationFlow(call, mutationFn)
 
     return (
@@ -30,6 +31,16 @@ export const SaveForm = createCallable<Props, string>(
             placeholder="Item name"
             className="mt-4 w-full rounded-md border border-[var(--color-border)] bg-[var(--color-bg-subtle)] px-3 py-2 text-sm text-[var(--color-fg)] focus:border-[var(--color-accent)] focus:outline-none disabled:opacity-50"
           />
+          <label className="mt-3 flex items-center gap-2 text-xs text-[var(--color-fg-subtle)]">
+            <input
+              type="checkbox"
+              checked={shouldFail}
+              onChange={(e) => setShouldFail(e.target.checked)}
+              disabled={submit.pending}
+              className="accent-[var(--color-accent)]"
+            />
+            Simulate a failed save
+          </label>
           <div className="mt-6 flex items-center justify-end gap-3">
             <button
               type="button"
@@ -42,7 +53,7 @@ export const SaveForm = createCallable<Props, string>(
             <button
               type="button"
               disabled={submit.pending || !name.trim()}
-              onClick={() => submit({ name: name.trim() })}
+              onClick={() => submit({ name: name.trim(), shouldFail })}
               className="rounded-md bg-[var(--color-accent)] px-4 py-2 text-sm font-medium text-[var(--color-accent-fg)] transition-colors hover:bg-[var(--color-accent-hover)] disabled:opacity-50"
             >
               {submit.pending ? 'Saving…' : 'Save'}
