@@ -1,0 +1,29 @@
+## Plain-data props, not JSX
+
+It can be tempting to make a generic `<Drawer>` Callable that accepts
+`body: ReactNode` and renders whatever JSX the caller hands it. **Don't.**
+`.call()` is imperative — the JSX you pass is captured as a prop snapshot
+at call time. The drawer won't react to state changes in the caller, and
+the typed contract that makes Callables worth using collapses into
+"pass me anything."
+
+A Callable's strength is being dedicated to one use case with a clear
+shape: typed props in, typed Response out. Here, `Props = { initial:
+Settings }` and `Response = Settings | null` — Save resolves with the
+new values, Cancel/Escape/backdrop-click resolves with `null`.
+
+## When to reach for it
+
+- Settings panels, filter pickers, detail views — anywhere a temporary
+  side surface owns a form and reports the result back.
+- Cases where the user might commit (Save) or back out (Cancel) and the
+  caller needs to know which happened.
+
+## Gotchas
+
+- **Owned state lives inside the Callable.** Use `useState` initialized
+  from `props.initial`. Don't reach back out to caller state during the
+  call — the call has no reactive link to its caller's render.
+- **Pick a Response that distinguishes outcomes.** `Settings | null` is
+  the smallest model that lets the caller tell Save from Cancel without
+  introspecting the data.

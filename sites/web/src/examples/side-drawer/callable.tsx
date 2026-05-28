@@ -1,14 +1,22 @@
-import { type ReactNode, useEffect, useRef } from 'react'
+import { type ReactNode, useEffect, useRef, useState } from 'react'
 import { createCallable } from 'react-call'
 
-interface Props {
-  title: string
-  body: ReactNode
+export type Theme = 'system' | 'light' | 'dark'
+
+export interface Settings {
+  notifications: boolean
+  syncOnLaunch: boolean
+  theme: Theme
 }
 
-export const SideDrawer = createCallable<Props, void>(
-  ({ call, title, body }) => {
+interface Props {
+  initial: Settings
+}
+
+export const SettingsDrawer = createCallable<Props, Settings | null>(
+  ({ call, initial }) => {
     const drawerRef = useRef<HTMLDivElement>(null)
+    const [settings, setSettings] = useState<Settings>(initial)
 
     useEffect(() => {
       const onPointer = (e: MouseEvent) => {
@@ -16,11 +24,11 @@ export const SideDrawer = createCallable<Props, void>(
           drawerRef.current &&
           !drawerRef.current.contains(e.target as Node)
         ) {
-          call.end()
+          call.end(null)
         }
       }
       const onKey = (e: KeyboardEvent) => {
-        if (e.key === 'Escape') call.end()
+        if (e.key === 'Escape') call.end(null)
       }
       document.addEventListener('mousedown', onPointer)
       document.addEventListener('keydown', onKey)
@@ -34,32 +42,114 @@ export const SideDrawer = createCallable<Props, void>(
       <div
         role="dialog"
         aria-modal="true"
-        aria-label={title}
+        aria-label="Settings"
         className="fixed inset-0 z-50 flex justify-end bg-black/50 backdrop-blur-sm"
       >
         <div
           ref={drawerRef}
-          className="h-full w-full max-w-sm border-l border-[var(--color-border)] bg-[var(--color-bg)] p-6 shadow-2xl"
+          className="flex h-full w-full max-w-sm flex-col border-l border-[var(--color-border)] bg-[var(--color-bg)] shadow-2xl"
         >
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between border-b border-[var(--color-border)] px-6 py-4">
             <p className="text-base font-medium text-[var(--color-fg)]">
-              {title}
+              Settings
             </p>
             <button
               type="button"
-              onClick={() => call.end()}
+              onClick={() => call.end(null)}
               aria-label="Close"
               className="-mr-1 inline-flex h-7 w-7 items-center justify-center rounded-md text-base leading-none text-[var(--color-fg-subtle)] transition-colors hover:bg-[var(--color-bg-subtle)] hover:text-[var(--color-fg)]"
             >
               ×
             </button>
           </div>
-          <div className="mt-4 text-sm text-[var(--color-fg-muted)]">
-            {body}
+
+          <div className="flex-1 space-y-5 p-6 text-sm">
+            <Row
+              label="Notifications"
+              hint="Browser notifications for new mentions."
+            >
+              <Toggle
+                checked={settings.notifications}
+                onChange={(notifications) =>
+                  setSettings({ ...settings, notifications })
+                }
+              />
+            </Row>
+            <Row label="Sync on launch" hint="Fetch latest data on app start.">
+              <Toggle
+                checked={settings.syncOnLaunch}
+                onChange={(syncOnLaunch) =>
+                  setSettings({ ...settings, syncOnLaunch })
+                }
+              />
+            </Row>
+            <Row label="Theme" hint="Visual theme used across the app.">
+              <select
+                value={settings.theme}
+                onChange={(e) =>
+                  setSettings({
+                    ...settings,
+                    theme: e.target.value as Theme,
+                  })
+                }
+                className="rounded-md border border-[var(--color-border)] bg-[var(--color-bg-subtle)] px-2 py-1 text-sm text-[var(--color-fg)] focus:border-[var(--color-accent)] focus:outline-none"
+              >
+                <option value="system">System</option>
+                <option value="light">Light</option>
+                <option value="dark">Dark</option>
+              </select>
+            </Row>
+          </div>
+
+          <div className="flex items-center justify-end gap-3 border-t border-[var(--color-border)] px-6 py-4">
+            <button
+              type="button"
+              onClick={() => call.end(null)}
+              className="rounded-md border border-[var(--color-border)] px-4 py-2 text-sm font-medium text-[var(--color-fg-muted)] transition-colors hover:text-[var(--color-fg)]"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={() => call.end(settings)}
+              className="rounded-md bg-[var(--color-accent)] px-4 py-2 text-sm font-medium text-[var(--color-accent-fg)] transition-colors hover:bg-[var(--color-accent-hover)]"
+            >
+              Save
+            </button>
           </div>
         </div>
       </div>
     )
   },
 )
-SideDrawer.displayName = 'SideDrawer'
+SettingsDrawer.displayName = 'SettingsDrawer'
+
+interface RowProps {
+  label: string
+  hint: string
+  children: ReactNode
+}
+
+const Row = ({ label, hint, children }: RowProps) => (
+  <div className="flex items-start justify-between gap-4">
+    <div>
+      <p className="font-medium text-[var(--color-fg)]">{label}</p>
+      <p className="mt-0.5 text-xs text-[var(--color-fg-subtle)]">{hint}</p>
+    </div>
+    {children}
+  </div>
+)
+
+interface ToggleProps {
+  checked: boolean
+  onChange: (next: boolean) => void
+}
+
+const Toggle = ({ checked, onChange }: ToggleProps) => (
+  <input
+    type="checkbox"
+    checked={checked}
+    onChange={(e) => onChange(e.target.checked)}
+    className="mt-1 accent-[var(--color-accent)]"
+  />
+)

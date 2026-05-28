@@ -1,9 +1,9 @@
-import { SideDrawer } from './callable'
+import { SettingsDrawer } from './callable'
 import { OpenSettingsButton } from './caller'
 
 const SideDrawerExample = () => (
   <>
-    <SideDrawer />
+    <SettingsDrawer />
     <OpenSettingsButton />
   </>
 )
