@@ -1,8 +1,9 @@
 import { defineEcConfig } from 'astro-expressive-code'
 
 export default defineEcConfig({
-  themes: ['github-dark'],
+  themes: ['github-light', 'github-dark'],
   useDarkModeMediaQuery: false,
+  themeCssSelector: (theme) => (theme.type === 'dark' ? '.dark' : false),
   defaultProps: { wrap: true },
   styleOverrides: {
     codeFontFamily:
