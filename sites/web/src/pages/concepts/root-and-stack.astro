@@ -29,9 +29,9 @@ import { StackDemo } from '~/components/concepts/StackDemo'
   </div>
 
   <p>
-    Each call carries its own <code>CallContext</code>. Closing one does not
-    affect the others. This is what makes nested or recursive interactions
-    natural to model — a confirm-inside-a-form is just two calls on the same
+    Each call carries its own <code>CallContext</code>, and closing one does
+    not affect the others. That is what makes recursion natural to model — a
+    confirm that opens <em>another</em> confirm is just two calls on the same
     Stack.
   </p>
 
@@ -40,5 +40,19 @@ import { StackDemo } from '~/components/concepts/StackDemo'
     Mount the bare component (<code>{`<Confirm />`}</code>) once, anywhere
     visible. Two mounts of the same Callable will throw at <code>.call()</code>
     time — it is a programmer error, not a runtime fallback.
+  </p>
+
+  <h2>As many Callables as you want</h2>
+  <p>
+    One Root per Callable — but you can have as many Callables as your app
+    needs. A <code>Confirm</code>, a <code>Toast</code>, a <code>Drawer</code>,
+    a <code>Lightbox</code>: each is its own Root with its own Stack, mounted
+    side by side near the top of your tree.
+  </p>
+  <p>
+    They never collide. There is no shared registry, no z-index coordinator,
+    no provider that has to know about every dialog in advance. Each Callable
+    owns its own little world and ignores the rest — so adding the tenth
+    interactive surface to an app is exactly as simple as adding the first.
   </p>
 </Concept>
