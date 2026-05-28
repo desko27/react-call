@@ -6,8 +6,10 @@ same open call re-renders with the new props.
 
 That's the differentiator from [`upsert`](/concepts/upsert): with
 `update`, you choose exactly which open call to push to — and updates
-only land if it's still open. Multiple parallel orders, each tracked
-by its own promise, no fighting for a singleton slot.
+only land if it's still open. (Without the promise, the only fallback is
+`Callable.update(props)`, which broadcasts to _every_ open instance.)
+Multiple parallel orders, each tracked by its own promise, no fighting
+for a singleton slot.
 
 ## When to reach for it
 
@@ -20,9 +22,6 @@ by its own promise, no fighting for a singleton slot.
 
 ## Gotchas
 
-- **The promise is the key.** Keep the reference. Without it you can
-  only fall back to `Callable.update(props)`, which broadcasts to *every*
-  open instance of this Callable.
 - **Updates to a closed call are no-ops.** If the user dismisses early,
   subsequent `update(promise, …)` calls are silently dropped. Track
   dismissal via `promise.then(…)` if your loop needs to stop pushing.
