@@ -19,21 +19,27 @@ interface Props {
 const ALL_CATEGORIES = Object.keys(CATEGORY_LABELS) as Category[]
 const ALL_BEHAVIORS = Object.keys(BEHAVIOR_LABELS) as Behavior[]
 
+type Filter =
+  | { kind: 'all' }
+  | { kind: 'category'; value: Category }
+  | { kind: 'behavior'; value: Behavior }
+
+const ALL: Filter = { kind: 'all' }
+
 export const Gallery = ({ entries }: Props) => {
   const [query, setQuery] = useState('')
-  const [category, setCategory] = useState<Category | 'all'>('all')
-  const [behaviors, setBehaviors] = useState<Set<Behavior>>(new Set())
+  const [filter, setFilter] = useState<Filter>(ALL)
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase()
     return entries.filter(({ meta }) => {
-      if (category !== 'all' && meta.category !== category) return false
-      if (behaviors.size > 0) {
-        const has = meta.behaviors ?? []
-        for (const b of behaviors) {
-          if (!has.includes(b)) return false
-        }
-      }
+      if (filter.kind === 'category' && meta.category !== filter.value)
+        return false
+      if (
+        filter.kind === 'behavior' &&
+        !(meta.behaviors ?? []).includes(filter.value)
+      )
+        return false
       if (q) {
         const haystack = [
           meta.title,
@@ -48,14 +54,7 @@ export const Gallery = ({ entries }: Props) => {
       }
       return true
     })
-  }, [entries, query, category, behaviors])
-
-  const toggleBehavior = (b: Behavior) => {
-    const next = new Set(behaviors)
-    if (next.has(b)) next.delete(b)
-    else next.add(b)
-    setBehaviors(next)
-  }
+  }, [entries, query, filter])
 
   return (
     <div className="mx-auto max-w-6xl px-6 py-16">
@@ -81,15 +80,15 @@ export const Gallery = ({ entries }: Props) => {
         <div className="flex flex-wrap gap-2">
           <CategoryChip
             label="All"
-            active={category === 'all'}
-            onClick={() => setCategory('all')}
+            active={filter.kind === 'all'}
+            onClick={() => setFilter(ALL)}
           />
           {ALL_CATEGORIES.map((cat) => (
             <CategoryChip
               key={cat}
               label={CATEGORY_LABELS[cat]}
-              active={category === cat}
-              onClick={() => setCategory(cat)}
+              active={filter.kind === 'category' && filter.value === cat}
+              onClick={() => setFilter({ kind: 'category', value: cat })}
             />
           ))}
         </div>
@@ -102,8 +101,8 @@ export const Gallery = ({ entries }: Props) => {
             <BehaviorPill
               key={b}
               label={BEHAVIOR_LABELS[b]}
-              active={behaviors.has(b)}
-              onClick={() => toggleBehavior(b)}
+              active={filter.kind === 'behavior' && filter.value === b}
+              onClick={() => setFilter({ kind: 'behavior', value: b })}
             />
           ))}
         </div>
