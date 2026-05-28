@@ -31,6 +31,28 @@ const related = getAllExamples()
 
 const noteImporter = noteModules[`../../examples/${slug}/notes.mdx`]
 const Notes = noteImporter ? (await noteImporter()).Content : null
+
+// Mark the three lines that carry the model: where the Callable is declared,
+// where the call closes, and where it's invoked from the outside. Each pattern
+// is a substring match; the regex catches `<Callable>.call(` invocations.
+const HIGHLIGHT_PATTERNS: Array<string | RegExp> = [
+  'createCallable',
+  'call.end',
+  /\b[A-Z]\w*\.call\(/,
+]
+const highlightedLines = (source: string): string => {
+  const lines = source.split('\n')
+  const matches: number[] = []
+  lines.forEach((line, i) => {
+    const hit = HIGHLIGHT_PATTERNS.some((p) =>
+      typeof p === 'string' ? line.includes(p) : p.test(line),
+    )
+    if (hit) matches.push(i + 1)
+  })
+  return matches.length > 0 ? `{${matches.join(',')}}` : ''
+}
+const callableMeta = highlightedLines(example.callableSource)
+const callerMeta = highlightedLines(example.callerSource)
 ---
 
 <Base
@@ -109,7 +131,7 @@ const Notes = noteImporter ? (await noteImporter()).Content : null
           code={example.callableSource}
           lang="tsx"
           title={example.meta.files.callable}
-          mark={['createCallable', 'call.end', /\b[A-Z]\w*\.call\(/g]}
+          meta={callableMeta}
         />
       </div>
 
@@ -130,7 +152,7 @@ const Notes = noteImporter ? (await noteImporter()).Content : null
           code={example.callerSource}
           lang="tsx"
           title={example.meta.files.caller}
-          mark={['createCallable', 'call.end', /\b[A-Z]\w*\.call\(/g]}
+          meta={callerMeta}
         />
       </div>
     </section>
