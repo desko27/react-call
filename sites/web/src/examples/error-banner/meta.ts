@@ -5,7 +5,7 @@ export const meta = {
   description:
     'A transient banner that closes itself via setTimeout. Multiple calls stack — each error gets its own banner.',
   category: 'notification',
-  behaviors: ['nested'],
+  behaviors: ['stacking'],
   tags: ['error', 'auto-dismiss', 'stack'],
   files: { callable: 'ErrorBanner.tsx', caller: 'TriggerErrorButton.tsx' },
   order: 11,

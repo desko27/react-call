@@ -7,7 +7,12 @@ export type Category =
   | 'overlay'
   | 'flow'
 
-export type Behavior = 'upsert' | 'mutation-flow' | 'nested' | 'update'
+export type Behavior =
+  | 'update'
+  | 'upsert'
+  | 'mutation-flow'
+  | 'stacking'
+  | 'nested'
 
 export interface ExampleMeta {
   title: string
@@ -114,8 +119,9 @@ export const CATEGORY_LABELS: Record<Category, string> = {
 }
 
 export const BEHAVIOR_LABELS: Record<Behavior, string> = {
+  update: 'Update',
   upsert: 'Upsert',
   'mutation-flow': 'Mutation flow',
+  stacking: 'Stacking',
   nested: 'Nested',
-  update: 'Update',
 }
