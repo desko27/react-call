@@ -1,4 +1,8 @@
 LICENSE
+dist/host.cjs
+dist/host.d.cts
+dist/host.d.ts
+dist/host.js
 dist/main.cjs
 dist/main.d.cts
 dist/main.d.ts

@@ -139,3 +139,6 @@ dist
 
 # vitest browser mode
 __screenshots__
+
+# Local Storybook reproduction scratchpad (see ADR-0016 verification flow)
+.claude/sb-repro/
