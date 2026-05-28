@@ -46,10 +46,17 @@ import { MutationFlowDemo } from '~/components/concepts/MutationFlowDemo'
 
   <h2>Failure semantics</h2>
   <p>
-    When the MutationFn throws, useMutationFlow swallows the throw, clears
-    pending, and re-throws to the Trigger callsite (so you can opt in to
-    catch it at the call site if you want). The Call <em>itself</em> stays
-    open — that is the whole point. The user sees the dialog return to its
-    idle state and can try again.
+    When the MutationFn throws, useMutationFlow clears pending — via the same
+    <code>.finally</code> that tracks the in-flight state — and does nothing
+    to the error itself: it propagates as an unhandled rejection. The lib
+    doesn't own your error handling, so it won't silence, log, or re-route
+    the throw. If the failure matters to your UX or telemetry, wrap the body
+    of your MutationFn in <code>try/catch</code>.
+  </p>
+  <p>
+    The Call stays open <em>not</em> because the throw was caught, but because
+    closing a Call requires an explicit <code>call.end()</code> — and a
+    MutationFn that throws never reaches it. The user sees the dialog return to
+    its idle state and can try again.
   </p>
 </Concept>

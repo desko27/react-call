@@ -75,20 +75,20 @@ export const MutationFlowSection = () => {
       mutationFn: async (call, payload) => {
         append('trigger fires • pending = true', 'info')
         await sleep(900)
-        if (payload.shouldFail) {
-          append('throw → pending clears, call stays open', 'bad')
-          throw new Error('Network error')
+        // Handle your own errors inside the mutationFn — the lib lets a
+        // throw propagate untouched. The call stays open because a throw
+        // never reaches call.end(), not because anything caught it.
+        try {
+          if (payload.shouldFail) throw new Error('Network error')
+          append('success → call.end("saved")', 'good')
+          call.end('saved')
+        } catch {
+          append('caught → pending clears, call stays open', 'bad')
         }
-        append('success → call.end("saved")', 'good')
-        call.end('saved')
       },
+    }).finally(() => {
+      setBusy(false)
     })
-      .catch(() => {
-        /* swallow the rejection from the .catch chain */
-      })
-      .finally(() => {
-        setBusy(false)
-      })
   }
 
   return (

@@ -68,16 +68,18 @@ export const MutationFlowDemo = () => {
       mutationFn: async (call, payload) => {
         append('• pending = true', 'info')
         await sleep(700)
-        if (payload.shouldFail) {
-          append('• throw → pending clears, call stays open', 'bad')
-          throw new Error('Save failed')
+        // The lib won't touch your errors — handle them in your own
+        // mutationFn. The Call stays open simply because a throw never
+        // reaches call.end(). pending clears automatically either way.
+        try {
+          if (payload.shouldFail) throw new Error('Save failed')
+          append('• success → call.end()', 'good')
+          call.end('ok')
+        } catch {
+          append('• caught — pending clears, call stays open', 'bad')
         }
-        append('• success → call.end()', 'good')
-        call.end('ok')
       },
-    })
-      .catch(() => {})
-      .finally(() => setBusy(false))
+    }).finally(() => setBusy(false))
   }
 
   return (
