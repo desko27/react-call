@@ -26,14 +26,14 @@ export const ErrorBanner = createCallable<Props, void>(
         style={{ top }}
         className="pointer-events-none fixed left-1/2 z-50 -translate-x-1/2 transition-[top] duration-200"
       >
-        <div className="pointer-events-auto flex items-center gap-3 rounded-md border border-red-500/40 bg-red-500/10 px-4 py-2 text-sm text-red-200 shadow-2xl backdrop-blur">
+        <div className="pointer-events-auto flex w-80 max-w-[calc(100vw-1.5rem)] items-center gap-3 rounded-md border border-red-500/40 bg-red-500/10 px-4 py-2 text-sm text-red-200 shadow-2xl backdrop-blur">
           <span aria-hidden="true">⚠</span>
-          <span>{message}</span>
+          <span className="flex-1 truncate">{message}</span>
           <button
             type="button"
             onClick={() => call.end()}
             aria-label="Dismiss"
-            className="-mr-1 ml-2 inline-flex h-7 w-7 items-center justify-center rounded-md text-base leading-none text-red-300/80 transition-colors hover:bg-red-500/20 hover:text-red-100"
+            className="-mr-1 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-base leading-none text-red-300/80 transition-colors hover:bg-red-500/20 hover:text-red-100"
           >
             ×
           </button>
