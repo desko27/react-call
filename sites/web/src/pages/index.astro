@@ -1,4 +1,5 @@
 ---
+import { InstallCommand } from '~/components/InstallCommand'
 import { Hero } from '~/components/landing/Hero'
 import { HowItLives } from '~/components/landing/HowItLives'
 import { MutationFlowSection } from '~/components/landing/MutationFlowSection'
@@ -27,11 +28,8 @@ import Base from '~/layouts/Base.astro'
           class="font-mono text-sm">@next</code
         >.
       </p>
-      <div
-        class="mt-8 inline-flex items-center gap-2 rounded-md border border-[var(--color-border)] bg-[var(--color-bg-subtle)] px-4 py-3 font-mono text-sm text-[var(--color-fg)]"
-      >
-        <span class="text-[var(--color-fg-subtle)]">$</span>
-        npm install react-call@next
+      <div class="mt-8 flex justify-center">
+        <InstallCommand client:idle />
       </div>
       <div class="mt-6 flex items-center justify-center gap-6 text-sm">
         <a
