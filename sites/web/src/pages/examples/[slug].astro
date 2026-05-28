@@ -109,10 +109,15 @@ const highlightedLines = (source: string): string => {
   }
 
   // Single-line markers: the createCallable declaration site (in the
-  // Callable file) and the import line that pulls the Callable into the
-  // caller file (`from './callable'` — every caller uses that path).
+  // Callable file) and the relative-path import that pulls the Callable
+  // into the caller file. In caller files the only relative import we
+  // render is the Callable (everything else resolves from packages —
+  // react, react-call) so matching `from './...'` is safe.
   source.split('\n').forEach((line, i) => {
-    if (line.includes('createCallable') || line.includes("from './callable'")) {
+    if (
+      line.includes('createCallable') ||
+      /from\s+['"]\.\/\w+['"]/.test(line)
+    ) {
       marked.add(i + 1)
     }
   })
@@ -121,16 +126,25 @@ const highlightedLines = (source: string): string => {
   const sorted = [...marked].sort((a, b) => a - b)
   return `{${sorted.join(',')}}`
 }
-const callableMeta = highlightedLines(example.callableSource)
-const callerMeta = highlightedLines(example.callerSource)
-
-// Build a minimal App.tsx that mounts the Callable Root next to the
-// caller component. Derives the export names from the meta filenames
-// (e.g. 'Confirm.tsx' → 'Confirm'). The Root mount line is highlighted
-// so the visitor sees exactly where the Callable plugs into the tree.
+// On-disk caller imports `./callable` (folder convention), but the code
+// blocks show the Callable's display filename (e.g. Confirm.tsx) in the
+// tab. Rewrite the import for display so the path matches what the
+// reader sees — same trick Sandpack uses when it spins up a sandbox.
 const stemOf = (filename: string) => filename.replace(/\.tsx?$/, '')
 const callableExport = stemOf(example.meta.files.callable)
 const callerExport = stemOf(example.meta.files.caller)
+const displayCallerSource = example.callerSource.replace(
+  /from\s+['"]\.\/callable['"]/g,
+  `from './${callableExport}'`,
+)
+
+const callableMeta = highlightedLines(example.callableSource)
+const callerMeta = highlightedLines(displayCallerSource)
+
+// Build a minimal App.tsx that mounts the Callable Root next to the
+// caller component. The two lines that carry the Root contract — the
+// import of the Callable and the <Callable /> mount inside the tree —
+// are both highlighted so the visitor sees the whole wiring at once.
 const appSource = `import { ${callableExport} } from './${callableExport}'
 import { ${callerExport} } from './${callerExport}'
 
@@ -143,10 +157,18 @@ export default function App() {
   )
 }
 `
-const appRootLine =
-  appSource.split('\n').findIndex((l) => l.includes(`<${callableExport} />`)) +
-  1
-const appMeta = appRootLine > 0 ? `{${appRootLine}}` : ''
+const appLines = appSource.split('\n')
+const appMarkedLines: number[] = []
+appLines.forEach((line, i) => {
+  if (
+    line.includes(`from './${callableExport}'`) ||
+    line.includes(`<${callableExport} />`)
+  ) {
+    appMarkedLines.push(i + 1)
+  }
+})
+const appMeta =
+  appMarkedLines.length > 0 ? `{${appMarkedLines.join(',')}}` : ''
 ---
 
 <Base
@@ -259,7 +281,7 @@ const appMeta = appRootLine > 0 ? `{${appRootLine}}` : ''
           </span>
         </div>
         <Code
-          code={example.callerSource}
+          code={displayCallerSource}
           lang="tsx"
           title={example.meta.files.caller}
           meta={callerMeta}
