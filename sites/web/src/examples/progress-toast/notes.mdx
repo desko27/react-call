@@ -6,21 +6,15 @@ of the singleton — you can `await Toast.upsert(…)` once and your code
 resumes when the toast finally closes, even if its message changes a dozen
 times in between.
 
-Two different consumers calling `Toast.upsert(…)` will fight for the same
-slot. That's the point — toasts are conceptually a single piece of
-ambient UI. If you need parallel toasts, use regular `.call()` instead;
-the Root will stack them.
+Because `upsert` keeps a single instance, every `Toast.upsert(…)` —
+wherever it's called from — targets that same toast: a second caller
+updates the existing one instead of opening another. That's exactly what a
+progress indicator wants — there should only ever be one. When each event
+should get its own toast, reach for `.call()` instead and the Root stacks
+them (that's [error-banner](/examples/error-banner)).
 
 ## When to reach for it
 
 - Progress indicators where the message updates as work advances.
 - A "saving…" → "saved" status pill.
 - A connection state badge that may flip many times during a session.
-
-## Gotchas
-
-- **Close it explicitly.** Upsert never closes itself. Call `Toast.end()`
-  when work is done — common pattern is `try/finally` around the work.
-- **First-call props matter.** Until the next `upsert`, the singleton
-  renders with whatever you passed first. There's no implicit "merge with
-  previous props."
