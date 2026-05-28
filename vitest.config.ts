@@ -28,10 +28,10 @@ export default defineConfig({
       // the gate blocks regressions without demanding new tests. Bump up
       // as coverage grows. See ADR-0017.
       thresholds: {
-        statements: 89,
-        branches: 77,
-        functions: 98,
-        lines: 95,
+        statements: 93,
+        branches: 81,
+        functions: 100,
+        lines: 99,
       },
     },
     projects: [
