@@ -1,6 +1,6 @@
 @import 'tailwindcss';
 @import '@fontsource-variable/geist/index.css';
-@import '@fontsource-variable/geist-mono/index.css';
+@import '@fontsource-variable/jetbrains-mono/index.css';
 
 @source '../**/*.astro';
 @source '../**/*.tsx';
@@ -14,7 +14,7 @@
     'Geist Variable', ui-sans-serif, system-ui, -apple-system,
     BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   --font-mono:
-    'Geist Mono Variable', ui-monospace, SFMono-Regular, Menlo, Monaco,
+    'JetBrains Mono Variable', ui-monospace, SFMono-Regular, Menlo, Monaco,
     Consolas, monospace;
 
   --color-accent: #e11d74;
@@ -80,12 +80,12 @@
   pre,
   kbd {
     font-family: var(--font-mono);
-    /* Geist Mono ships programming ligatures (===, !==, =>, ->) and the
-       glyphs render visibly distorted in some browsers. Disabling the
-       ligature features keeps each character its own glyph. */
-    font-variant-ligatures: none;
+    /* JetBrains Mono ships clean programming ligatures (===, !==, =>,
+       ->, &&, ||, …). Force-enable the relevant OpenType features so
+       browsers honour them regardless of the user-agent default. */
+    font-variant-ligatures: common-ligatures contextual;
     font-feature-settings:
-      'liga' 0,
-      'calt' 0;
+      'liga' 1,
+      'calt' 1;
   }
 }
