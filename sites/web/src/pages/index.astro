@@ -1,0 +1,55 @@
+---
+import { InstallCommand } from '~/components/InstallCommand'
+import { Hero } from '~/components/landing/Hero'
+import { HowItLives } from '~/components/landing/HowItLives'
+import { MutationFlowSection } from '~/components/landing/MutationFlowSection'
+import { NotJustConfirmations } from '~/components/landing/NotJustConfirmations'
+import { StackSection } from '~/components/landing/StackSection'
+import Base from '~/layouts/Base.astro'
+import { getAllExamples } from '~/lib/examples'
+
+const exampleCount = getAllExamples().length
+---
+
+<Base>
+  <Hero client:load />
+  <NotJustConfirmations exampleCount={exampleCount} client:idle />
+  <HowItLives client:idle />
+  <StackSection client:idle />
+  <MutationFlowSection client:idle />
+
+  <section class="border-t border-[var(--color-border)]">
+    <div class="mx-auto max-w-3xl px-6 py-24 text-center">
+      <h2
+        class="text-3xl font-medium tracking-tight text-[var(--color-fg)] md:text-4xl"
+      >
+        Ready to make your components{' '}
+        <span class="font-mono text-[var(--color-accent)]">await</span>?
+      </h2>
+      <p class="mt-4 text-base text-[var(--color-fg-muted)]">
+        1 KB. No deps. SSR. React Native. v2 is in <code
+          class="font-mono text-sm">@next</code
+        >.
+      </p>
+      <div class="mt-8 flex justify-center">
+        <InstallCommand client:idle />
+      </div>
+      <div class="mt-6 flex items-center justify-center gap-6 text-sm">
+        <a
+          href="/examples"
+          class="rounded-md bg-[var(--color-accent)] px-4 py-2 font-medium text-[var(--color-accent-fg)] transition-colors hover:bg-[var(--color-accent-hover)]"
+        >
+          Browse examples
+        </a>
+        <a
+          href="https://github.com/desko27/react-call"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-[var(--color-fg-muted)] transition-colors hover:text-[var(--color-fg)]"
+        >
+          GitHub →
+        </a>
+      </div>
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,54 @@
+---
+import Base from '~/layouts/Base.astro'
+
+const concepts = [
+  {
+    href: '/concepts/root-and-stack',
+    title: 'Root & Stack',
+    description:
+      'Where a Callable lives in the tree and what happens when many calls are active at once.',
+  },
+  {
+    href: '/concepts/upsert',
+    title: 'Upsert',
+    description:
+      'Singleton-style calls: the first call creates, subsequent calls mutate the same instance.',
+  },
+  {
+    href: '/concepts/mutation-flow',
+    title: 'Mutation flow',
+    description:
+      'Wire a Callable to an async action without losing the "stay open on failure" guarantee.',
+  },
+]
+---
+
+<Base title="Concepts — react-call">
+  <div class="mx-auto max-w-3xl px-6 py-16">
+    <h1
+      class="text-3xl font-medium tracking-tight text-[var(--color-fg)] md:text-5xl"
+    >
+      Concepts
+    </h1>
+    <p class="mt-3 text-base text-[var(--color-fg-muted)]">
+      Three lenses on the mental model. Each page mixes prose with an
+      interactive demo you can poke.
+    </p>
+
+    <div class="mt-12 grid gap-4">
+      {
+        concepts.map((c) => (
+          <a
+            href={c.href}
+            class="group flex flex-col gap-2 rounded-lg border border-[var(--color-border)] bg-[var(--color-bg-subtle)] p-5 transition-colors hover:border-[var(--color-accent)]"
+          >
+            <h2 class="text-lg font-medium text-[var(--color-fg)] transition-colors group-hover:text-[var(--color-accent)]">
+              {c.title}
+            </h2>
+            <p class="text-sm text-[var(--color-fg-muted)]">{c.description}</p>
+          </a>
+        ))
+      }
+    </div>
+  </div>
+</Base>

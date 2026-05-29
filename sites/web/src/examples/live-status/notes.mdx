@@ -1,0 +1,27 @@
+## Why `update` and not `upsert`
+
+`call()` returns a promise that doubles as the **call identity**. Pass
+that same promise back to `Callable.update(promise, newProps)` and the
+same open call re-renders with the new props.
+
+That's the differentiator from [`upsert`](/concepts/upsert): with
+`update`, you choose exactly which open call to push to — and updates
+only land if it's still open. (Without the promise, the only fallback is
+`Callable.update(props)`, which broadcasts to _every_ open instance.)
+Multiple parallel orders, each tracked by its own promise, no fighting
+for a singleton slot.
+
+## When to reach for it
+
+- Long-running operations that emit progress from outside the Callable
+  (websocket frames, server-sent events, timers).
+- A live "viewers count" or "presence" indicator on an already-open
+  dialog.
+- Anywhere the call's props need to change while it stays mounted, and
+  the caller knows which specific call to target.
+
+## Gotchas
+
+- **Updates to a closed call are no-ops.** If the user dismisses early,
+  subsequent `update(promise, …)` calls are silently dropped. Track
+  dismissal via `promise.then(…)` if your loop needs to stop pushing.

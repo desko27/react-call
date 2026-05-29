@@ -1,0 +1,51 @@
+---
+import Concept from '~/layouts/Concept.astro'
+import { UpsertDemo } from '~/components/concepts/UpsertDemo'
+---
+
+<Concept
+  title="Upsert"
+  intro="Singleton-style calls. The first upsert creates the call; later upserts mutate its props on the same instance. The returned promise is identical across the singleton's lifetime."
+>
+  <h2>When you want one, not many</h2>
+  <p>
+    <code>call()</code> is the default: each invocation adds a new entry to the
+    Stack. But sometimes the right model is "there is exactly one of these
+    things alive, and I keep telling it what to show right now."
+  </p>
+  <p>
+    Notifications, loading toasts, progress indicators — these are conceptually
+    singletons. <code>upsert()</code> models that directly.
+  </p>
+
+  <div class="demo">
+    <UpsertDemo client:load />
+  </div>
+
+  <h2>What changes between calls</h2>
+  <ul>
+    <li>
+      <strong>First call:</strong> creates a new instance, returns a promise.
+    </li>
+    <li>
+      <strong>Subsequent calls:</strong> update the existing instance's props.
+      Same promise reference.
+    </li>
+    <li>
+      <strong>After <code>end()</code>:</strong> the next upsert creates a new
+      instance again.
+    </li>
+    <li>
+      Regular <code>call()</code>s and <code>upsert()</code>s are independent —
+      they never collide.
+    </li>
+  </ul>
+
+  <h2>Useful identities</h2>
+  <p>
+    Because the promise is stable across the singleton's lifetime, you can
+    safely <code>await</code> it once and have your code resume when the
+    notification finally goes away — even if its message changes a dozen times
+    in between.
+  </p>
+</Concept>

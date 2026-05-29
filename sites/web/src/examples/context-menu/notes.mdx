@@ -1,0 +1,20 @@
+## The caller knows where the click was
+
+A context menu has to appear _at the cursor_ — and the only place the
+cursor position exists is the DOM event, which fires at the call site,
+not inside the Callable. So the caller reads `e.clientX` / `e.clientY`
+and hands them over as plain `x` / `y` props; the Callable just renders
+`fixed` at those coordinates. It never reaches into the DOM to find the
+pointer.
+
+That is the role `.call(props)` plays in general: it is the seam where
+caller-side context — a cursor position, the row you right-clicked, any
+data the event carries — crosses into the Callable. The event happens in
+your component; `.call()` snapshots what the Callable needs and opens it.
+
+## When to reach for it
+
+Reach for this whenever a surface must appear anchored to a point: a
+right-click menu, a popover beside a clicked element, a picker that
+springs from a button. The trigger owns the coordinates; the Callable
+owns the rendering.

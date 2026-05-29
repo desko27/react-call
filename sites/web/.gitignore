@@ -1,0 +1,6 @@
+# Astro
+.astro/
+dist/
+
+# Build artifacts
+*.tsbuildinfo

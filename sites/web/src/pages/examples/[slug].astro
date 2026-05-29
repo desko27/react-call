@@ -1,0 +1,211 @@
+---
+import { Code } from 'astro-expressive-code/components'
+import type { MarkdownInstance } from 'astro'
+import { ExampleHost } from '~/components/gallery/ExampleHost'
+import { PlaygroundButton } from '~/components/gallery/PlaygroundButton'
+import Base from '~/layouts/Base.astro'
+import {
+  appRootMeta,
+  buildAppSource,
+  highlightedLines,
+  rewriteCallableImport,
+  stemOf,
+} from '~/lib/code-marks'
+import {
+  BEHAVIOR_LABELS,
+  CATEGORY_LABELS,
+  getAllExamples,
+  getExample,
+} from '~/lib/examples'
+
+type NotesModule = Pick<MarkdownInstance<unknown>, 'Content'>
+
+const noteModules = import.meta.glob<NotesModule>('../../examples/*/notes.mdx')
+
+export const getStaticPaths = () =>
+  getAllExamples().map(({ slug }) => ({ params: { slug } }))
+
+const { slug } = Astro.params
+if (!slug) throw new Error('Missing slug param')
+const example = getExample(slug)
+if (!example) throw new Error(`Example not found: ${slug}`)
+
+const related = getAllExamples()
+  .filter((e) => e.slug !== slug && e.meta.category === example.meta.category)
+  .slice(0, 3)
+
+const noteImporter = noteModules[`../../examples/${slug}/notes.mdx`]
+const Notes = noteImporter ? (await noteImporter()).Content : null
+
+// The on-disk caller imports `./callable`, but the code block shows the
+// Callable's display filename (e.g. Confirm.tsx). Rewrite the import for
+// display so the path matches what the reader sees.
+const callableExport = stemOf(example.meta.files.callable)
+const callerExport = stemOf(example.meta.files.caller)
+const displayCallerSource = rewriteCallableImport(
+  example.callerSource,
+  callableExport,
+)
+
+const callableMeta = highlightedLines(example.callableSource)
+const callerMeta = highlightedLines(displayCallerSource)
+
+// A minimal App.tsx mounting the Root next to the caller. The Callable
+// import and the <Callable /> mount are both marked so the visitor sees
+// the whole wiring at once.
+const appSource = buildAppSource(callableExport, callerExport)
+const appMeta = appRootMeta(appSource, callableExport)
+---
+
+<Base
+  title={`${example.meta.title} — react-call`}
+  description={example.meta.description}
+>
+  <article class="mx-auto max-w-4xl px-6 py-12 md:py-16">
+    <nav
+      class="mb-6 font-mono text-xs text-[var(--color-fg-subtle)]"
+      aria-label="Breadcrumb"
+    >
+      <a
+        href="/examples"
+        class="transition-colors hover:text-[var(--color-fg-muted)]">Examples</a
+      >
+      <span class="px-2">/</span>
+      <span class="text-[var(--color-fg-muted)]">
+        {CATEGORY_LABELS[example.meta.category]}
+      </span>
+    </nav>
+
+    <header class="mb-10">
+      <h1
+        class="text-3xl font-medium tracking-tight text-[var(--color-fg)] md:text-4xl"
+      >
+        {example.meta.title}
+      </h1>
+      <p class="mt-3 text-base text-[var(--color-fg-muted)]">
+        {example.meta.description}
+      </p>
+      {
+        example.meta.behaviors && example.meta.behaviors.length > 0 && (
+          <div class="mt-4 flex flex-wrap gap-1.5">
+            {example.meta.behaviors.map((b) => (
+              <span class="rounded bg-[var(--color-bg-muted)] px-2 py-0.5 font-mono text-xs text-[var(--color-fg-muted)]">
+                {BEHAVIOR_LABELS[b]}
+              </span>
+            ))}
+          </div>
+        )
+      }
+    </header>
+
+    <section
+      class="relative mb-12 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-subtle)] p-10 flex flex-col items-center justify-center min-h-[280px]"
+      aria-label="Live demo"
+    >
+      <ExampleHost slug={slug} client:load />
+      <div class="absolute right-4 top-4">
+        <PlaygroundButton
+          client:idle
+          title={example.meta.title}
+          callableFilename={example.meta.files.callable}
+          callableSource={example.callableSource}
+          callerFilename={example.meta.files.caller}
+          callerSource={example.callerSource}
+        />
+      </div>
+    </section>
+
+    <section class="space-y-6">
+      <div>
+        <div
+          class="mb-2 flex items-baseline justify-between"
+        >
+          <h2
+            class="font-mono text-xs uppercase tracking-wider text-[var(--color-accent)]"
+          >
+            The Callable
+          </h2>
+          <span class="font-mono text-xs text-[var(--color-fg-subtle)]">
+            declared once, mounted in the React tree
+          </span>
+        </div>
+        <Code
+          code={example.callableSource}
+          lang="tsx"
+          title={example.meta.files.callable}
+          meta={callableMeta}
+        />
+      </div>
+
+      <div>
+        <div
+          class="mb-2 flex items-baseline justify-between"
+        >
+          <h2
+            class="font-mono text-xs uppercase tracking-wider text-[var(--color-accent)]"
+          >
+            The Root
+          </h2>
+          <span class="font-mono text-xs text-[var(--color-fg-subtle)]">
+            mounted in your app tree, once
+          </span>
+        </div>
+        <Code code={appSource} lang="tsx" title="App.tsx" meta={appMeta} />
+      </div>
+
+      <div>
+        <div
+          class="mb-2 flex items-baseline justify-between"
+        >
+          <h2
+            class="font-mono text-xs uppercase tracking-wider text-[var(--color-accent)]"
+          >
+            The caller
+          </h2>
+          <span class="font-mono text-xs text-[var(--color-fg-subtle)]">
+            anywhere in your app, imperative
+          </span>
+        </div>
+        <Code
+          code={displayCallerSource}
+          lang="tsx"
+          title={example.meta.files.caller}
+          meta={callerMeta}
+        />
+      </div>
+    </section>
+
+    {
+      Notes && (
+        <section class="prose-react-call mt-16 space-y-4 text-[var(--color-fg-muted)]">
+          <Notes />
+        </section>
+      )
+    }
+
+    {
+      related.length > 0 && (
+        <section class="mt-16">
+          <h2 class="mb-4 font-mono text-xs uppercase tracking-wider text-[var(--color-fg-subtle)]">
+            Related examples
+          </h2>
+          <div class="grid gap-3 sm:grid-cols-3">
+            {related.map(({ slug: relSlug, meta }) => (
+              <a
+                href={`/examples/${relSlug}`}
+                class="rounded-lg border border-[var(--color-border)] bg-[var(--color-bg-subtle)] p-4 transition-colors hover:border-[var(--color-accent)]"
+              >
+                <span class="font-mono text-xs uppercase tracking-wider text-[var(--color-fg-subtle)]">
+                  {CATEGORY_LABELS[meta.category]}
+                </span>
+                <h3 class="mt-1 text-sm font-medium text-[var(--color-fg)]">
+                  {meta.title}
+                </h3>
+              </a>
+            ))}
+          </div>
+        </section>
+      )
+    }
+  </article>
+</Base>

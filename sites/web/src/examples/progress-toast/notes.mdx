@@ -1,0 +1,20 @@
+## Why `upsert` and not `call`
+
+Each `Toast.upsert(props)` either creates the singleton or updates its
+props. The returned promise is **the same reference** across the lifetime
+of the singleton — you can `await Toast.upsert(…)` once and your code
+resumes when the toast finally closes, even if its message changes a dozen
+times in between.
+
+Because `upsert` keeps a single instance, every `Toast.upsert(…)` —
+wherever it's called from — targets that same toast: a second caller
+updates the existing one instead of opening another. That's exactly what a
+progress indicator wants — there should only ever be one. When each event
+should get its own toast, reach for `.call()` instead and the Root stacks
+them (that's [error-banner](/examples/error-banner)).
+
+## When to reach for it
+
+- Progress indicators where the message updates as work advances.
+- A "saving…" → "saved" status pill.
+- A connection state badge that may flip many times during a session.

@@ -1,0 +1,23 @@
+## Not every yes/no is a boolean
+
+[confirm-dialog](/examples/confirm-dialog) returns a `boolean`, and for
+"proceed or not" that is right. Consent is different: this Callable
+resolves with `'allow' | 'deny'`. The Response type is part of your API
+— a named union documents itself at the call site (`result === 'allow'`
+beats remembering which way `true` points) and leaves room to grow
+(`'allow-once'`, `'manage'`) without rewriting every caller. Reach past
+`boolean` when the two outcomes aren't a pure true/false, or you expect a
+third one someday.
+
+The Response set also decides how the user can leave. There is no
+backdrop-click or Esc handler here on purpose: `'allow' | 'deny'` has no
+"dismissed" variant, so there is deliberately no way to close the prompt
+without answering. Compare [item-picker](/examples/item-picker), whose
+`T | null` Response _does_ model dismissal — so it lets you click away.
+Your Response type and your escape hatches have to agree.
+
+## When to reach for it
+
+OAuth-style consent, permission and cookie prompts, "approve these terms"
+flows — anywhere the outcome is a labelled decision you might store, log,
+or branch on, not a throwaway yes/no.

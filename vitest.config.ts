@@ -39,7 +39,10 @@ export default defineConfig({
         extends: true,
         test: {
           name: 'unit',
-          include: ['packages/*/src/**/*.test.{ts,tsx}'],
+          include: [
+            'packages/*/src/**/*.test.{ts,tsx}',
+            'sites/*/src/**/*.test.{ts,tsx}',
+          ],
           exclude: DIST_TESTS,
         },
       },

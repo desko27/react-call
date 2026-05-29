@@ -1,0 +1,26 @@
+## You don't keep a list of banners
+
+The reflex for "stacking toasts" in React is a `useState<Banner[]>` —
+push on trigger, filter on dismiss, map to render. This example keeps no
+such array. Every `ErrorBanner.call(…)` is an independent entry in the
+Root's Stack, and the Root renders all of them. Trigger ten errors and
+that's ten calls; the Stack _is_ the list, and it lives in the library,
+not in your component.
+
+Because each call is its own Stack entry, it carries its own
+`CallContext` — including `call.index`, this call's position in the
+Stack. That's what spaces the banners apart: the vertical offset is just
+`call.index * ROW_HEIGHT`, read inside the Callable with no counter of
+your own. This is the one example where `call.index` does real work;
+most Callables never touch it.
+
+## When to reach for it
+
+Use plain `.call()` whenever concurrent instances should _coexist_ rather
+than replace each other — error toasts, per-item notifications, anything
+where a second event shouldn't clobber the first.
+
+When you instead want a _single_ surface that updates in place — a
+progress bar, a "saving… → saved" pill — that's
+[`upsert`](/examples/progress-toast), not stacking. The dividing question
+is simply: should a new call add a banner, or update the existing one?

@@ -1,0 +1,9 @@
+## A boolean is the whole answer
+
+A boolean response is the right model when **the user's answer is the whole
+point**. Delete confirmations, "discard unsaved changes?", "do you accept?"
+— the caller doesn't need a payload back, just a yes-or-no.
+
+If the dialog has fields, return the form data directly (see [Prompt for
+input](/examples/prompt-input) or [Save form](/examples/save-form)) instead
+of a boolean plus a side-channel.
