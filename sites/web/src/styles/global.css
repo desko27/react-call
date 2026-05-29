@@ -61,8 +61,16 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
+  /* Sticky footer: body fills at least the viewport, main grows to take
+     the slack so the footer sits at the bottom on short pages. */
   body {
+    display: flex;
+    flex-direction: column;
     min-height: 100vh;
+  }
+
+  body > main {
+    flex: 1 0 auto;
   }
 
   ::selection {
