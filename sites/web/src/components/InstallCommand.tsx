@@ -5,10 +5,10 @@ type PM = 'npm' | 'pnpm' | 'yarn' | 'bun'
 const PMS: PM[] = ['npm', 'pnpm', 'yarn', 'bun']
 
 const COMMANDS: Record<PM, string> = {
-  npm: 'npm install react-call@next',
-  pnpm: 'pnpm add react-call@next',
-  yarn: 'yarn add react-call@next',
-  bun: 'bun add react-call@next',
+  npm: 'npm install react-call',
+  pnpm: 'pnpm add react-call',
+  yarn: 'yarn add react-call',
+  bun: 'bun add react-call',
 }
 
 const STORAGE_KEY = 'pm'
