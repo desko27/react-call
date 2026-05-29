@@ -20,9 +20,7 @@ import {
 
 type NotesModule = Pick<MarkdownInstance<unknown>, 'Content'>
 
-const noteModules = import.meta.glob<NotesModule>(
-  '../../examples/*/notes.mdx',
-)
+const noteModules = import.meta.glob<NotesModule>('../../examples/*/notes.mdx')
 
 export const getStaticPaths = () =>
   getAllExamples().map(({ slug }) => ({ params: { slug } }))
