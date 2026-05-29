@@ -9,7 +9,7 @@
 </div>
 
 > [!NOTE]
-> These docs cover the upcoming **v2** API, currently published under the `next` tag — install it with `npm install react-call@next`. For the stable 1.x API see the [v1 README](https://github.com/desko27/react-call/blob/react-call%401.8.2/README.md).
+> These docs cover **v2**, the current stable release. Upgrading from 1.x? See [Migrating from v1](#migrating-from-v1) — or the [v1 README](https://github.com/desko27/react-call/blob/react-call%401.8.2/README.md) for the old API.
 
 `createCallable()` turns a React component into something you can `await`.
 
@@ -53,7 +53,7 @@ menus, pickers — any UI that conceptually returns a value to its caller.
 # Getting started
 
 ```sh
-npm install react-call@next
+npm install react-call
 ```
 
 We'll setup a confirmation dialog, but you can setup any component to be callable.

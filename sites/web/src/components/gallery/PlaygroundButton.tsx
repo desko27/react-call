@@ -109,9 +109,9 @@ export default function App() {
 }
 `
 
-// react-call v2 (the @next tag) works with React 18+. Pinning to 18 in the
-// sandbox is the safest pairing with CodeSandbox's classic React bundler,
-// which doesn't always keep up with brand-new React releases.
+// react-call v2 works with React 18+. Pinning to 18 in the sandbox is the
+// safest pairing with CodeSandbox's classic React bundler, which doesn't
+// always keep up with brand-new React releases.
 const PKG = JSON.stringify(
   {
     name: 'react-call-playground',
@@ -120,7 +120,7 @@ const PKG = JSON.stringify(
     dependencies: {
       react: '^18.3.1',
       'react-dom': '^18.3.1',
-      'react-call': 'next',
+      'react-call': 'latest',
     },
     devDependencies: {
       '@types/react': '^18.3.0',
