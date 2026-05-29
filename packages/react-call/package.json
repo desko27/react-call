@@ -1,6 +1,6 @@
 {
   "name": "react-call",
-  "version": "2.0.0-next.6",
+  "version": "2.0.0",
   "description": "Call your React components",
   "repository": {
     "type": "git",
