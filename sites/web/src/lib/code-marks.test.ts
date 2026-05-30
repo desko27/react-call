@@ -156,4 +156,22 @@ describe('buildAppSource + appRootMeta', () => {
     // Import is line 1; the <Confirm /> mount is line 7.
     expect(appRootMeta(app, 'Confirm')).toBe('{1,7}')
   })
+
+  test('splices Root props into the mount and still marks the same lines', () => {
+    const app = buildAppSource(
+      'Greeter',
+      'GreetButton',
+      'userName="Ada Lovelace"',
+    )
+    expect(app).toContain('<Greeter userName="Ada Lovelace" />')
+    expect(appRootMeta(app, 'Greeter')).toBe('{1,7}')
+  })
+
+  test('does not mark a caller mount that merely shares the Callable prefix', () => {
+    // Callable "Confirm", caller "ConfirmButton" — only the import (line 1)
+    // and the <Confirm /> mount (line 7) carry the Root contract; the
+    // <ConfirmButton /> mount on line 8 must stay unmarked.
+    const app = buildAppSource('Confirm', 'ConfirmButton')
+    expect(appRootMeta(app, 'Confirm')).toBe('{1,7}')
+  })
 })

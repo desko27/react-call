@@ -220,10 +220,16 @@ export const rewriteCallableImport = (
     `from './${callableExport}'`,
   )
 
-/** Builds the minimal App.tsx that mounts the Root next to the caller. */
+/**
+ * Builds the minimal App.tsx that mounts the Root next to the caller.
+ * `rootProps` is an optional JSX attribute string (e.g. `userName="Ada"`)
+ * spliced into the Root mount — set it for examples that read `call.root`
+ * so the generated App shows where those Root props come from.
+ */
 export const buildAppSource = (
   callableExport: string,
   callerExport: string,
+  rootProps?: string,
 ): string =>
   `import { ${callableExport} } from './${callableExport}'
 import { ${callerExport} } from './${callerExport}'
@@ -231,7 +237,7 @@ import { ${callerExport} } from './${callerExport}'
 export default function App() {
   return (
     <>
-      <${callableExport} />
+      <${callableExport}${rootProps ? ` ${rootProps}` : ''} />
       <${callerExport} />
     </>
   )
@@ -240,18 +246,19 @@ export default function App() {
 
 /**
  * Marks the two lines of the generated App.tsx that carry the Root
- * contract: the Callable import and the `<Callable />` mount.
+ * contract: the Callable import and the `<Callable … />` mount (with or
+ * without Root props). The mount matcher requires a delimiter after the
+ * name so `<Confirm />` matches but a `<ConfirmButton />` caller mount,
+ * which merely starts with the same prefix, does not.
  */
 export const appRootMeta = (
   appSource: string,
   callableExport: string,
 ): string => {
+  const mountRe = new RegExp(`<${callableExport}[\\s/>]`)
   const marked: number[] = []
   appSource.split('\n').forEach((line, i) => {
-    if (
-      line.includes(`from './${callableExport}'`) ||
-      line.includes(`<${callableExport} />`)
-    ) {
+    if (line.includes(`from './${callableExport}'`) || mountRe.test(line)) {
       marked.push(i + 1)
     }
   })

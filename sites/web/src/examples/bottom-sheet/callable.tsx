@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { createCallable } from 'react-call'
 
 interface Action {
@@ -12,9 +12,22 @@ interface Props {
   actions: readonly Action[]
 }
 
+// Keep the finished call mounted long enough for the slide-down to play.
+// Must match the CSS transition duration below.
+const UNMOUNTING_DELAY = 300
+
 export const BottomSheet = createCallable<Props, string | null>(
   ({ call, title, actions }) => {
     const sheetRef = useRef<HTMLDivElement>(null)
+
+    // Animate in on mount, out once the call has ended. `call.ended` is
+    // true during the unmounting delay — that's the window the exit
+    // transition plays in before react-call drops the call from the stack.
+    // The flag flips in an effect (post-paint), so the browser commits the
+    // off-screen state first and the slide-up has somewhere to animate from.
+    const [entered, setEntered] = useState(false)
+    useEffect(() => setEntered(true), [])
+    const open = entered && !call.ended
 
     useEffect(() => {
       const onPointer = (e: MouseEvent) => {
@@ -38,11 +51,11 @@ export const BottomSheet = createCallable<Props, string | null>(
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        className="fixed inset-0 z-50 flex items-end justify-center bg-black/50 backdrop-blur-sm"
+        className={`fixed inset-0 z-50 flex items-end justify-center bg-black/50 backdrop-blur-sm transition-opacity duration-300 ${open ? 'opacity-100' : 'opacity-0'}`}
       >
         <div
           ref={sheetRef}
-          className="w-full max-w-md rounded-t-2xl border-t border-x border-[var(--color-border)] bg-[var(--color-bg)] p-4 shadow-2xl"
+          className={`w-full max-w-md rounded-t-2xl border-t border-x border-[var(--color-border)] bg-[var(--color-bg)] p-4 shadow-2xl transition-transform duration-300 ease-out ${open ? 'translate-y-0' : 'translate-y-full'}`}
         >
           <div
             aria-hidden="true"
@@ -69,5 +82,6 @@ export const BottomSheet = createCallable<Props, string | null>(
       </div>
     )
   },
+  UNMOUNTING_DELAY,
 )
 BottomSheet.displayName = 'BottomSheet'

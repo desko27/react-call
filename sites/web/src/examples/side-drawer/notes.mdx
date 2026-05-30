@@ -1,0 +1,34 @@
+## Animating the exit
+
+A call normally unmounts the instant `call.end()` runs — fine for a fade,
+fatal for a slide-out, which never gets to play. The second argument to
+`createCallable` is an **unmounting delay** in milliseconds: react-call
+keeps the finished call in the stack that long before dropping it, and
+flips `call.ended` to `true` for the duration.
+
+```tsx
+const UNMOUNTING_DELAY = 300 // match your CSS transition
+
+export const SettingsDrawer = createCallable<Props, Settings | null>(
+  ({ call }) => {
+    const open = entered && !call.ended
+    // open ? 'translate-x-0' : 'translate-x-full'
+  },
+  UNMOUNTING_DELAY,
+)
+```
+
+So there are two transitions driven by one `open` flag:
+
+- **In** — `entered` starts `false` and flips on the next animation frame,
+  so the panel mounts off-screen and slides in.
+- **Out** — `call.end(...)` sets `call.ended`, `open` goes `false`, the
+  panel slides back out, and react-call unmounts it once the delay elapses.
+
+## Gotchas
+
+- **Keep the delay and the CSS duration in sync.** Too short and the exit
+  is cut off; too long and the call lingers invisibly.
+- `call.ended` is per-call — a click-outside, a button, or an external
+  `SettingsDrawer.end(null)` all route through the same window, so every
+  close animates the same way.

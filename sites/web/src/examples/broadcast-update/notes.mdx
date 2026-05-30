@@ -1,0 +1,27 @@
+## Update without a promise hits everyone
+
+`update` has two forms. Pass a promise to target one call; omit it and the
+new props **broadcast to every open call**:
+
+```tsx
+Upload.update({ state: 'paused' }) // every open pill, at once
+```
+
+It's a shallow **merge**, not a replace — `state` lands on each call while
+its own `label` stays put. That's why one "connection lost" event can
+pause three uploads without the caller tracking a single promise.
+
+## Broadcast vs. targeted
+
+This is the counterpart to [Live status](/examples/live-status):
+
+- **Targeted** — `update(promise, props)` pushes to one specific call the
+  caller is tracking. Use it when each call has its own lifecycle.
+- **Broadcast** — `update(props)` pushes to all of them. Use it for
+  ambient state every open call should reflect: connectivity, a global
+  mode, a shared clock.
+
+## Gotchas
+
+- Merging means a partial broadcast leaves untouched props alone — handy,
+  but double-check you're not relying on a prop a stale call still holds.

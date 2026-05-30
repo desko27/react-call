@@ -13,10 +13,23 @@ interface Props {
   initial: Settings
 }
 
+// Keep the finished call mounted long enough for the slide-out to play.
+// Must match the CSS transition duration below.
+const UNMOUNTING_DELAY = 300
+
 export const SettingsDrawer = createCallable<Props, Settings | null>(
   ({ call, initial }) => {
     const drawerRef = useRef<HTMLDivElement>(null)
     const [settings, setSettings] = useState<Settings>(initial)
+
+    // Animate in on mount, out once the call has ended. `call.ended` is
+    // true during the unmounting delay — that's the window the exit
+    // transition plays in before react-call drops the call from the stack.
+    // The flag flips in an effect (post-paint), so the browser commits the
+    // off-screen state first and the slide-in has somewhere to animate from.
+    const [entered, setEntered] = useState(false)
+    useEffect(() => setEntered(true), [])
+    const open = entered && !call.ended
 
     useEffect(() => {
       const onPointer = (e: MouseEvent) => {
@@ -43,11 +56,11 @@ export const SettingsDrawer = createCallable<Props, Settings | null>(
         role="dialog"
         aria-modal="true"
         aria-label="Settings"
-        className="fixed inset-0 z-50 flex justify-end bg-black/50 backdrop-blur-sm"
+        className={`fixed inset-0 z-50 flex justify-end bg-black/50 backdrop-blur-sm transition-opacity duration-300 ${open ? 'opacity-100' : 'opacity-0'}`}
       >
         <div
           ref={drawerRef}
-          className="flex h-full w-full max-w-sm flex-col border-l border-[var(--color-border)] bg-[var(--color-bg)] shadow-2xl"
+          className={`flex h-full w-full max-w-sm flex-col border-l border-[var(--color-border)] bg-[var(--color-bg)] shadow-2xl transition-transform duration-300 ease-out ${open ? 'translate-x-0' : 'translate-x-full'}`}
         >
           <div className="flex items-center justify-between border-b border-[var(--color-border)] px-6 py-4">
             <p className="text-base font-medium text-[var(--color-fg)]">
@@ -121,6 +134,7 @@ export const SettingsDrawer = createCallable<Props, Settings | null>(
       </div>
     )
   },
+  UNMOUNTING_DELAY,
 )
 SettingsDrawer.displayName = 'SettingsDrawer'
 

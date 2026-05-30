@@ -1,0 +1,35 @@
+## The promise is the call
+
+`Approval.call(...)` returns a promise that's both the awaited response
+**and** a handle to that specific open call. Pass it back to
+`Approval.end(promise, value)` and you settle that call from anywhere —
+here, a `setTimeout` that auto-declines if the user goes quiet:
+
+```tsx
+const promise = Approval.call({ action: 'Deploy to production' })
+setTimeout(() => Approval.end(promise, false), 4000)
+const approved = await promise // resolves whoever wins: user or timeout
+```
+
+Whether the user clicks a button (`call.end` inside) or the timeout fires
+(`Approval.end` outside), the same promise resolves and the dialog closes.
+
+## Targeted vs. all
+
+Pass the promise to hit **one** call. Omit it to end **every** open call
+at once, with one response value:
+
+```tsx
+Approval.end(false) // decline all open approvals
+```
+
+Useful for a global "cancel everything" — a route change, a logout, a
+parent flow that's been abandoned.
+
+## Gotchas
+
+- **Ending a settled call is a no-op.** If the user answers first, the
+  later `Approval.end(promise, …)` does nothing — no need to cancel the
+  timer for correctness (we clear it anyway to stop the countdown).
+- This is the [update](/examples/live-status) story in reverse: there the
+  caller pushes new props into the open call; here it closes it.
