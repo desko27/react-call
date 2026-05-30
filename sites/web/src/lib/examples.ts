@@ -13,6 +13,9 @@ export type Behavior =
   | 'mutation-flow'
   | 'stacking'
   | 'nested'
+  | 'exit-animation'
+  | 'root-props'
+  | 'end-from-caller'
 
 export interface ExampleMeta {
   title: string
@@ -24,6 +27,14 @@ export interface ExampleMeta {
     callable: string
     caller: string
   }
+  /**
+   * JSX attribute string spliced into the Root mount of the generated
+   * App.tsx (and the CodeSandbox export), e.g. `userName="Ada Lovelace"`.
+   * Set this on examples that read `call.root` so the displayed Root
+   * actually shows where those Root props come from. Omit for the common
+   * case where the Root takes no props.
+   */
+  rootProps?: string
   order?: number
 }
 
@@ -124,4 +135,7 @@ export const BEHAVIOR_LABELS: Record<Behavior, string> = {
   'mutation-flow': 'Mutation flow',
   stacking: 'Stacking',
   nested: 'Nested',
+  'exit-animation': 'Exit animation',
+  'root-props': 'Root props',
+  'end-from-caller': 'End from caller',
 }

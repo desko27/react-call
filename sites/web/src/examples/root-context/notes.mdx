@@ -1,0 +1,30 @@
+## Two kinds of props
+
+A call has **per-call props** (passed at `Greeter.call({ message })`) and
+**Root props** (passed at the mount, `<Greeter userName="Ada Lovelace" />`).
+The third generic on `createCallable<Props, Response, RootProps>` types the
+latter, and every call reads them through `call.root`:
+
+```tsx
+<p>Signed in as {call.root.userName}</p>
+```
+
+The caller never forwards the user's name — it would be noise at every
+callsite. The Root holds it once; each call projects it.
+
+## When to reach for Root props
+
+- **Share one value with every call** — the current user, tenant, locale,
+  feature flags. Set it on the Root, read it from `call.root`.
+- **Surface something only the Root's parent has** — a theme object, a
+  router, anything in scope where you mount `<Greeter />` but not where
+  you call it.
+- **Push live data into open calls.** Root props are reactive: when the
+  Root re-renders with a new `userName`, every active call re-renders with
+  it too — no `update()` needed, because it isn't a per-call prop.
+
+## Per-call or Root prop?
+
+If the value changes per invocation (the message, the item being acted
+on), it's a **per-call prop**. If it's ambient — the same for every call
+and owned by the surrounding app — it's a **Root prop**.

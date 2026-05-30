@@ -94,9 +94,6 @@ export const Gallery = ({ entries }: Props) => {
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <span className="font-mono text-xs uppercase tracking-wider text-[var(--color-fg-subtle)]">
-            Behaviors
-          </span>
           {ALL_BEHAVIORS.map((b) => (
             <BehaviorPill
               key={b}

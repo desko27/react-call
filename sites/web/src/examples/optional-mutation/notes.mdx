@@ -1,0 +1,17 @@
+## One Callable, two close paths
+
+Typing `mutationFn?` as possibly-undefined changes what the trigger
+returns: instead of `void`, `submit()` hands back a chain object with
+`.orEnd(value)`. That one chain covers both callers:
+
+- **No handler** (the _Discard draft_ button) → `submit().orEnd(true)`
+  delivers the **fallback response** and closes the call right away. No
+  async, no pending — a plain confirm.
+- **With a handler** (the _Publish post_ button) → `.orEnd` is a **no-op**.
+  The MutationFn runs (pending flips true), then it calls `call.end(true)`.
+
+The Callable doesn't branch on which caller it's serving — `useMutationFlow`
+resolves it from whether `mutationFn` is present at runtime.
+
+See [Save form](/examples/save-form) for the required-handler case, where
+the dialog stays open on a thrown error so the user can retry.

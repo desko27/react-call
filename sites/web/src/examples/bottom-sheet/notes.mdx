@@ -1,0 +1,19 @@
+## The slide-down on close
+
+The sheet would pop out of existence the moment `call.end()` runs, with no
+chance to slide away. Passing an **unmounting delay** (the second argument
+to `createCallable`) keeps the finished call mounted for that many
+milliseconds and exposes `call.ended` so you can drive the exit:
+
+```tsx
+const open = entered && !call.ended
+// open ? 'translate-y-0' : 'translate-y-full'
+```
+
+One `open` flag runs both halves: it flips on the first frame after mount
+(slide up), and back to `false` when `call.ended` turns true (slide down),
+right before react-call drops the call from the stack.
+
+Keep the delay equal to the CSS transition duration — here both are
+`300ms`. See the [settings drawer](/examples/side-drawer) for the same
+pattern on a horizontal slide.

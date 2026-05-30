@@ -7,6 +7,7 @@ interface Props {
   callableSource: string
   callerFilename: string
   callerSource: string
+  rootProps?: string
 }
 
 const exportNameFromSource = (source: string, fallback: string): string => {
@@ -95,14 +96,18 @@ root.render(
 )
 `
 
-const buildApp = (callableExport: string, callerExport: string) =>
+const buildApp = (
+  callableExport: string,
+  callerExport: string,
+  rootProps?: string,
+) =>
   `import { ${callableExport} } from './Callable'
 import { ${callerExport} } from './Caller'
 
 export default function App() {
   return (
     <>
-      <${callableExport} />
+      <${callableExport}${rootProps ? ` ${rootProps}` : ''} />
       <${callerExport} />
     </>
   )
@@ -167,6 +172,7 @@ export const PlaygroundButton = ({
   callableSource,
   callerFilename,
   callerSource,
+  rootProps,
 }: Props) => {
   const [opening, setOpening] = useState(false)
 
@@ -181,7 +187,9 @@ export const PlaygroundButton = ({
         'tsconfig.json': { content: TSCONFIG },
         'public/index.html': { content: PUBLIC_INDEX_HTML },
         'src/index.tsx': { content: INDEX_TSX },
-        'src/App.tsx': { content: buildApp(callableExport, callerExport) },
+        'src/App.tsx': {
+          content: buildApp(callableExport, callerExport, rootProps),
+        },
         'src/Callable.tsx': { content: callableSource },
         'src/Caller.tsx': {
           content: rewriteCallerImports(callerSource, 'Callable'),
