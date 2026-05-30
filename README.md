@@ -1,12 +1,26 @@
 <div align="center">
   <h2>
     ⚛️ 📡 <a href="https://react-call.desko.dev">react-call</a>
+  </h2>
+
+  <p><em>Call your React components like async functions — they resolve with a value.</em></p>
+
+  <p>
     <a href="https://www.npmjs.com/package/react-call"><img src="https://img.shields.io/npm/v/react-call?style=flat&label=npm&color=blue" alt="NPM Version"></a>
     <a href="https://www.npmjs.com/package/react-call"><img src="https://img.shields.io/npm/dw/react-call?style=flat&label=downloads&color=blue" alt="NPM Downloads"></a>
     <a href="https://bundlephobia.com/package/react-call"><img src="https://img.shields.io/bundlephobia/minzip/react-call?style=flat&label=size&color=blue" alt="Bundle size"></a>
-  </h2>
-  ✓ 1 KB ✓ No deps ✓ SSR ✓ React Native
-  <p>— Call your React components —</p>
+    <a href="https://www.npmjs.com/package/react-call"><img src="https://img.shields.io/npm/l/react-call?style=flat&label=license&color=blue" alt="License"></a>
+  </p>
+
+  ✓ &lt; 1 KB ✓ No deps ✓ SSR ✓ React Native
+
+  <p>
+    <strong><a href="https://react-call.desko.dev">📖 Site with live demos&nbsp;↗</a></strong>
+    &nbsp;·&nbsp;
+    <a href="https://react-call.desko.dev/examples">Examples gallery</a>
+    &nbsp;·&nbsp;
+    <a href="#getting-started">Getting started</a>
+  </p>
 </div>
 
 > [!NOTE]
@@ -18,7 +32,11 @@ Good fits: confirmations, dialogs, form modals, toasts, notifications, context
 menus, pickers — any UI that conceptually returns a value to its caller.
 
 
-![Hero](./docs/assets/hero.png)
+<p align="center">
+  <a href="https://react-call.desko.dev">
+    <img alt="react-call — call your React components" src="./docs/assets/hero.png" />
+  </a>
+</p>
 
 ## Contents
 
@@ -96,7 +114,7 @@ You're all done! Now you can do this anywhere in your codebase:
 const accepted = await Confirm.call({ message: 'Continue?' })
 ```
 
-Check out [the demo site](https://react-call.desko.dev/) to see some live examples of other React components being called.
+Want to see more? The [**examples gallery**](https://react-call.desko.dev/examples) has live demos of confirm dialogs, command palettes, toasts, multi-step wizards, drawers and more — each with its source and an **Open in CodeSandbox** button.
 
 # Advanced usage
 
