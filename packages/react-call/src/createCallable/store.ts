@@ -48,8 +48,8 @@ export function createStackStore<Props, Response>() {
       )
       emitChange()
     },
-    remove: (promise: Promise<Response> | null) => {
-      stack = stack.filter((c) => promise && c.promise !== promise)
+    remove: (promises: Set<Promise<Response>>) => {
+      stack = stack.filter((c) => !promises.has(c.promise))
       emitChange()
     },
     subscribe: (listener: Listener<Props, Response>) => {
