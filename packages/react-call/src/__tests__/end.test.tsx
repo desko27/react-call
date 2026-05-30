@@ -1,8 +1,18 @@
-import { render, screen, waitFor, within } from '@testing-library/react'
+import { act, render, screen, waitFor, within } from '@testing-library/react'
 import { userEvent } from '@testing-library/user-event'
 import { describe, expect, test } from 'vitest'
 import { withAct } from './shared/act'
 import { Confirm } from './shared/Confirm'
+
+/**
+ * The end-all path defers its stack removal to a macrotask (the
+ * unmountingDelay setTimeout, default 0). Flush that macrotask so we can
+ * assert what survives once the deferred removal has run.
+ */
+const flushUnmountingDelay = () =>
+  act(async () => {
+    await new Promise((resolve) => globalThis.setTimeout(resolve, 0))
+  })
 
 describe('end()', () => {
   describe('inside', () => {
@@ -175,6 +185,94 @@ describe('end()', () => {
           screen.getByRole('dialog', { name: /middle one/i }),
         ).toBeInTheDocument()
       })
+    })
+  })
+  // Regression: an end-all in the same synchronous tick used to schedule a
+  // blanket stack wipe that also clobbered calls added *after* it.
+  describe('same tick as later call()', () => {
+    test('end-all then call() — later calls survive', async () => {
+      render(<Confirm />)
+      const messages = ['foo', 'bar', 'xyz']
+      withAct(() => {
+        Confirm.end(false) // end all (stack empty here — intended no-op)
+        for (const message of messages) Confirm.call({ message })
+      })
+      await flushUnmountingDelay()
+      expect(screen.getAllByRole('dialog')).toHaveLength(3)
+      for (const message of messages) {
+        expect(
+          screen.getByRole('dialog', { name: new RegExp(message, 'i') }),
+        ).toBeInTheDocument()
+      }
+    })
+    test('end-all removes the pre-existing calls but keeps the later ones', async () => {
+      render(<Confirm />)
+      withAct(() => {
+        Confirm.call({ message: 'before one' })
+        Confirm.call({ message: 'before two' })
+      })
+      withAct(() => {
+        Confirm.end(false) // end the two pre-existing calls
+        Confirm.call({ message: 'after one' })
+        Confirm.call({ message: 'after two' })
+      })
+      await flushUnmountingDelay()
+      expect(
+        screen.queryByRole('dialog', { name: /before one/i }),
+      ).not.toBeInTheDocument()
+      expect(
+        screen.queryByRole('dialog', { name: /before two/i }),
+      ).not.toBeInTheDocument()
+      expect(
+        screen.getByRole('dialog', { name: /after one/i }),
+      ).toBeInTheDocument()
+      expect(
+        screen.getByRole('dialog', { name: /after two/i }),
+      ).toBeInTheDocument()
+    })
+    test('targeted end(promise) then call() — later calls survive', async () => {
+      render(<Confirm />)
+      let targeted!: Promise<boolean>
+      withAct(() => {
+        targeted = Confirm.call({ message: 'targeted' })
+      })
+      withAct(() => {
+        Confirm.end(targeted, false) // end one specific call
+        Confirm.call({ message: 'after one' })
+        Confirm.call({ message: 'after two' })
+      })
+      await flushUnmountingDelay()
+      expect(
+        screen.queryByRole('dialog', { name: /targeted/i }),
+      ).not.toBeInTheDocument()
+      expect(
+        screen.getByRole('dialog', { name: /after one/i }),
+      ).toBeInTheDocument()
+      expect(
+        screen.getByRole('dialog', { name: /after two/i }),
+      ).toBeInTheDocument()
+    })
+    test('update-all then call() — later calls survive', async () => {
+      render(<Confirm />)
+      withAct(() => {
+        Confirm.call({ message: 'before' })
+      })
+      withAct(() => {
+        Confirm.update({ message: 'updated' }) // update all (no removal)
+        Confirm.call({ message: 'after one' })
+        Confirm.call({ message: 'after two' })
+      })
+      await flushUnmountingDelay()
+      expect(screen.getAllByRole('dialog')).toHaveLength(3)
+      expect(
+        screen.getByRole('dialog', { name: /updated/i }),
+      ).toBeInTheDocument()
+      expect(
+        screen.getByRole('dialog', { name: /after one/i }),
+      ).toBeInTheDocument()
+      expect(
+        screen.getByRole('dialog', { name: /after two/i }),
+      ).toBeInTheDocument()
     })
   })
 })

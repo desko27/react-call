@@ -37,12 +37,20 @@ export function createCallable<Props = void, Response = void, RootProps = {}>(
 
   const createEnd =
     (promise: Promise<Response> | null) => (response: Response) => {
+      // Capture exactly which calls this end() resolves now. `set` runs
+      // `updateFn` once per targeted call — for a targeted end that's a
+      // single call, for an end-all (promise === null) it's every call
+      // currently in the stack. The deferred removal then clears only
+      // those, so calls added later in the same tick (e.g. an end-all
+      // immediately followed by call()) are never clobbered.
+      const ending = new Set<Promise<Response>>()
       storeRef.current.set(promise, (call) => {
         call.resolve(response)
+        ending.add(call.promise)
         return { ...call, ended: true }
       })
       globalThis.setTimeout(
-        () => storeRef.current.remove(promise),
+        () => storeRef.current.remove(ending),
         unmountingDelay,
       )
     }
