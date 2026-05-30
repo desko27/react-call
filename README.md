@@ -1,7 +1,8 @@
 <div align="center">
   <h2>
     ⚛️ 📡 <a href="https://react-call.desko.dev">react-call</a>
-    <a href="https://www.npmjs.com/package/react-call"><img src="https://img.shields.io/npm/dw/react-call?style=flat&label=npm&color=blue" alt="NPM Downloads"></a>
+    <a href="https://www.npmjs.com/package/react-call"><img src="https://img.shields.io/npm/v/react-call?style=flat&label=npm&color=blue" alt="NPM Version"></a>
+    <a href="https://www.npmjs.com/package/react-call"><img src="https://img.shields.io/npm/dw/react-call?style=flat&label=downloads&color=blue" alt="NPM Downloads"></a>
     <a href="https://bundlephobia.com/package/react-call"><img src="https://img.shields.io/bundlephobia/minzip/react-call?style=flat&label=size&color=blue" alt="Bundle size"></a>
   </h2>
   ✓ 1 KB ✓ No deps ✓ SSR ✓ React Native
