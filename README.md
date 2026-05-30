@@ -23,9 +23,6 @@
   </p>
 </div>
 
-> [!NOTE]
-> These docs cover **v2**, the current stable release. Upgrading from 1.x? See [Migrating from v1](#migrating-from-v1) — or the [v1 README](https://github.com/desko27/react-call/blob/react-call%401.8.2/README.md) for the old API.
-
 `createCallable()` turns a React component into something you can `await`.
 
 Good fits: confirmations, dialogs, form modals, toasts, notifications, context
@@ -70,6 +67,9 @@ menus, pickers — any UI that conceptually returns a value to its caller.
 - [Migrating from v1](#migrating-from-v1)
 
 # Getting started
+
+> [!NOTE]
+> These docs cover **v2**, the current stable release. Upgrading from 1.x? See [Migrating from v1](#migrating-from-v1) — or the [v1 README](https://github.com/desko27/react-call/blob/react-call%401.8.2/README.md) for the old API.
 
 ```sh
 npm install react-call
