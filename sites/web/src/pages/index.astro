@@ -48,11 +48,11 @@ const exampleCount = getAllExamples().length
           </div>
           <pre
             class="mt-4 overflow-x-auto font-mono text-xs leading-relaxed text-[var(--color-fg-muted)] md:text-sm">{`// 1) the trigger just flips a flag
-const onDelete = () => setOpen(true)
+`}<span class="text-[var(--color-fg)]">{`const onDelete = () => setOpen(true)`}</span>{`
 
 // 2) ...the real work lives in the dialog,
 //    in a handler far from (1)
-<Confirm onAccept={() => api.delete(id)} … />`}</pre>
+`}<span class="text-[var(--color-fg)]">{`<Confirm onAccept={() => api.delete(id)} … />`}</span></pre>
         </div>
 
         <div
@@ -66,9 +66,9 @@ const onDelete = () => setOpen(true)
           <pre
             class="mt-4 overflow-x-auto font-mono text-xs leading-relaxed text-[var(--color-fg-muted)] md:text-sm">{`// one handler: ask, await, act
 const onDelete = async () => {
-  if (await Confirm.call()) {
+`}<span class="text-[var(--color-fg)]">{`  if (await Confirm.call()) {
     await api.delete(id)
-  }
+  }`}</span>{`
 }`}</pre>
         </div>
       </div>
