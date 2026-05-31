@@ -1,13 +1,13 @@
 import { type MouseEvent, useState } from 'react'
+import { BottomSheet } from '~/examples/bottom-sheet/callable'
 import { ColorPicker } from '~/examples/color-picker/callable'
 import {
   type Command,
   CommandPalette,
 } from '~/examples/command-palette/callable'
-import { Confirm } from '~/examples/confirm-dialog/callable'
 import { ContextMenu } from '~/examples/context-menu/callable'
-import { Lightbox } from '~/examples/image-lightbox/callable'
 import { Toast } from '~/examples/progress-toast/callable'
+import { Wizard } from '~/examples/wizard/callable'
 import { type Result, ResultBadge } from './ResultBadge'
 
 const SWATCHES = [
@@ -26,18 +26,19 @@ const COMMANDS: readonly Command[] = [
   { id: 'restart', label: 'Restart' },
 ]
 
+const SHEET_ACTIONS = [
+  { id: 'share', label: 'Share', icon: '⇪' },
+  { id: 'copy-link', label: 'Copy link', icon: '⤴' },
+  { id: 'pin', label: 'Pin', icon: '📌' },
+  { id: 'archive', label: 'Archive', icon: '🗄' },
+] as const
+
 const sleep = (ms: number) =>
   new Promise<void>((resolve) => setTimeout(resolve, ms))
 
 const formatString = (v: string | null): Result => ({
   value: v ?? 'null',
   highlighted: v !== null,
-  ts: Date.now(),
-})
-
-const formatBool = (v: boolean): Result => ({
-  value: String(v),
-  highlighted: v,
   ts: Date.now(),
 })
 
@@ -109,38 +110,27 @@ interface Props {
 }
 
 export const NotJustConfirmations = ({ exampleCount }: Props) => {
-  const fireConfirm = async (): Promise<Result> => {
-    const v = await Confirm.call({ message: 'A real .call() — same as yours.' })
-    return formatBool(v)
-  }
-
-  const fireToast = async (): Promise<Result> => {
-    Toast.upsert({ message: 'Starting…', percent: 0 })
-    for (let p = 20; p <= 100; p += 20) {
-      await sleep(180)
-      Toast.upsert({ message: `Working… ${p}%`, percent: p })
-    }
-    await sleep(500)
-    Toast.end()
-    return formatVoid('done')
-  }
-
-  const firePicker = async (): Promise<Result> => {
-    const v = await ColorPicker.call({ swatches: SWATCHES })
-    return formatString(v)
-  }
-
   const fireCommand = async (): Promise<Result> => {
     const v = await CommandPalette.call({ commands: COMMANDS })
     return formatString(v)
   }
 
-  const fireLightbox = async (): Promise<Result> => {
-    await Lightbox.call({
-      src: 'https://images.unsplash.com/photo-1518770660439-4636190af475?w=1400',
-      alt: 'Circuit board',
+  const fireBottomSheet = async (): Promise<Result> => {
+    const v = await BottomSheet.call({
+      title: 'Quick actions',
+      actions: SHEET_ACTIONS,
     })
-    return formatVoid('closed')
+    return formatString(v)
+  }
+
+  const fireWizard = async (): Promise<Result> => {
+    const data = await Wizard.call()
+    return data ? formatVoid(`${data.name} · ${data.plan}`) : formatString(null)
+  }
+
+  const firePicker = async (): Promise<Result> => {
+    const v = await ColorPicker.call({ swatches: SWATCHES })
+    return formatString(v)
   }
 
   const fireContextMenu = async (e?: MouseEvent): Promise<Result> => {
@@ -159,14 +149,25 @@ export const NotJustConfirmations = ({ exampleCount }: Props) => {
     return formatString(v)
   }
 
+  const fireToast = async (): Promise<Result> => {
+    Toast.upsert({ message: 'Starting…', percent: 0 })
+    for (let p = 20; p <= 100; p += 20) {
+      await sleep(180)
+      Toast.upsert({ message: `Working… ${p}%`, percent: p })
+    }
+    await sleep(500)
+    Toast.end()
+    return formatVoid('done')
+  }
+
   return (
     <>
-      <Confirm />
-      <Toast />
-      <ColorPicker />
       <CommandPalette />
-      <Lightbox />
+      <BottomSheet />
+      <Wizard />
+      <ColorPicker />
       <ContextMenu />
+      <Toast />
 
       <section className="mx-auto max-w-6xl px-6 py-24">
         <div className="text-center">
@@ -186,18 +187,25 @@ export const NotJustConfirmations = ({ exampleCount }: Props) => {
 
         <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <Card
-            slug="confirm-dialog"
-            category="Dialog"
-            title="Confirm"
-            description="The simplest case. Returns a boolean to the caller."
-            onTry={fireConfirm}
+            slug="command-palette"
+            category="Menu"
+            title="Command palette"
+            description="⌘K-style search. Arrow keys to navigate, Enter to run."
+            onTry={fireCommand}
           />
           <Card
-            slug="progress-toast"
-            category="Notification"
-            title="Progress toast"
-            description="A singleton that updates itself via upsert() as work progresses."
-            onTry={fireToast}
+            slug="bottom-sheet"
+            category="Drawer"
+            title="Bottom sheet"
+            description="Slides up from the bottom — resolves with the action you tap."
+            onTry={fireBottomSheet}
+          />
+          <Card
+            slug="wizard"
+            category="Flow"
+            title="Multi-step wizard"
+            description="A 3-step signup — one await resolves with the whole form."
+            onTry={fireWizard}
           />
           <Card
             slug="color-picker"
@@ -207,13 +215,6 @@ export const NotJustConfirmations = ({ exampleCount }: Props) => {
             onTry={firePicker}
           />
           <Card
-            slug="command-palette"
-            category="Menu"
-            title="Command palette"
-            description="⌘K-style search. Arrow keys to navigate, Enter to run."
-            onTry={fireCommand}
-          />
-          <Card
             slug="context-menu"
             category="Menu"
             title="Context menu"
@@ -221,11 +222,11 @@ export const NotJustConfirmations = ({ exampleCount }: Props) => {
             onTry={fireContextMenu}
           />
           <Card
-            slug="image-lightbox"
-            category="Overlay"
-            title="Image lightbox"
-            description="Open a fullscreen overlay. Backdrop or Esc closes."
-            onTry={fireLightbox}
+            slug="progress-toast"
+            category="Notification"
+            title="Progress toast"
+            description="A singleton that updates itself via upsert() as work progresses."
+            onTry={fireToast}
           />
         </div>
 
