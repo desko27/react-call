@@ -1,0 +1,168 @@
+---
+import { Code } from 'astro-expressive-code/components'
+import Base from '~/layouts/Base.astro'
+
+const byHandConfirm = `function DeleteButton({ id }) {
+  const [open, setOpen] = useState(false)
+
+  return (
+    <>
+      <button onClick={() => setOpen(true)}>Delete</button>
+
+      {open && (
+        <Confirm
+          // the consequence — stranded here, far
+          // from the button that started it
+          onAccept={() => { api.delete(id); setOpen(false) }}
+          onCancel={() => setOpen(false)}
+        />
+      )}
+    </>
+  )
+}`
+
+const withCallConfirm = `function DeleteButton({ id }) {
+  return (
+    <button
+      onClick={async () => {
+        // ask, await, act — one place
+        if (await Confirm.call()) {
+          await api.delete(id)
+        }
+      }}
+    >
+      Delete
+    </button>
+  )
+}`
+---
+
+<Base
+  title="Why react-call? — react-call"
+  description="Why use react-call instead of managing dialogs and pickers with plain React state? The interaction is imperative by nature — a call() keeps the whole flow in one place, and the hand-rolled version converges on react-call anyway."
+>
+  <div class="mx-auto max-w-4xl px-6 py-12 md:py-16">
+    <nav
+      class="mb-8 font-mono text-xs text-[var(--color-fg-subtle)]"
+      aria-label="Breadcrumb"
+    >
+      <a
+        href="/"
+        class="transition-colors hover:text-[var(--color-fg-muted)]">Home</a
+      >
+      <span class="px-2">/</span>
+      <span class="text-[var(--color-fg-muted)]">Why</span>
+    </nav>
+
+    <header class="mb-12">
+      <h1
+        class="text-3xl font-medium tracking-tight text-[var(--color-fg)] md:text-5xl"
+      >
+        Why react-call?
+      </h1>
+      <p
+        class="mt-4 max-w-2xl text-base text-[var(--color-fg-muted)] md:text-lg"
+      >
+        Short version: for showing and hiding something, React state is perfect.
+        The moment the interaction has to <span class="italic">answer</span> you,
+        that model starts to strain — and what you build to compensate is, more
+        or less, this library.
+      </p>
+    </header>
+
+    <div class="prose-react-call space-y-6 text-[var(--color-fg-muted)]">
+      <h2>An imperative flow in a declarative model</h2>
+      <p>
+        A confirm, a prompt, a picker is <strong>imperative by nature</strong>:
+        ask a question, wait, get an answer, continue. React state is
+        <strong>declarative</strong> — it describes what the UI is for a given
+        state, not a step-by-step flow that returns a value. Forcing the
+        imperative interaction through declarative state is the mismatch.
+        Everything below is a symptom of it.
+      </p>
+      <p>
+        react-call doesn't make React less declarative — the Root still renders
+        its active calls declaratively. It gives the <em>imperative</em> half an
+        imperative API, <code>await Confirm.call()</code>, and leaves rendering
+        where it belongs. Each half does what it's good at.
+      </p>
+
+      <h2>State renders the dialog. It can't return the answer.</h2>
+      <p>
+        You can keep a dialog in React state easily enough — a flag to show it,
+        even the choice once it's made. What state can't do is hand that choice
+        <em>back</em> to the imperative code that opened it. So you bridge the
+        gap by hand: a callback prop, or a resolver kept in state, lifted to a
+        common parent — and the consequence of the decision ends up stranded in
+        that handler, far from the click that triggered it.
+      </p>
+
+      <div class="grid gap-4 md:grid-cols-2 md:gap-6">
+        <div class="min-w-0">
+          <div
+            class="mb-2 font-mono text-xs uppercase tracking-wider text-[var(--color-fg-subtle)]"
+          >
+            By hand
+          </div>
+          <Code code={byHandConfirm} lang="tsx" meta="{6,12,13}" />
+        </div>
+
+        <div class="min-w-0">
+          <div
+            class="mb-2 font-mono text-xs uppercase tracking-wider text-[var(--color-accent)]"
+          >
+            With react-call
+          </div>
+          <Code code={withCallConfirm} lang="tsx" meta="{6-8}" />
+        </div>
+      </div>
+
+      <h2>“But why add a dependency?”</h2>
+      <p>
+        Fair. You can hand-roll a promise so you can <code>await</code> the
+        answer and keep the flow in one place. But that wrapper — once it also
+        handles typing, SSR, the one-Root-per-component rule, exit animations,
+        and more than one call on screen at once — <strong>is</strong> react-call.
+        It's ~1 KB, has no dependencies, and it's already written and tested.
+      </p>
+
+      <h2>When React state is the right call</h2>
+      <p>
+        None of this is "React state is bad". For a pure show/hide toggle that
+        returns nothing — a menu that just opens and closes — a
+        <code>useState</code> is exactly right, and you shouldn't reach for a
+        library. The line is the <em>result</em>: the moment you need an answer
+        back, several of these on screen at once, or the same dialog reused from
+        many places, a <code>call()</code> earns its keep.
+      </p>
+      <ul>
+        <li>
+          <strong>Composition</strong> — two questions at once are just two calls
+          living together, not a set of open/close flags you wire up by hand.{' '}
+          <a href="/concepts/root-and-stack">See the Stack →</a>
+        </li>
+        <li>
+          <strong>Reuse</strong> — define the Callable once, call it from any
+          handler, hook or domain action. No re-wiring per screen.
+        </li>
+      </ul>
+    </div>
+
+    <div
+      class="mt-14 flex flex-col items-start gap-4 border-t border-[var(--color-border)] pt-10 sm:flex-row sm:items-center"
+    >
+      <a
+        href="/examples"
+        class="rounded-md bg-[var(--color-accent)] px-4 py-2 text-sm font-medium text-[var(--color-accent-fg)] transition-colors hover:bg-[var(--color-accent-hover)]"
+      >
+        See it on real examples
+      </a>
+      <a
+        href="/concepts"
+        class="text-sm text-[var(--color-fg-muted)] transition-colors hover:text-[var(--color-fg)]"
+      >
+        Or learn how it works →
+      </a>
+    </div>
+  </div>
+</Base>

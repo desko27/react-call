@@ -4,7 +4,9 @@ export default defineEcConfig({
   themes: ['github-light', 'github-dark'],
   useDarkModeMediaQuery: false,
   themeCssSelector: (theme) => (theme.type === 'dark' ? '.dark' : false),
-  defaultProps: { wrap: true },
+  // Long lines scroll horizontally rather than wrapping, so each line
+  // keeps its place — wrapping garbles code structure, worst on mobile.
+  defaultProps: { wrap: false },
   styleOverrides: {
     codeFontFamily:
       'var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace)',

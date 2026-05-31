@@ -15,6 +15,76 @@ const exampleCount = getAllExamples().length
   <Hero client:load />
   <NotJustConfirmations exampleCount={exampleCount} client:idle />
   <HowItLives client:idle />
+
+  <section class="border-t border-[var(--color-border)]">
+    <div class="mx-auto max-w-6xl px-6 py-24">
+      <div class="text-center">
+        <p
+          class="font-mono text-xs uppercase tracking-wider text-[var(--color-fg-subtle)]"
+        >
+          Why not just React state?
+        </p>
+        <h2
+          class="mt-3 text-3xl font-medium tracking-tight text-[var(--color-fg)] md:text-4xl"
+        >
+          One question. One handler.
+        </h2>
+        <p class="mx-auto mt-4 max-w-2xl text-base text-[var(--color-fg-muted)]">
+          React state shows the dialog, but it can't hand the answer back to the
+          code that opened it — so the flow splits across handlers. A{' '}
+          <code class="font-mono text-sm">call()</code> returns the answer right
+          where you asked.
+        </p>
+      </div>
+
+      <div class="mt-12 grid gap-4 md:grid-cols-2 md:gap-6">
+        <div
+          class="min-w-0 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-subtle)] p-6"
+        >
+          <div
+            class="font-mono text-xs uppercase tracking-wider text-[var(--color-fg-subtle)]"
+          >
+            React state
+          </div>
+          <pre
+            class="mt-4 overflow-x-auto font-mono text-xs leading-relaxed text-[var(--color-fg-muted)] md:text-sm">{`// 1) the trigger just flips a flag
+`}<span class="text-[var(--color-fg)]">{`const onDelete = () => setOpen(true)`}</span>{`
+
+// 2) ...the real work lives in the dialog,
+//    in a handler far from (1)
+`}<span class="text-[var(--color-fg)]">{`<Confirm onAccept={() => api.delete(id)} … />`}</span></pre>
+        </div>
+
+        <div
+          class="min-w-0 rounded-xl border-2 border-[var(--color-accent)] bg-[var(--color-bg-subtle)] p-6"
+        >
+          <div
+            class="font-mono text-xs uppercase tracking-wider text-[var(--color-accent)]"
+          >
+            With react-call
+          </div>
+          <pre
+            class="mt-4 overflow-x-auto font-mono text-xs leading-relaxed text-[var(--color-fg-muted)] md:text-sm">{`// one handler: ask, await, act
+const onDelete = async () => {
+`}<span class="text-[var(--color-fg)]">{`  if (await Confirm.call()) {
+    await api.delete(id)
+  }`}</span>{`
+}`}</pre>
+        </div>
+      </div>
+
+      <div class="mt-8 text-center">
+        <a
+          href="/why"
+          class="inline-flex items-center gap-1 text-sm font-medium text-[var(--color-accent)] transition-colors hover:text-[var(--color-accent-hover)]"
+        >
+          Read the full case
+          <span aria-hidden="true">→</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
   <StackSection client:idle />
   <MutationFlowSection client:idle />
 
