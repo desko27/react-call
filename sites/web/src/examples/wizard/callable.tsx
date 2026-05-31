@@ -7,6 +7,11 @@ export interface WizardResult {
   plan: 'free' | 'pro' | 'team'
 }
 
+// text-base (16px) on mobile stops iOS Safari from auto-zooming when a
+// step input autofocuses; md:text-sm restores the compact size on desktop.
+const INPUT_CLASS =
+  'w-full rounded-md border border-[var(--color-border)] bg-[var(--color-bg-subtle)] px-3 py-2 text-base text-[var(--color-fg)] focus:border-[var(--color-accent)] focus:outline-none md:text-sm'
+
 export const Wizard = createCallable<void, WizardResult | null>(({ call }) => {
   const [step, setStep] = useState(0)
   const [name, setName] = useState('')
@@ -30,7 +35,7 @@ export const Wizard = createCallable<void, WizardResult | null>(({ call }) => {
       role="dialog"
       aria-modal="true"
       aria-label="Wizard"
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm"
     >
       <div className="w-full max-w-md rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] p-6 shadow-2xl">
         <div className="mb-5 flex items-center gap-2">
@@ -54,7 +59,7 @@ export const Wizard = createCallable<void, WizardResult | null>(({ call }) => {
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder="Ada Lovelace"
-              className="w-full rounded-md border border-[var(--color-border)] bg-[var(--color-bg-subtle)] px-3 py-2 text-sm text-[var(--color-fg)] focus:border-[var(--color-accent)] focus:outline-none"
+              className={INPUT_CLASS}
             />
           </Step>
         )}
@@ -67,7 +72,7 @@ export const Wizard = createCallable<void, WizardResult | null>(({ call }) => {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="ada@example.com"
-              className="w-full rounded-md border border-[var(--color-border)] bg-[var(--color-bg-subtle)] px-3 py-2 text-sm text-[var(--color-fg)] focus:border-[var(--color-accent)] focus:outline-none"
+              className={INPUT_CLASS}
             />
           </Step>
         )}
