@@ -78,10 +78,6 @@ menus, pickers — any UI that conceptually returns a value to its caller.
 npm install react-call
 ```
 
-> [!TIP]
-> **Using an AI assistant** (Claude Code, Cursor, …)? Install the [react-call skill](#ai-agent-skill) so it writes correct Callables — the single-Root rule, `call` vs `upsert`, mutation flow, SSR:
-> `npx skills add desko27/react-call --skill react-call`
-
 We'll setup a confirmation dialog, but you can setup any component to be callable.
 
 ## 1. ⚛️ Declare
