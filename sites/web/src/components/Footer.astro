@@ -5,69 +5,71 @@ const year = new Date().getFullYear()
 <footer
   class="border-t border-[var(--color-border)] bg-[var(--color-bg-subtle)]"
 >
-  <div
-    class="mx-auto flex max-w-6xl flex-col gap-6 px-6 py-10 md:flex-row md:items-center md:justify-between"
-  >
-    <div class="flex items-center gap-3">
-      <span
-        aria-hidden="true"
-        class="text-[var(--color-accent)]">●</span
+  <div class="mx-auto max-w-6xl px-6 py-10">
+    <div
+      class="flex flex-col gap-6 md:flex-row md:items-center md:justify-between"
+    >
+      <div class="flex items-center gap-3">
+        <span
+          aria-hidden="true"
+          class="text-[var(--color-accent)]">●</span
+        >
+        <span class="font-mono text-sm text-[var(--color-fg)]">react-call</span>
+        <span class="text-xs text-[var(--color-fg-subtle)]">
+          — your component can <span class="font-mono">await</span>.
+        </span>
+      </div>
+
+      <nav
+        class="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-[var(--color-fg-muted)] md:justify-end"
+        aria-label="Footer"
       >
-      <span class="font-mono text-sm text-[var(--color-fg)]">react-call</span>
-      <span class="text-xs text-[var(--color-fg-subtle)]">
-        — your component can <span class="font-mono">await</span>.
-      </span>
+        <a
+          href="/why"
+          class="transition-colors hover:text-[var(--color-fg)]">Why</a
+        >
+        <a
+          href="/examples"
+          class="transition-colors hover:text-[var(--color-fg)]">Examples</a
+        >
+        <a
+          href="/concepts"
+          class="transition-colors hover:text-[var(--color-fg)]">Concepts</a
+        >
+        <a
+          href="https://github.com/desko27/react-call#readme"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="transition-colors hover:text-[var(--color-fg)]">Full reference</a
+        >
+        <a
+          href="https://www.npmjs.com/package/react-call"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="transition-colors hover:text-[var(--color-fg)]">npm</a
+        >
+        <a
+          href="https://github.com/desko27/react-call"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="transition-colors hover:text-[var(--color-fg)]">GitHub</a
+        >
+        <a
+          href="https://github.com/desko27/react-call/issues"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="transition-colors hover:text-[var(--color-fg)]">Issues</a
+        >
+        <a
+          href="https://github.com/desko27/react-call/blob/main/LICENSE"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="transition-colors hover:text-[var(--color-fg)]">MIT</a
+        >
+      </nav>
     </div>
 
-    <nav
-      class="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-[var(--color-fg-muted)]"
-      aria-label="Footer"
-    >
-      <a
-        href="/why"
-        class="transition-colors hover:text-[var(--color-fg)]">Why</a
-      >
-      <a
-        href="/examples"
-        class="transition-colors hover:text-[var(--color-fg)]">Examples</a
-      >
-      <a
-        href="/concepts"
-        class="transition-colors hover:text-[var(--color-fg)]">Concepts</a
-      >
-      <a
-        href="https://github.com/desko27/react-call#readme"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="transition-colors hover:text-[var(--color-fg)]">Full reference</a
-      >
-      <a
-        href="https://www.npmjs.com/package/react-call"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="transition-colors hover:text-[var(--color-fg)]">npm</a
-      >
-      <a
-        href="https://github.com/desko27/react-call"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="transition-colors hover:text-[var(--color-fg)]">GitHub</a
-      >
-      <a
-        href="https://github.com/desko27/react-call/issues"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="transition-colors hover:text-[var(--color-fg)]">Issues</a
-      >
-      <a
-        href="https://github.com/desko27/react-call/blob/main/LICENSE"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="transition-colors hover:text-[var(--color-fg)]">MIT</a
-      >
-    </nav>
-
-    <p class="font-mono text-xs text-[var(--color-fg-subtle)]">
+    <p class="mt-8 font-mono text-xs text-[var(--color-fg-subtle)]">
       © {year} desko27 · built with itself
     </p>
   </div>
