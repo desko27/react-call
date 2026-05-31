@@ -1,5 +1,40 @@
 ---
+import { Code } from 'astro-expressive-code/components'
 import Base from '~/layouts/Base.astro'
+
+const byHandConfirm = `function DeleteButton({ id }) {
+  const [open, setOpen] = useState(false)
+
+  return (
+    <>
+      <button onClick={() => setOpen(true)}>Delete</button>
+
+      {open && (
+        <Confirm
+          // the consequence — stranded here, far
+          // from the button that started it
+          onAccept={() => { api.delete(id); setOpen(false) }}
+          onCancel={() => setOpen(false)}
+        />
+      )}
+    </>
+  )
+}`
+
+const withCallConfirm = `function DeleteButton({ id }) {
+  return (
+    <button
+      onClick={async () => {
+        // ask, await, act — one place
+        if (await Confirm.call()) {
+          await api.delete(id)
+        }
+      }}
+    >
+      Delete
+    </button>
+  )
+}`
 ---
 
 <Base
@@ -63,58 +98,22 @@ import Base from '~/layouts/Base.astro'
       </p>
 
       <div class="grid gap-4 md:grid-cols-2 md:gap-6">
-        <div
-          class="min-w-0 rounded-xl border border-[var(--color-border)] bg-[var(--color-bg-subtle)] p-5 md:p-6"
-        >
+        <div class="min-w-0">
           <div
-            class="font-mono text-xs uppercase tracking-wider text-[var(--color-fg-subtle)]"
+            class="mb-2 font-mono text-xs uppercase tracking-wider text-[var(--color-fg-subtle)]"
           >
             By hand
           </div>
-          <pre
-            class="mt-4 overflow-x-auto font-mono text-xs leading-relaxed text-[var(--color-fg-muted)]">{`function DeleteButton({ id }) {
-  const [open, setOpen] = useState(false)
-
-  return (
-    <>
-      <button onClick={() => setOpen(true)}>Delete</button>
-
-      {open && (
-        <Confirm
-          // the consequence — stranded here, far
-          // from the button that started it
-          onAccept={() => { api.delete(id); setOpen(false) }}
-          onCancel={() => setOpen(false)}
-        />
-      )}
-    </>
-  )
-}`}</pre>
+          <Code code={byHandConfirm} lang="tsx" meta="{6,12,13}" />
         </div>
 
-        <div
-          class="min-w-0 rounded-xl border-2 border-[var(--color-accent)] bg-[var(--color-bg-subtle)] p-5 md:p-6"
-        >
+        <div class="min-w-0">
           <div
-            class="font-mono text-xs uppercase tracking-wider text-[var(--color-accent)]"
+            class="mb-2 font-mono text-xs uppercase tracking-wider text-[var(--color-accent)]"
           >
             With react-call
           </div>
-          <pre
-            class="mt-4 overflow-x-auto font-mono text-xs leading-relaxed text-[var(--color-fg-muted)]">{`function DeleteButton({ id }) {
-  return (
-    <button
-      onClick={async () => {
-        // ask, await, act — one place
-        if (await Confirm.call()) {
-          await api.delete(id)
-        }
-      }}
-    >
-      Delete
-    </button>
-  )
-}`}</pre>
+          <Code code={withCallConfirm} lang="tsx" meta="{6-8}" />
         </div>
       </div>
 
