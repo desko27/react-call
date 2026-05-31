@@ -66,10 +66,16 @@ const Card = ({
   onTry,
 }: CardProps) => {
   const [result, setResult] = useState<Result | null>(null)
+  const [pending, setPending] = useState(false)
 
   const handleClick = async (e: MouseEvent) => {
-    const next = await onTry(e)
-    setResult(next)
+    setPending(true)
+    try {
+      const next = await onTry(e)
+      setResult(next)
+    } finally {
+      setPending(false)
+    }
   }
 
   return (
@@ -87,7 +93,8 @@ const Card = ({
         <button
           type="button"
           onClick={handleClick}
-          className="rounded-md border border-[var(--color-border-strong)] bg-[var(--color-bg)] px-3 py-1.5 text-xs text-[var(--color-fg)] transition-colors hover:border-[var(--color-accent)] hover:text-[var(--color-accent)]"
+          disabled={pending}
+          className="rounded-md border border-[var(--color-border-strong)] bg-[var(--color-bg)] px-3 py-1.5 text-xs text-[var(--color-fg)] transition-colors hover:border-[var(--color-accent)] hover:text-[var(--color-accent)] disabled:opacity-50"
         >
           {buttonLabel}
         </button>
@@ -125,7 +132,9 @@ export const NotJustConfirmations = ({ exampleCount }: Props) => {
 
   const fireWizard = async (): Promise<Result> => {
     const data = await Wizard.call()
-    return data ? formatVoid(`${data.name} · ${data.plan}`) : formatString(null)
+    return data
+      ? formatVoid(`${data.name} · ${data.email} · ${data.plan}`)
+      : formatString(null)
   }
 
   const firePicker = async (): Promise<Result> => {

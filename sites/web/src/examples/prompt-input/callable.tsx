@@ -42,7 +42,7 @@ export const Prompt = createCallable<Props, string | null>(
             value={value}
             placeholder={placeholder}
             onChange={(e) => setValue(e.target.value)}
-            className="mt-4 w-full rounded-md border border-[var(--color-border)] bg-[var(--color-bg-subtle)] px-3 py-2 text-sm text-[var(--color-fg)] focus:border-[var(--color-accent)] focus:outline-none"
+            className="mt-4 w-full rounded-md border border-[var(--color-border)] bg-[var(--color-bg-subtle)] px-3 py-2 text-base text-[var(--color-fg)] focus:border-[var(--color-accent)] focus:outline-none md:text-sm"
           />
           <div className="mt-6 flex items-center justify-end gap-3">
             <button

@@ -29,7 +29,7 @@ export const SaveForm = createCallable<Props, string>(
             onChange={(e) => setName(e.target.value)}
             disabled={submit.pending}
             placeholder="Item name"
-            className="mt-4 w-full rounded-md border border-[var(--color-border)] bg-[var(--color-bg-subtle)] px-3 py-2 text-sm text-[var(--color-fg)] focus:border-[var(--color-accent)] focus:outline-none disabled:opacity-50"
+            className="mt-4 w-full rounded-md border border-[var(--color-border)] bg-[var(--color-bg-subtle)] px-3 py-2 text-base text-[var(--color-fg)] focus:border-[var(--color-accent)] focus:outline-none disabled:opacity-50 md:text-sm"
           />
           <label className="mt-3 flex items-center gap-2 text-xs text-[var(--color-fg-subtle)]">
             <input

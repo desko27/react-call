@@ -35,7 +35,7 @@ export const Wizard = createCallable<void, WizardResult | null>(({ call }) => {
       role="dialog"
       aria-modal="true"
       aria-label="Wizard"
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm"
     >
       <div className="w-full max-w-md rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] p-6 shadow-2xl">
         <div className="mb-5 flex items-center gap-2">

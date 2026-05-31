@@ -105,7 +105,7 @@ export const SettingsDrawer = createCallable<Props, Settings | null>(
                     theme: e.target.value as Theme,
                   })
                 }
-                className="rounded-md border border-[var(--color-border)] bg-[var(--color-bg-subtle)] px-2 py-1 text-sm text-[var(--color-fg)] focus:border-[var(--color-accent)] focus:outline-none"
+                className="rounded-md border border-[var(--color-border)] bg-[var(--color-bg-subtle)] px-2 py-1 text-base text-[var(--color-fg)] focus:border-[var(--color-accent)] focus:outline-none md:text-sm"
               >
                 <option value="system">System</option>
                 <option value="light">Light</option>
