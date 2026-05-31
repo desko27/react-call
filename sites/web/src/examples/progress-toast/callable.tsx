@@ -5,12 +5,17 @@ interface Props {
   percent?: number
 }
 
+// px per stacked toast, including the gap — offsets concurrent calls so
+// they stack upward instead of overlapping (same idea as error-banner).
+const ROW_HEIGHT = 84
+
 export const Toast = createCallable<Props, void>(
   ({ call, message, percent }) => (
     <div
       role="status"
       aria-live="polite"
-      className="pointer-events-none fixed bottom-6 right-6 z-50"
+      style={{ bottom: 24 + call.index * ROW_HEIGHT }}
+      className="pointer-events-none fixed right-6 z-50 transition-[bottom] duration-200"
     >
       <div className="pointer-events-auto min-w-[280px] rounded-lg border border-[var(--color-border)] bg-[var(--color-bg)] p-4 shadow-2xl">
         <div className="flex items-start justify-between gap-3">

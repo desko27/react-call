@@ -75,13 +75,16 @@ export const CommandPalette = createCallable<Props, string | null>(
           ref={paletteRef}
           className="w-full max-w-md overflow-hidden rounded-xl border border-[var(--color-border)] bg-[var(--color-bg)] shadow-2xl"
         >
+          {/* text-base (16px) on mobile stops iOS Safari from auto-zooming
+              when the input autofocuses on open; md:text-sm restores the
+              compact size on larger screens. */}
           <input
             ref={inputRef}
             type="text"
             placeholder="Type a command…"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            className="w-full border-b border-[var(--color-border)] bg-transparent px-4 py-3 text-sm text-[var(--color-fg)] focus:outline-none"
+            className="w-full border-b border-[var(--color-border)] bg-transparent px-4 py-3 text-base text-[var(--color-fg)] focus:outline-none md:text-sm"
           />
           <ul ref={listRef} className="max-h-72 overflow-y-auto p-1">
             {filtered.length === 0 ? (
