@@ -1,4 +1,5 @@
 ---
+import { CopyCommand } from '~/components/CopyCommand'
 import { InstallCommand } from '~/components/InstallCommand'
 import { Hero } from '~/components/landing/Hero'
 import { HowItLives } from '~/components/landing/HowItLives'
@@ -102,7 +103,27 @@ const onDelete = async () => {
       <div class="mt-8 flex justify-center">
         <InstallCommand client:idle />
       </div>
-      <div class="mt-6 flex items-center justify-center gap-6 text-sm">
+
+      <div class="mt-6 flex flex-col items-center gap-2">
+        <p class="font-mono text-xs text-[var(--color-fg-subtle)]">
+          🤖 Building with an AI assistant?
+        </p>
+        <CopyCommand
+          client:idle
+          command="npx skills add desko27/react-call --skill react-call"
+          label="Install the react-call agent skill"
+        />
+        <a
+          href="https://github.com/desko27/react-call#ai-agent-skill"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-xs text-[var(--color-accent)] transition-colors hover:text-[var(--color-accent-hover)]"
+        >
+          What the skill does ↗
+        </a>
+      </div>
+
+      <div class="mt-8 flex items-center justify-center gap-6 text-sm">
         <a
           href="/examples"
           class="rounded-md bg-[var(--color-accent)] px-4 py-2 font-medium text-[var(--color-accent-fg)] transition-colors hover:bg-[var(--color-accent-hover)]"

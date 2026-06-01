@@ -19,6 +19,8 @@
     &nbsp;·&nbsp;
     <a href="https://react-call.desko.dev/examples">Examples gallery</a>
     &nbsp;·&nbsp;
+    <a href="#ai-agent-skill">🤖 AI agent skill</a>
+    &nbsp;·&nbsp;
     <a href="#getting-started">Getting started</a>
   </p>
 </div>
@@ -64,6 +66,7 @@ menus, pickers — any UI that conceptually returns a value to its caller.
 - [Lazy loading](#lazy-loading)
 - [SSR](#ssr)
   - [Next.js / RSC](#nextjs--rsc)
+- [AI agent skill](#ai-agent-skill)
 - [Migrating from v1](#migrating-from-v1)
 
 # Getting started
@@ -506,6 +509,16 @@ export const Confirm = createCallable(...)
 ```
 
 Then `<Confirm />` mounts cleanly from any Server Component (e.g. `app/layout.tsx`).
+
+# AI agent skill
+
+Using an AI coding assistant (Claude Code, Cursor, …)? Install the official react-call skill so it writes correct Callables — the Declare→Root→Call model, `call` vs `upsert`, mutation flow, multi-preview hosts, SSR, the single-Root rule, and the canonical vocabulary:
+
+```sh
+npx skills add desko27/react-call --skill react-call
+```
+
+The `--skill react-call` flag pins exactly this skill (this repo also hosts the maintainers' internal workflow skills, which you don't want). Powered by [`skills`](https://github.com/vercel-labs/skills) — works with any agent it supports.
 
 # Migrating from v1
 

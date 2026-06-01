@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { InstallCommand } from '../InstallCommand'
 import { HeroConfirm } from './HeroConfirm'
+import { HeroInstall } from './HeroInstall'
 import { type Result, ResultBadge } from './ResultBadge'
 
 export const Hero = () => {
@@ -32,7 +32,7 @@ export const Hero = () => {
 
       <section className="mx-auto max-w-6xl px-6 pt-16 pb-24 md:pt-24 md:pb-32">
         <div className="text-center">
-          <InstallCommand />
+          <HeroInstall />
           <h1
             className="
               mt-6 text-4xl font-medium tracking-tight
