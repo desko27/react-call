@@ -21,6 +21,7 @@ const mobileLinks = [...navItems, referenceLink]
 
 <header
   class="
+    relative
     sticky top-0 z-40
     border-b border-[var(--color-border)]
     bg-[color-mix(in_srgb,var(--color-bg)_85%,transparent)]
@@ -80,6 +81,7 @@ const mobileLinks = [...navItems, referenceLink]
         </a>
       </div>
       <a
+        id="debug-star-cta"
         href="https://github.com/desko27/react-call"
         target="_blank"
         rel="noopener noreferrer"
@@ -112,4 +114,44 @@ const mobileLinks = [...navItems, referenceLink]
       </div>
     </nav>
   </div>
+
+  {/* TEMPORARY visual-check guides — remove before merge.
+      Red line at the header's 50% height, plus lines at the Star
+      button's top and bottom edges. */}
+  <div
+    aria-hidden="true"
+    class="pointer-events-none absolute inset-x-0 top-1/2 z-50 h-px -translate-y-1/2 bg-red-500"
+  >
+  </div>
+  <div
+    id="debug-star-top"
+    aria-hidden="true"
+    class="pointer-events-none absolute inset-x-0 z-50 h-px bg-red-500"
+  >
+  </div>
+  <div
+    id="debug-star-bottom"
+    aria-hidden="true"
+    class="pointer-events-none absolute inset-x-0 z-50 h-px bg-red-500"
+  >
+  </div>
 </header>
+
+<script>
+  // TEMPORARY: position the guide lines on the Star button's top/bottom
+  // edges, relative to the header. Remove together with the lines above.
+  function placeDebugGuides() {
+    const header = document.querySelector('header')
+    const star = document.getElementById('debug-star-cta')
+    const top = document.getElementById('debug-star-top')
+    const bottom = document.getElementById('debug-star-bottom')
+    if (!header || !star || !top || !bottom) return
+    const h = header.getBoundingClientRect()
+    const s = star.getBoundingClientRect()
+    top.style.top = `${s.top - h.top}px`
+    bottom.style.top = `${s.bottom - h.top}px`
+  }
+  placeDebugGuides()
+  window.addEventListener('resize', placeDebugGuides)
+  window.addEventListener('load', placeDebugGuides)
+</script>
