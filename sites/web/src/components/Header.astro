@@ -33,17 +33,18 @@ const mobileLinks = [...navItems, referenceLink]
     <a
       href="/"
       class="
-        flex shrink-0 items-center gap-2
+        flex shrink-0 items-center
         font-mono text-sm font-medium whitespace-nowrap
         text-[var(--color-fg)]
       "
     >
-      <span
-        class="text-[var(--color-accent)]"
-        aria-hidden="true">●</span
-      >
       <span class="flex items-start gap-1">
-        react-call
+        <span
+          >react-call<span
+            class="text-[var(--color-accent)]"
+            aria-hidden="true">()</span
+          ></span
+        >
         <span
           class="text-xs font-normal leading-none text-[var(--color-fg-subtle)]"
           >v2</span
