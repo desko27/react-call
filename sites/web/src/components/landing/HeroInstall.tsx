@@ -49,10 +49,13 @@ export const HeroInstall = () => {
 
       {/* Both boxes share one grid cell so the widget always sizes to the
           taller one (the lib box, with its PM tab row) — toggling never
-          shifts the layout. The hidden box stays in flow via `invisible`. */}
-      <div className="grid place-items-center">
+          shifts the layout. The hidden box stays in flow via `invisible`.
+          `grid-cols-1` bounds the track to minmax(0,1fr) and `min-w-0` lets
+          the cell shrink below the command's width, so a long command scrolls
+          inside the box on narrow screens instead of overflowing the page. */}
+      <div className="grid w-full grid-cols-1">
         <div
-          className={`col-start-1 row-start-1 ${
+          className={`col-start-1 row-start-1 flex min-w-0 items-center justify-center ${
             mode === 'lib' ? '' : 'pointer-events-none invisible'
           }`}
           aria-hidden={mode !== 'lib'}
@@ -60,7 +63,7 @@ export const HeroInstall = () => {
           <InstallCommand />
         </div>
         <div
-          className={`col-start-1 row-start-1 ${
+          className={`col-start-1 row-start-1 flex min-w-0 items-center justify-center ${
             mode === 'skill' ? '' : 'pointer-events-none invisible'
           }`}
           aria-hidden={mode !== 'skill'}
