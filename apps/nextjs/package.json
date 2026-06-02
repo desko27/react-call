@@ -9,7 +9,7 @@
     "check:types": "tsc --noEmit"
   },
   "dependencies": {
-    "next": "^15.1.0",
+    "next": "^16.2.7",
     "react": "^19.2.7",
     "react-call": "workspace:*",
     "react-dom": "^19.2.7"
