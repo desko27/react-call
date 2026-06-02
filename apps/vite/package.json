@@ -8,14 +8,14 @@
     "check:types": "tsc --noEmit"
   },
   "dependencies": {
-    "react": "^19.2.6",
+    "react": "^19.2.7",
     "react-call": "workspace:*",
-    "react-dom": "^19.2.6"
+    "react-dom": "^19.2.7"
   },
   "devDependencies": {
-    "@types/react": "^19.2.15",
+    "@types/react": "^19.2.16",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.2",
-    "vite": "^8.0.14"
+    "vite": "^8.0.16"
   }
 }
