@@ -110,14 +110,14 @@
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
     "@types/node": "^25.9.1",
-    "@types/react": "^19.2.15",
+    "@types/react": "^19.2.16",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.2",
-    "react-dom": "^19.2.6",
+    "react-dom": "^19.2.7",
     "size-limit": "^12.1.0",
     "typescript": "^6.0.3",
-    "vite": "^8.0.14",
-    "vite-plugin-dts": "^5.0.1"
+    "vite": "^8.0.16",
+    "vite-plugin-dts": "^5.0.2"
   },
   "peerDependencies": {
     "react": ">=18",

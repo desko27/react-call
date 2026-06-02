@@ -15,19 +15,19 @@
     "@astrojs/sitemap": "^3.6.0",
     "@tailwindcss/vite": "^4.3.0",
     "astro": "^5.16.6",
-    "astro-expressive-code": "^0.41.5",
+    "astro-expressive-code": "^0.42.0",
     "@fontsource-variable/fira-code": "^5.2.5",
     "@fontsource-variable/geist": "^5.2.9",
     "clsx": "^2.1.1",
     "lz-string": "^1.5.0",
-    "react": "^19.2.6",
+    "react": "^19.2.7",
     "react-call": "workspace:*",
-    "react-dom": "^19.2.6",
+    "react-dom": "^19.2.7",
     "tailwindcss": "^4.3.0",
     "typescript": "^6.0.3"
   },
   "devDependencies": {
-    "@types/react": "^19.2.15",
+    "@types/react": "^19.2.16",
     "@types/react-dom": "^19.2.3"
   }
 }
