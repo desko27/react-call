@@ -31,9 +31,12 @@ const mobileLinks = [...navItems, referenceLink]
   <div
     class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4 sm:px-6"
   >
+    {/* top-px: optical nudge — the mono wordmark's ink sits ~1px higher
+        than the sans nav text on the shared baseline, so drop it to match. */}
     <a
       href="/"
       class="
+        relative top-px
         flex shrink-0 items-center
         font-mono text-sm font-medium whitespace-nowrap
         text-[var(--color-fg)]
