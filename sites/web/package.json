@@ -6,7 +6,8 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "check:types": "astro check"
+    "check:types": "astro check",
+    "og": "node scripts/generate-og.mjs"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
@@ -27,6 +28,7 @@
     "typescript": "^6.0.3"
   },
   "devDependencies": {
+    "@resvg/resvg-js": "^2.6.2",
     "@types/react": "^19.2.16",
     "@types/react-dom": "^19.2.3"
   }
