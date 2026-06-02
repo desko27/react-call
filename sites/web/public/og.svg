@@ -15,8 +15,7 @@
 
   <!-- Top-left brand -->
   <g transform="translate(80, 80)">
-    <circle cx="10" cy="10" r="10" fill="#e11d74"/>
-    <text x="32" y="17" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="22" fill="#fafafa">react-call</text>
+    <text x="0" y="17" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="22" fill="#fafafa">react-call<tspan fill="#ff3a8e">()</tspan></text>
   </g>
 
   <!-- Main copy: anchored to left edge with the same x as the brand mark (80) -->

@@ -1,6 +1,11 @@
 <div align="center">
   <h1>
-    ⚛️ 📡 <a href="https://react-call.desko.dev">react-call</a>
+    <a href="https://react-call.desko.dev">
+      <picture>
+        <source media="(prefers-color-scheme: dark)" srcset="./docs/assets/wordmark-dark.svg" />
+        <img alt="react-call" src="./docs/assets/wordmark-light.svg" height="40" />
+      </picture>
+    </a>
   </h1>
 
   <p><em>Call your React components like async functions — they resolve with a value.</em></p>
@@ -27,15 +32,15 @@
 
 `createCallable()` turns a React component into something you can `await`.
 
-Good fits: confirmations, dialogs, form modals, toasts, notifications, context
-menus, pickers — any UI that conceptually returns a value to its caller.
-
 
 <p align="center">
   <a href="https://react-call.desko.dev">
     <img alt="react-call — call your React components" src="./docs/assets/hero.png" />
   </a>
 </p>
+
+Good fits: confirmations, dialogs, form modals, toasts, notifications, context
+menus, pickers — any UI that conceptually returns a value to its caller.
 
 ## Contents
 
