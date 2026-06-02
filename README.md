@@ -32,15 +32,15 @@
 
 `createCallable()` turns a React component into something you can `await`.
 
-Good fits: confirmations, dialogs, form modals, toasts, notifications, context
-menus, pickers — any UI that conceptually returns a value to its caller.
-
 
 <p align="center">
   <a href="https://react-call.desko.dev">
     <img alt="react-call — call your React components" src="./docs/assets/hero.png" />
   </a>
 </p>
+
+Good fits: confirmations, dialogs, form modals, toasts, notifications, context
+menus, pickers — any UI that conceptually returns a value to its caller.
 
 ## Contents
 
