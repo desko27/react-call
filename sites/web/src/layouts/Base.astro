@@ -14,7 +14,10 @@ interface Props {
 const {
   title = 'react-call — your component can await',
   description = 'createCallable turns any React component into something you can await. Dialogs, toasts, pickers, menus — any UI that conceptually returns a value to its caller.',
-  image = '/og.svg',
+  // Must be a raster format: Reddit, X, Facebook, LinkedIn, Slack, Discord and
+  // iMessage all ignore an SVG og:image. og.png is generated from og.svg via
+  // `pnpm --filter web og` — see sites/web/scripts/generate-og.mjs.
+  image = '/og.png',
   type = 'website',
   noindex = false,
 } = Astro.props
@@ -57,6 +60,10 @@ const imageUrl = new URL(image, site).href
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:image" content={imageUrl} />
+    <meta property="og:image:type" content="image/png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={title} />
     <meta property="og:locale" content="en_US" />
 
     <!-- Twitter / X -->
@@ -64,6 +71,7 @@ const imageUrl = new URL(image, site).href
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={imageUrl} />
+    <meta name="twitter:image:alt" content={title} />
 
     <!-- Sitemap -->
     <link rel="sitemap" href="/sitemap-index.xml" />
