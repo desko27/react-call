@@ -58,7 +58,7 @@
     }
   },
   "files": {
-    "includes": ["**", "!package.json"]
+    "includes": ["**", "!package.json", "!**/next-env.d.ts"]
   },
   "overrides": [
     {
