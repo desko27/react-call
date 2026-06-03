@@ -12,5 +12,9 @@ allowBuilds:
   # apps/nextjs playground (no <Image /> usage).
   sharp: false
 
+minimumReleaseAgeExclude:
+  - '@astrojs/react@5.0.7'
+  - astro@6.4.3
+
 overrides:
   fflate: "0.8.2"
