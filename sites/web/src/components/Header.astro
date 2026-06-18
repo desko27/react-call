@@ -96,13 +96,14 @@ const mobileLinks = [...navItems, referenceLink]
           h-9 md:h-auto
           text-sm text-[var(--color-fg-muted)]
           transition-colors hover:text-[var(--color-fg)]
+          hover:bg-[var(--color-bg-muted)] md:hover:bg-transparent
         "
       >
         <span
           class="
             flex items-center gap-1.5
             pl-2.5 pr-1 md:px-3 md:py-1.5
-            transition-colors group-hover:bg-[var(--color-bg-muted)]
+            transition-colors md:group-hover:bg-[var(--color-bg-muted)]
           "
         >
           <svg
