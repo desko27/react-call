@@ -3,6 +3,7 @@ import { defineConfig } from 'vitest/config'
 const DIST_TESTS = [
   'packages/*/src/**/bundle-content.test.ts',
   'packages/*/src/**/tarball-snapshot.test.ts',
+  'packages/*/src/**/fast-refresh-compat.test.ts',
 ]
 
 export default defineConfig({

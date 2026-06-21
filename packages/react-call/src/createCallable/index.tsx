@@ -172,6 +172,11 @@ export function createCallable<Props = void, Response = void, RootProps = {}>(
   // the consumer's module); this whole block is dead code in the
   // consumer's production bundle.
   if (process.env.NODE_ENV !== 'production') {
+    Object.defineProperty(callable, 'name', {
+      value: 'Root',
+      configurable: true,
+    })
+
     let displayName: string | undefined
     let registered = false
     Object.defineProperty(callable, 'displayName', {
