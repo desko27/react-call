@@ -129,9 +129,11 @@ _Avoid_: Stuck call, dangling call, no-op path.
 
 > **Maintainer:** "If the **MutationFn** throws, does the **Call** end?"
 >
-> **Designer:** "No — the **Trigger** swallows the throw, **pending**
-> clears, the **Call** stays open. The **MutationFn** itself decides
-> when to invoke `call.end()`."
+> **Designer:** "No — the **Call** stays open because closing needs an
+> explicit `call.end()`, and **pending** clears via `.finally`. The
+> **Trigger** doesn't catch the throw; an uncaught one escapes as an
+> unhandled rejection (ADR-0016), so the **MutationFn** handles its own
+> errors and decides when to invoke `call.end()`."
 >
 > **Maintainer:** "And if the caller never provides a **MutationFn**?"
 >

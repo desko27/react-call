@@ -45,8 +45,13 @@ await Confirm.call({
 })
 ```
 
-If the MutationFn throws, the Trigger swallows it, `pending` clears, and the Call
-**stays open** — the handler itself owns `call.end()`.
+The Call **stays open** on failure because closing requires an explicit
+`call.end()` — a MutationFn that returns (or throws) without reaching `end`
+leaves the Call in the Stack, ready to retry. `pending` always clears (via
+`.finally`). The Trigger does **not** catch errors: an uncaught throw escapes
+as an unhandled promise rejection. Handle failures **inside** the MutationFn —
+`try/catch`, show your error UI, then `return` without calling `end` — rather
+than letting it throw.
 
 ## Optional MutationFn + `.orEnd`
 
