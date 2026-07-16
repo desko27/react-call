@@ -26,6 +26,8 @@
     &nbsp;·&nbsp;
     <a href="#ai-agent-skill">🤖 AI agent skill</a>
     &nbsp;·&nbsp;
+    <a href="#why-react-call">Why react-call?</a>
+    &nbsp;·&nbsp;
     <a href="#getting-started">Getting started</a>
   </p>
 </div>
@@ -44,6 +46,7 @@ menus, pickers — any UI that conceptually returns a value to its caller.
 
 ## Contents
 
+- [Why react-call?](#why-react-call)
 - [Getting started](#getting-started)
   - [1. ⚛️ Declare](#1-️-declare)
   - [2. 📡 Root](#2--root)
@@ -73,6 +76,78 @@ menus, pickers — any UI that conceptually returns a value to its caller.
   - [Next.js / RSC](#nextjs--rsc)
 - [AI agent skill](#ai-agent-skill)
 - [Migrating from v1](#migrating-from-v1)
+
+# Why react-call?
+
+Short version: for showing and hiding something, React state is perfect. The
+moment the interaction has to *answer* you, that model starts to strain — and
+what you build to compensate is, more or less, this library.
+
+A confirm, a prompt, a picker is **imperative by nature**: ask a question, wait,
+get an answer, continue. React state is **declarative** — it describes what the
+UI is for a given state, not a step-by-step flow that returns a value.
+
+You can keep a dialog in state easily enough: a flag to show it, even the choice
+once it's made. What state can't do is hand that choice *back* to the code that
+opened it. So you bridge the gap by hand, and the consequence of the decision
+ends up stranded in a handler, far from the click that triggered it:
+
+```tsx
+function DeleteButton({ id }) {
+  const [open, setOpen] = useState(false)
+
+  return (
+    <>
+      <button onClick={() => setOpen(true)}>Delete</button>
+
+      {open && (
+        <Confirm
+          // the consequence — stranded here, far
+          // from the button that started it
+          onAccept={() => { api.delete(id); setOpen(false) }}
+          onCancel={() => setOpen(false)}
+        />
+      )}
+    </>
+  )
+}
+```
+
+With a `call()`, the whole flow stays in one place:
+
+```tsx
+function DeleteButton({ id }) {
+  return (
+    <button
+      onClick={async () => {
+        // ask, await, act — one place
+        if (await Confirm.call()) {
+          await api.delete(id)
+        }
+      }}
+    >
+      Delete
+    </button>
+  )
+}
+```
+
+**"But why add a dependency?"** Fair. You can hand-roll a promise so you can
+`await` the answer and keep the flow in one place. But that wrapper — once it
+also handles typing, SSR, the one-Root-per-component rule, exit animations, and
+more than one call on screen at once — **is** react-call. It's < 1 KB, has no
+dependencies, and it's already written and tested.
+
+**When React state is the right call.** None of this is "React state is bad".
+For a pure show/hide toggle that returns nothing — a menu that just opens and
+closes — a `useState` is exactly right, and you shouldn't reach for a library.
+The line is the *result*: the moment you need an answer back, several of these
+on screen at once, or the same dialog reused from many places, a `call()` earns
+its keep.
+
+> [!NOTE]
+> The full argument, with live examples, lives at
+> **[react-call.desko.dev/why ↗](https://react-call.desko.dev/why)**.
 
 # Getting started
 
