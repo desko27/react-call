@@ -38,16 +38,6 @@ Multi-context repo (presence of `CONTEXT-MAP.md` at the root):
         └── docs/adr/
 ```
 
-## This repo's `CONTEXT.md` carries three extra sections
-
-`domain-modeling`'s `CONTEXT-FORMAT.md` describes a glossary and nothing else. This repo's `CONTEXT.md` deliberately keeps three sections that the format dropped, because they hold real, actively maintained knowledge:
-
-- **`## Relationships`** — cardinality and scoping between terms (a **MutationFlow** is scoped to a single **Call**; the **Host** scopes the single-Root invariant).
-- **`## Example dialogue`** — a maintainer/designer exchange pinning down the semantics of a **MutationFn** that throws, per ADR-0016.
-- **`## Flagged ambiguities`** — resolved naming collisions (`mutation`, `context`, `asyncAction`) and the canonical term each landed on.
-
-**Maintain them alongside `## Language`.** When a decision changes a relationship, an ambiguity resolution, or the behaviour the dialogue describes, update the section in the same pass — don't let them go stale while only the glossary moves. Everything else in `CONTEXT-FORMAT.md` applies unchanged.
-
 ## Use the glossary's vocabulary
 
 When your output names a domain concept (in an issue title, a refactor proposal, a hypothesis, a test name), use the term as defined in `CONTEXT.md`. Don't drift to synonyms the glossary explicitly avoids.

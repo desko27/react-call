@@ -4,7 +4,7 @@
 
 ### Issue tracker
 
-Issues are tracked as GitHub issues via the `gh` CLI. See `docs/agents/issue-tracker.md`.
+Issues are tracked as GitHub issues via the `gh` CLI. External PRs are not a triage surface. See `docs/agents/issue-tracker.md`.
 
 ### Triage labels
 
@@ -12,4 +12,4 @@ Default canonical label strings — `needs-triage`, `needs-info`, `ready-for-age
 
 ### Domain docs
 
-Single-context: one `CONTEXT.md` + `docs/adr/` at the repo root. See `docs/agents/domain.md`.
+Single-context: one `CONTEXT.md` + `docs/adr/` at the repo root. `CONTEXT.md` carries three sections beyond the upstream glossary format. See `docs/agents/domain.md`.
