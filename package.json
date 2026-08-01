@@ -25,7 +25,7 @@
     "happy-dom": "^20.10.6",
     "lefthook": "^2.1.9",
     "publint": "^0.3.21",
-    "typescript": "^6.0.3",
+    "typescript": "^7.0.2",
     "vitest": "^4.1.9"
   },
   "packageManager": "pnpm@11.1.3",
