@@ -10,27 +10,27 @@
     "og": "node scripts/generate-og.mjs"
   },
   "dependencies": {
-    "@astrojs/check": "^0.9.4",
-    "@astrojs/mdx": "^7.0.0",
-    "@astrojs/react": "^6.0.0",
+    "@astrojs/check": "^0.9.10",
+    "@astrojs/mdx": "^7.0.5",
+    "@astrojs/react": "^6.0.2",
     "@astrojs/sitemap": "^3.6.0",
-    "@tailwindcss/vite": "^4.3.2",
-    "astro": "^7.0.4",
-    "astro-expressive-code": "^0.44.0",
-    "@fontsource-variable/fira-code": "^5.2.5",
-    "@fontsource-variable/geist": "^5.2.9",
+    "@tailwindcss/vite": "^4.3.3",
+    "astro": "^7.1.5",
+    "astro-expressive-code": "^0.44.1",
+    "@fontsource-variable/fira-code": "^5.3.0",
+    "@fontsource-variable/geist": "^5.3.0",
     "clsx": "^2.1.1",
     "lz-string": "^1.5.0",
-    "react": "^19.2.7",
+    "react": "^19.2.8",
     "react-call": "workspace:*",
-    "react-dom": "^19.2.7",
-    "tailwindcss": "^4.3.2",
+    "react-dom": "^19.2.8",
+    "tailwindcss": "^4.3.3",
     "typescript": "^6.0.3"
   },
   "devDependencies": {
     "@resvg/resvg-js": "^2.6.2",
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
-    "vite": "^8.1.2"
+    "vite": "^8.1.5"
   }
 }
