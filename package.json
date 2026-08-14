@@ -20,12 +20,12 @@
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.5",
     "@biomejs/biome": "^2.5.8",
-    "@changesets/cli": "^2.31.1",
+    "@changesets/cli": "^3.0.0",
     "@vitest/coverage-v8": "^4.1.10",
     "happy-dom": "^20.11.2",
     "lefthook": "^2.1.10",
     "publint": "^0.3.23",
-    "typescript": "^6.0.3",
+    "typescript": "^7.0.2",
     "vitest": "^4.1.10"
   },
   "packageManager": "pnpm@11.21.0",
