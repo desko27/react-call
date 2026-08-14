@@ -25,16 +25,16 @@ const FORBIDDEN_SYMBOLS = [
 ] as const
 
 describe('bundle content — ADR-0007 React Native compatibility', () => {
-  it.each([
-    'main.js',
-    'main.cjs',
-  ] as const)('dist/%s has no DOM-only / react-dom references', async (filename) => {
-    const code = await readFile(resolve(DIST, filename), 'utf-8')
-    for (const symbol of FORBIDDEN_SYMBOLS) {
-      expect(
-        code,
-        `forbidden symbol "${symbol}" found in ${filename}`,
-      ).not.toContain(symbol)
-    }
-  })
+  it.each(['main.js', 'main.cjs'] as const)(
+    'dist/%s has no DOM-only / react-dom references',
+    async (filename) => {
+      const code = await readFile(resolve(DIST, filename), 'utf-8')
+      for (const symbol of FORBIDDEN_SYMBOLS) {
+        expect(
+          code,
+          `forbidden symbol "${symbol}" found in ${filename}`,
+        ).not.toContain(symbol)
+      }
+    },
+  )
 })
