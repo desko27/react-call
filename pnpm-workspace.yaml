@@ -13,8 +13,8 @@ allowBuilds:
   sharp: false
 
 minimumReleaseAgeExclude:
-  - astro@7.0.4
-  - vite@8.1.2
+  - astro@7.2.1
+  - vite@8.2.1
 
 overrides:
   fflate: "0.8.2"
