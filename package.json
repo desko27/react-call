@@ -19,14 +19,14 @@
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.5",
-    "@biomejs/biome": "^2.5.8",
+    "@biomejs/biome": "^2.5.11",
     "@changesets/cli": "^2.31.1",
-    "@vitest/coverage-v8": "^4.1.10",
-    "happy-dom": "^20.11.2",
-    "lefthook": "^2.1.10",
-    "publint": "^0.3.23",
+    "@vitest/coverage-v8": "^4.1.11",
+    "happy-dom": "^20.11.15",
+    "lefthook": "^2.1.12",
+    "publint": "^0.3.24",
     "typescript": "^6.0.3",
-    "vitest": "^4.1.10"
+    "vitest": "^4.1.11"
   },
   "packageManager": "pnpm@11.21.0",
   "engines": {
