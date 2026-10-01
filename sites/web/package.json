@@ -11,8 +11,8 @@
   },
   "dependencies": {
     "@astrojs/check": "^0.9.10",
-    "@astrojs/mdx": "^7.0.5",
-    "@astrojs/react": "^6.0.2",
+    "@astrojs/mdx": "^8.0.2",
+    "@astrojs/react": "^7.0.0",
     "@astrojs/sitemap": "^3.7.3",
     "@fontsource-variable/fira-code": "^5.3.0",
     "@fontsource-variable/geist": "^5.3.0",
@@ -25,7 +25,7 @@
     "react-call": "workspace:*",
     "react-dom": "^19.2.8",
     "tailwindcss": "^4.3.3",
-    "typescript": "^6.0.3"
+    "typescript": "^7.0.2"
   },
   "devDependencies": {
     "@resvg/resvg-js": "^2.6.2",
