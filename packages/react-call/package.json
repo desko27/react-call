@@ -104,21 +104,21 @@
     }
   ],
   "devDependencies": {
-    "@microsoft/api-extractor": "^7.58.12",
+    "@microsoft/api-extractor": "^7.59.2",
     "@size-limit/preset-small-lib": "^13.0.3",
-    "@testing-library/dom": "^10.4.1",
+    "@testing-library/dom": "^10.4.2",
     "@testing-library/jest-dom": "^7.0.1",
-    "@testing-library/react": "^16.3.2",
-    "@testing-library/user-event": "^14.6.4",
-    "@types/node": "^26.2.0",
-    "@types/react": "^19.2.18",
-    "@types/react-dom": "^19.2.4",
-    "@vitejs/plugin-react": "^6.0.5",
-    "react-dom": "^19.2.8",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.7",
+    "@types/node": "^26.6.3",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.1",
+    "react-dom": "^19.3.0",
     "size-limit": "^13.0.3",
     "typescript": "^6.0.3",
-    "vite": "^8.2.1",
-    "vite-plugin-dts": "^5.0.3"
+    "vite": "^8.3.1",
+    "vite-plugin-dts": "^5.1.1"
   },
   "peerDependencies": {
     "react": ">=18",
