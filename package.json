@@ -19,12 +19,12 @@
   },
   "devDependencies": {
     "@arethetypeswrong/cli": "^0.18.5",
-    "@biomejs/biome": "^2.5.8",
+    "@biomejs/biome": "^2.5.14",
     "@changesets/cli": "^2.31.1",
     "@vitest/coverage-v8": "^4.1.10",
-    "happy-dom": "^20.11.2",
-    "lefthook": "^2.1.10",
-    "publint": "^0.3.23",
+    "happy-dom": "^20.14.5",
+    "lefthook": "^2.1.14",
+    "publint": "^0.3.24",
     "typescript": "^6.0.3",
     "vitest": "^4.1.10"
   },
